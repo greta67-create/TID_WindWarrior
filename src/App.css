@@ -10,6 +10,7 @@
   --shadow: rgba(20, 40, 100, 0.12);
   --font-sans: "Ubuntu", system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
+  --content: 560px;
 }
 
 /* Baseline - TBD */
@@ -24,23 +25,38 @@ body,
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: var(--back);
   color: var(--text);
 }
 
 /* App  */
 .app {
+  position: relative;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
 
+.app::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1; /* sit behind all content */
+  background: radial-gradient(
+    120% 120% at 50% -20%,
+    var(--back) 20%,
+    var(--light) 70%,
+    var(--sub) 100%
+  );
+}
+
 /* Page  */
 .page {
-  max-width: 480px;
+  width: 100%;
+  max-width: var(--content);
   margin: 0 auto;
   padding: 16px;
-  padding-bottom: 72px;
+  padding-bottom: 140px;
+  background: transparent;
 }
 
 /* Header */
@@ -59,11 +75,27 @@ body {
   color: var(--text);
 }
 
-.stack {
-  display: grid;
-  gap: 12px;
+.section-subtitle {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  font-weight: 400;
 }
 
+.stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* centers children horizontally */
+  gap: 16px;
+}
+
+.stack > a {
+  display: block;
+  width: 100%;
+}
+
+.session-card {
+  width: 100%;
+}
 /* Bottom nav */
 .nav {
   position: fixed;
@@ -80,6 +112,14 @@ body {
   z-index: 10;
 }
 
+.nav-inner {
+  max-width: var(--content);
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
 .nav .nav-link {
   font-family: var(--font-sans);
   font-weight: 600;
@@ -93,4 +133,59 @@ body {
 .nav .nav-link.active {
   color: var(--back);
   background: var(--primary);
+}
+
+/* Fixed comment bar above bottom nav */
+.comment-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 64px; /* sit above the nav */
+  padding: 8px 16px;
+  background: transparent;
+  z-index: 9;
+}
+.comment-inner {
+  max-width: var(--content);
+  margin: 0 auto;
+  display: flex;
+  gap: 8px;
+}
+.comment-input {
+  flex: 1;
+  background: var(--back);
+  border: 1px solid var(--light);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-family: var(--font-sans);
+}
+.send-btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 0 14px;
+  font-weight: 700;
+}
+
+/* Comments list (Session View) */
+.chat-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* Single comment bubble */
+.chat-item {
+  background: var(--back);
+  border: 1px solid var(--light);
+  border-radius: 16px;
+  padding: 12px 14px;
+  box-shadow: 0 6px 24px var(--shadow);
+}
+
+/* Author styling */
+.chat-item strong {
+  font-weight: 700;
+  color: var(--text);
 }

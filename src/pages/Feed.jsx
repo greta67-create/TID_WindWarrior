@@ -2,40 +2,7 @@ import "/src/App.css";
 import Sessionblock from "../components/Sessionblock";
 import { Link } from "react-router-dom";
 
-function SessionFeedPage() {
-  const sessions = [
-    {
-      id: "1",
-      spot: "Amager Strand",
-      dateLabel: "Apr 4th",
-      timeLabel: "12pm",
-      windKts: 21,
-      tempC: 18,
-      weather: "⛅️",
-      windDir: "↗",
-    },
-    {
-      id: "2",
-      spot: "Dragør",
-      dateLabel: "Apr 4th",
-      timeLabel: "2pm",
-      windKts: 19,
-      tempC: 17,
-      weather: "⛅️",
-      windDir: "↗",
-    },
-    {
-      id: "3",
-      spot: "Sydvestpynten",
-      dateLabel: "Apr 4th",
-      timeLabel: "4pm",
-      windKts: 17,
-      tempC: 16,
-      weather: "⛅️",
-      windDir: "↗",
-    },
-  ];
-
+function SessionFeedPage({ sessions = [] }) {
   return (
     <div className="page">
       <div className="page-header">
