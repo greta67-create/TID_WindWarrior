@@ -1,12 +1,9 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  NavLink,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import SessionFeedPage from "./pages/Feed";
 import SessionViewPage from "./pages/SessionView";
+import ProfileView from "./pages/ProfileView";
+import Navbar from "./components/Navigationbar";
 
 // Local demo data (replace with API later)
 const SESSIONS = [
@@ -53,50 +50,6 @@ function MapPage() {
   );
 }
 
-function ProfilePage() {
-  return (
-    <div className="page">
-      <div className="page-header">
-        <div className="page-title">Profile</div>
-      </div>
-    </div>
-  );
-}
-
-function NavBar() {
-  return (
-    <nav className="nav">
-      <div className="nav-inner">
-        <NavLink
-          to="/"
-          end
-          className={({ isActive }) =>
-            isActive ? "nav-link active" : "nav-link"
-          }
-        >
-          Home
-        </NavLink>
-        <NavLink
-          to="/map"
-          className={({ isActive }) =>
-            isActive ? "nav-link active" : "nav-link"
-          }
-        >
-          Map
-        </NavLink>
-        <NavLink
-          to="/profile"
-          className={({ isActive }) =>
-            isActive ? "nav-link active" : "nav-link"
-          }
-        >
-          Profile
-        </NavLink>
-      </div>
-    </nav>
-  );
-}
-
 export default function App() {
   return (
     <Router>
@@ -108,9 +61,9 @@ export default function App() {
             element={<SessionViewPage sessions={SESSIONS} />}
           />
           <Route path="/map" element={<MapPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile" element={<ProfileView />} />
         </Routes>
-        <NavBar />
+        <Navbar />
       </div>
     </Router>
   );
