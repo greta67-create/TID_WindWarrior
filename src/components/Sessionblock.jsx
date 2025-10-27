@@ -29,10 +29,8 @@ export default function Sessionblock({
         <div className="metric">
           <div className="icon-badge">{windDir}</div>
           <div className="metric-text">{windKts} knts</div>
-        </div>
-        <div className="metric">
           <div className="icon-badge">{weather}</div>
-          <div className="metric-text">{tempC}°C</div>
+          <div className="metric-text">🌡️{tempC}°C</div>
         </div>
         <div className="avatars" aria-label="participants">
           👤👤

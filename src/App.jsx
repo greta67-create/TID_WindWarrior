@@ -27,7 +27,7 @@ const SESSIONS = [
     timeLabel: "2pm",
     windKts: 19,
     tempC: 17,
-    weather: "⛅️",
+    weather: "🌤️",
     windDir: "↗",
   },
   {
@@ -37,7 +37,7 @@ const SESSIONS = [
     timeLabel: "4pm",
     windKts: 17,
     tempC: 16,
-    weather: "⛅️",
+    weather: "☀",
     windDir: "↗",
   },
 ];
