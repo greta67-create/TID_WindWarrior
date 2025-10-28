@@ -8,13 +8,17 @@ import "./App.css";
 import SessionFeedPage from "./pages/Feed";
 import SessionViewPage from "./pages/SessionView";
 
+import ava1 from "./assets/avatar1.png";
+import ava2 from "./assets/avatar2.png";
+import ava3 from "./assets/avatar3.png";
+
 // Local demo data (replace with API later)
 const SESSIONS = [
   {
     id: "1",
     spot: "Amager Strand",
-    dateLabel: "Apr 4th",
-    timeLabel: "12pm",
+    dateLabel: " 4 Apr",
+    timeLabel: "12:00",
     windKts: 21,
     tempC: 18,
     weather: "⛅️",
@@ -23,8 +27,8 @@ const SESSIONS = [
   {
     id: "2",
     spot: "Dragør",
-    dateLabel: "Apr 4th",
-    timeLabel: "2pm",
+    dateLabel: "4 Apr",
+    timeLabel: "14:00",
     windKts: 19,
     tempC: 17,
     weather: "🌤️",
@@ -33,8 +37,8 @@ const SESSIONS = [
   {
     id: "3",
     spot: "Sydvestpynten",
-    dateLabel: "Apr 4th",
-    timeLabel: "4pm",
+    dateLabel: "4 Apr",
+    timeLabel: "16:00",
     windKts: 17,
     tempC: 16,
     weather: "☀",
