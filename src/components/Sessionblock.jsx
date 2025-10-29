@@ -11,6 +11,8 @@ export default function Sessionblock({
   windDir = "↗",
   avatars = [],
   onJoin = () => {},
+  isJoined = false,
+  joinedText = "Joining",
 }) {
   // show at most 3 avatars
   const list = Array.isArray(avatars) ? avatars : avatars ? [avatars] : [];
@@ -29,8 +31,11 @@ export default function Sessionblock({
           <div className="subtle">
             {dateLabel} | {timeLabel}
           </div>
-          <button className="join-button" onClick={onJoin}>
-            Join
+          <button
+            className={`join-button ${isJoined ? "joined" : ""}`}
+            onClick={onJoin}
+          >
+            {isJoined ? joinedText : "Join"}
           </button>
         </div>
       </div>

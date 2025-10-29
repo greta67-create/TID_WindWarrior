@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { GoHomeFill } from "react-icons/go";
 import { GrMapLocation } from "react-icons/gr";
 import { IoPersonSharp } from "react-icons/io5";
-import "./Navigationbar.css";
+import "../styles/Navigationbar.css";
 
 export default function Navbar() {
   return (

@@ -9,7 +9,11 @@ import "../styles/SessionView.css";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
-export default function SessionViewPage({ sessions = [] }) {
+export default function SessionViewPage({
+  sessions = [],
+  onJoinSession,
+  joinedSessions = [],
+}) {
   const { id } = useParams();
 
   const session = sessions.find((x) => x.id === id) ||
@@ -46,7 +50,7 @@ export default function SessionViewPage({ sessions = [] }) {
   const onJoin = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    alert(`Join session ${session.id}`);
+    onJoinSession(session.id);
   };
 
   const handleSendClick = () => {
@@ -93,6 +97,7 @@ export default function SessionViewPage({ sessions = [] }) {
         windDir={session.windDir}
         avatars={defaultAvatars}
         onJoin={onJoin}
+        isJoined={joinedSessions.includes(session.id)}
       />
 
       {/* Subtitle */}
