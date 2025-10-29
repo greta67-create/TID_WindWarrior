@@ -64,7 +64,7 @@ export default function App() {
             path="/session/:id"
             element={<SessionViewPage sessions={SESSIONS} />}
           />
-          <Route path="/map" element={<MapPage />} />
+          <Route path="/map" element={<MapView />} />
           <Route path="/profile" element={<ProfileView />} />
         </Routes>
         <Navbar />
