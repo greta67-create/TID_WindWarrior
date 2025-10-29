@@ -1,4 +1,4 @@
-import "./Sessionblock.css";
+import "../styles/Sessionblock.css";
 
 export default function Sessionblock({
   //fallbacks
@@ -9,32 +9,48 @@ export default function Sessionblock({
   tempC = 18,
   weather = "⛅️",
   windDir = "↗",
+  avatars = [],
   onJoin = () => {},
 }) {
+  // show at most 3 avatars
+  const list = Array.isArray(avatars) ? avatars : avatars ? [avatars] : [];
+  const shown = list.slice(0, 3);
+  const more = 3; // calculate the number of additional avatars
+
   return (
     <div className="session-card">
       <div className="session-header">
-        <div className="session-title">
-          <div className="spot">{spot}</div>
+        <div className="session-header-left">
+          <div className="session-title">
+            <div className="spot">{spot}</div>
+          </div>
+        </div>
+        <div className="session-header-right">
           <div className="subtle">
             {dateLabel} | {timeLabel}
           </div>
+          <button className="join-button" onClick={onJoin}>
+            Join
+          </button>
         </div>
-        <button className="join-button" onClick={onJoin}>
-          Join
-        </button>
       </div>
 
       <div className="session-footer">
-        <div className="metric">
+        <div className="metrics">
           <div className="icon-badge">{windDir}</div>
           <div className="metric-text">{windKts} knts</div>
           <div className="icon-badge">{weather}</div>
-          <div className="metric-text">🌡️{tempC}°C</div>
+          <div className="metric-text">{tempC}°C</div>
         </div>
-        <div className="avatars" aria-label="participants">
-          👤👤
-        </div>
+
+        {list.length > 0 && (
+          <div className="avatar-stack">
+            {shown.map((src, i) => (
+              <img key={i} alt="" src={src} className="avatar" />
+            ))}
+            {more > 0 && <div className="avatar-count">+{more}</div>}
+          </div>
+        )}
       </div>
     </div>
   );
