@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import SessionFeedPage from "./pages/Feed";
 import SessionViewPage from "./pages/SessionView";
+import SpotViewPage from "./pages/SpotView";
 import ProfileView from "./pages/ProfileView";
 import Navbar from "./components/Navigationbar";
 import MapView from "./pages/MapView";
@@ -65,6 +66,7 @@ export default function App() {
             element={<SessionViewPage sessions={SESSIONS} />}
           />
           <Route path="/map" element={<MapView />} />
+          <Route path="/spot/:spotName" element={<SpotViewPage />} />
           <Route path="/profile" element={<ProfileView />} />
         </Routes>
         <Navbar />

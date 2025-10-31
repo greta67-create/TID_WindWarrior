@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Sessionblock from "../components/Sessionblock";
 import "../App.css";
 import ava1 from "../assets/avatar1.png";
