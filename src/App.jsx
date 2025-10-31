@@ -5,7 +5,7 @@ import SessionViewPage from "./pages/SessionView";
 import SpotViewPage from "./pages/SpotView";
 import ProfileView from "./pages/ProfileView";
 import Navbar from "./components/Navigationbar";
-
+import MapView from "./pages/MapView";
 import ava1 from "./assets/avatar1.png";
 import ava2 from "./assets/avatar2.png";
 import ava3 from "./assets/avatar3.png";
@@ -65,8 +65,8 @@ export default function App() {
             path="/session/:id"
             element={<SessionViewPage sessions={SESSIONS} />}
           />
+          <Route path="/map" element={<MapView />} />
           <Route path="/spot/:spotName" element={<SpotViewPage />} />
-          <Route path="/map" element={<MapPage />} />
           <Route path="/profile" element={<ProfileView />} />
         </Routes>
         <Navbar />
