@@ -1,4 +1,4 @@
-import "./Sessionblock.css";
+import "../styles/Sessionblock.css";
 import { Link } from "react-router-dom";
 
 export default function Sessionblock({
