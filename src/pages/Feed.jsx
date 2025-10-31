@@ -7,13 +7,18 @@ import ava3 from "../assets/avatar3.png";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
-const onJoin = (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  alert(`Join session ${session.id}`);
-};
-
-function SessionFeedPage({ sessions = [] }) {
+function SessionFeedPage({
+  sessions = [],
+  onJoinSession,
+  joinedSessions = [],
+}) {
+  const handleJoin = (id) => (e) => {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (onJoinSession) onJoinSession(id);
+  };
   return (
     <div className="page">
       <div className="page-header">
@@ -38,7 +43,8 @@ function SessionFeedPage({ sessions = [] }) {
               weather={s.weather}
               windDir={s.windDir}
               avatars={defaultAvatars}
-              onJoin={onJoin}
+              onJoin={handleJoin(s.id)}
+              isJoined={joinedSessions.includes(s.id)}
             />
           </Link>
         ))}

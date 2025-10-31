@@ -1,14 +1,11 @@
 import React from "react";
+import ava1 from "../assets/avatar1.png";
 
-export default function ProfileCard() {
+export default function ProfileCard({ avatar = ava1 }) {
   return (
     <div style={styles.card}>
       <div style={styles.imageContainer}>
-        <img
-          src="https://via.placeholder.com/150"
-          alt="Profile"
-          style={styles.image}
-        />
+        <img src={avatar} alt="Profile" style={styles.image} />
       </div>
       <h2 style={styles.name}>Carl Caterpillar</h2>
       <p style={styles.text}>Windsurfer</p>
