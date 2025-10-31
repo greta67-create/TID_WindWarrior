@@ -4,8 +4,9 @@ import "./App.css";
 import SessionFeedPage from "./pages/Feed";
 import SessionViewPage from "./pages/SessionView";
 import ProfileView from "./pages/Profileview";
+import SpotViewPage from "./pages/SpotView";
 import Navbar from "./components/Navigationbar";
-
+import MapView from "./pages/MapView";
 import ava1 from "./assets/avatar1.png";
 import ava2 from "./assets/avatar2.png";
 import ava3 from "./assets/avatar3.png";
@@ -104,6 +105,8 @@ export default function App() {
               />
             }
           />
+          <Route path="/map" element={<MapView />} />
+          <Route path="/spot/:spotName" element={<SpotViewPage />} />
         </Routes>
         <Navbar />
       </div>
