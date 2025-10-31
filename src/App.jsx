@@ -1,21 +1,22 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  NavLink,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import SessionFeedPage from "./pages/Feed";
 import SessionViewPage from "./pages/SessionView";
 import SpotViewPage from "./pages/SpotView";
+import ProfileView from "./pages/ProfileView";
+import Navbar from "./components/Navigationbar";
+
+import ava1 from "./assets/avatar1.png";
+import ava2 from "./assets/avatar2.png";
+import ava3 from "./assets/avatar3.png";
 
 // Local demo data (replace with API later)
 const SESSIONS = [
   {
     id: "1",
     spot: "Amager Strand",
-    dateLabel: "Apr 4th",
-    timeLabel: "12pm",
+    dateLabel: " 4 Apr",
+    timeLabel: "12:00",
     windKts: 21,
     tempC: 18,
     weather: "⛅️",
@@ -24,8 +25,8 @@ const SESSIONS = [
   {
     id: "2",
     spot: "Dragør",
-    dateLabel: "Apr 4th",
-    timeLabel: "2pm",
+    dateLabel: "4 Apr",
+    timeLabel: "14:00",
     windKts: 19,
     tempC: 17,
     weather: "🌤️",
@@ -34,8 +35,8 @@ const SESSIONS = [
   {
     id: "3",
     spot: "Sydvestpynten",
-    dateLabel: "Apr 4th",
-    timeLabel: "4pm",
+    dateLabel: "4 Apr",
+    timeLabel: "16:00",
     windKts: 17,
     tempC: 16,
     weather: "☀",
@@ -54,50 +55,6 @@ function MapPage() {
   );
 }
 
-function ProfilePage() {
-  return (
-    <div className="page">
-      <div className="page-header">
-        <div className="page-title">Profile</div>
-      </div>
-    </div>
-  );
-}
-
-function NavBar() {
-  return (
-    <nav className="nav">
-      <div className="nav-inner">
-        <NavLink
-          to="/"
-          end
-          className={({ isActive }) =>
-            isActive ? "nav-link active" : "nav-link"
-          }
-        >
-          Home
-        </NavLink>
-        <NavLink
-          to="/map"
-          className={({ isActive }) =>
-            isActive ? "nav-link active" : "nav-link"
-          }
-        >
-          Map
-        </NavLink>
-        <NavLink
-          to="/profile"
-          className={({ isActive }) =>
-            isActive ? "nav-link active" : "nav-link"
-          }
-        >
-          Profile
-        </NavLink>
-      </div>
-    </nav>
-  );
-}
-
 export default function App() {
   return (
     <Router>
@@ -110,9 +67,9 @@ export default function App() {
           />
           <Route path="/spot/:spotName" element={<SpotViewPage />} />
           <Route path="/map" element={<MapPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile" element={<ProfileView />} />
         </Routes>
-        <NavBar />
+        <Navbar />
       </div>
     </Router>
   );
