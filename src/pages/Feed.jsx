@@ -1,12 +1,31 @@
-import "/src/App.css";
-import Sessionblock from "../components/Sessionblock";
+import "../App.css";
+import SessionBlock from "../components/Sessionblocksmall";
 import { Link } from "react-router-dom";
+import ava1 from "../assets/avatar1.png";
+import ava2 from "../assets/avatar2.png";
+import ava3 from "../assets/avatar3.png";
 
-function SessionFeedPage({ sessions = [] }) {
+const defaultAvatars = [ava1, ava2, ava3];
+
+function SessionFeedPage({
+  sessions = [],
+  onJoinSession,
+  joinedSessions = [],
+}) {
+  const handleJoin = (id) => (e) => {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (onJoinSession) onJoinSession(id);
+  };
   return (
     <div className="page">
       <div className="page-header">
         <div className="page-title">Session Feed</div>
+      </div>
+      <div className="section-subtitle">
+        Top sessions based on the weather forecast
       </div>
       <div className="stack">
         {sessions.map((s) => (
@@ -15,7 +34,7 @@ function SessionFeedPage({ sessions = [] }) {
             to={`/session/${s.id}`}
             style={{ textDecoration: "none" }}
           >
-            <Sessionblock
+            <SessionBlock
               spot={s.spot}
               dateLabel={s.dateLabel}
               timeLabel={s.timeLabel}
@@ -23,7 +42,9 @@ function SessionFeedPage({ sessions = [] }) {
               tempC={s.tempC}
               weather={s.weather}
               windDir={s.windDir}
-              onJoin={() => alert(`Join session ${s.id}`)}
+              avatars={defaultAvatars}
+              onJoin={handleJoin(s.id)}
+              isJoined={joinedSessions.includes(s.id)}
             />
           </Link>
         ))}
