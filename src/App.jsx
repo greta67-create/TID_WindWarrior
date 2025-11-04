@@ -94,7 +94,7 @@ export default function App() {
               />
             }
           />
-          <Route path="/map" element={<MapPage />} />
+          <Route path="/map" element={<MapView />} />
           <Route
             path="/profile"
             element={
@@ -105,7 +105,6 @@ export default function App() {
               />
             }
           />
-          <Route path="/map" element={<MapView />} />
           <Route path="/spot/:spotName" element={<SpotViewPage />} />
         </Routes>
         <Navbar />

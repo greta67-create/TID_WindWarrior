@@ -2,11 +2,11 @@
 @import "/src/App.css";
 
 .profile-card {
-  background-color: white;
+  background-color: var(--back);
   border-radius: 1rem;
   padding: 1.5rem;
   text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px var(--shadow);
 }
 
 .profile-image-container img {
@@ -17,21 +17,23 @@
 }
 
 .profile-name {
-  color: #19306e;
+  color: var(--text);
+  font: var(--font-sans);
   margin-top: 1rem;
   font-size: 1.4rem;
   font-weight: 700;
 }
 
 .profile-text {
-  color: #19306e;
+  color: var(--text);
+  font: var(--font-sans);
   margin: 0.3rem 0;
   font-size: 1rem;
 }
 
 .profile-button {
-  background-color: #19306e;
-  color: white;
+  background-color: var(--text);
+  color: var(--back);
   border: none;
   border-radius: 1rem;
   padding: 0.5rem 1.2rem;
@@ -40,8 +42,4 @@
   font-size: 1rem;
   font-weight: 500;
   transition: background-color 0.2s ease;
-}
-
-.profile-button:hover {
-  background-color: #142657;
 }
