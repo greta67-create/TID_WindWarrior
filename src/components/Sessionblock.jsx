@@ -1,4 +1,4 @@
-import "./Sessionblock.css";
+import "../styles/Sessionblock.css";
 import { Link } from "react-router-dom";
 
 export default function Sessionblock({
@@ -24,7 +24,7 @@ export default function Sessionblock({
     <div className="session-card">
       <div className="session-header">
         <div className="session-title">
-          <Link 
+          <Link
             to={`/spot/${encodeURIComponent(spot)}`}
             className="spot"
             style={{ textDecoration: "none", color: "inherit" }}
