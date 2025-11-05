@@ -80,14 +80,18 @@ export default function SessionViewPage({
     <div className="page">
       {/* Title */}
       <div className="page-header">
-        <div className="page-title">Session View</div>
+        <div className="page-title">{session.spot}</div>
+        <div className="page-title">Test</div>
+      </div>
+      <div className="section-subtitle">
+        Most important information for your session
       </div>
       <div className="section-subtitle">
         Most important information for your session
       </div>
 
       {/* Session card */}
-      <Sessionblock
+      <Sessionblocklarge
         spot={session.spot}
         dateLabel={session.dateLabel}
         timeLabel={session.timeLabel}

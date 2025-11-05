@@ -34,7 +34,7 @@ function SessionFeedPage({
             to={`/session/${s.id}`}
             style={{ textDecoration: "none" }}
           >
-            <Sessionblock
+            <SessionBlock
               spot={s.spot}
               dateLabel={s.dateLabel}
               timeLabel={s.timeLabel}

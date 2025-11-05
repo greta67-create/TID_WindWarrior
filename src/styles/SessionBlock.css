@@ -1,0 +1,145 @@
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap");
+@import "/src/App.css";
+
+/* Card */
+.session-card {
+  background: var(--back);
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 10px 30px var(--shadow);
+}
+
+/* Header */
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.session-header-left {
+  display: flex;
+  align-items: baseline;
+}
+
+.session-header-right {
+  display: flex;
+  align-items: baseline;
+}
+
+.session-title {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.spot {
+  font: var(--font-sans);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 0.2px;
+}
+
+.subtle {
+  font: var(--font-sans);
+  font-size: 15px;
+  color: var(--text);
+  font-weight: 400;
+  margin-right: 12px;
+}
+
+/* Button */
+.join-button {
+  background: var(--primary);
+  font: var(--font-sans);
+  font-size: 15px;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 15px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.join-button.joined {
+  opacity: 0.7;
+}
+
+/* Footer row */
+.session-footer {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Metrics */
+.metrics {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  margin-right: 12px;
+}
+
+.metric-text {
+  font: var(--font-sans);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.icon-badge {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--back);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--text);
+}
+
+/* Avatars */
+.avatars {
+  display: flex;
+  align-items: center;
+}
+
+.avatar-stack {
+  display: flex;
+  align-items: center;
+}
+
+.avatar-stack .avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.avatar-count {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--light);
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px var(--shadow);
+  margin-left: -20px;
+}
+
+/* overlap */
+.avatar-stack .avatar + .avatar,
+.avatar-stack .avatar-count {
+  margin-left: -20px;
+}
