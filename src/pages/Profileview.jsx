@@ -1,6 +1,6 @@
 import "../App.css";
 import ProfileCard from "../components/Profilecard";
-import SessionBlock from "../components/Sessionblocksmall";
+import Sessionblock from "../components/Sessionblock";
 import { Link } from "react-router-dom";
 import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
@@ -37,7 +37,7 @@ export default function ProfileView({
                 to={`/session/${s.id}`}
                 style={{ textDecoration: "none" }}
               >
-                <SessionBlock
+                <Sessionblock
                   spot={s.spot}
                   dateLabel={s.dateLabel}
                   timeLabel={s.timeLabel}

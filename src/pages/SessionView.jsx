@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import Sessionblocklarge from "../components/SessionBlocklarge";
+import Sessionblock from "../components/Sessionblock";
 import "../App.css";
 import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
@@ -82,6 +82,9 @@ export default function SessionViewPage({
       <div className="page-header">
         <div className="page-title">{session.spot}</div>
         <div className="page-title">Test</div>
+      </div>
+      <div className="section-subtitle">
+        Most important information for your session
       </div>
       <div className="section-subtitle">
         Most important information for your session
