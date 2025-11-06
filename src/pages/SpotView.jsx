@@ -59,9 +59,9 @@ export default function SpotViewPage() {
   const navigate = useNavigate();
 
   // higer wind first rule (can be adapted though)
-  const sessions = MOCK_SESSIONS
-    .filter((s) => s.spot === name)
-    .sort((a, b) => b.windKts - a.windKts);
+  const sessions = MOCK_SESSIONS.filter((s) => s.spot === name).sort(
+    (a, b) => b.windKts - a.windKts
+  );
 
   return (
     <div className="page">
@@ -90,28 +90,28 @@ export default function SpotViewPage() {
         ))}
       </div>
       {/* Comments section */}
-<div className="section-subtitle" style={{ marginTop: 16 }}>
-  What others say about this place:
-</div>
+      <div className="section-subtitle" style={{ marginTop: 16 }}>
+        What others say about this place:
+      </div>
 
-<div className="chat-list">
-  {MOCK_COMMENTS.map((c) => (
-    <div key={c.id} className="chat-item">
-      <strong>{c.name}</strong>
-      <span style={{ opacity: 0.6, marginLeft: 8, fontSize: 12 }}>
-        {c.date}
-      </span>
-      <div style={{ marginTop: 4 }}>{c.text}</div>
-    </div>
-  ))}
-</div>
+      <div className="chat-list">
+        {MOCK_COMMENTS.map((c) => (
+          <div key={c.id} className="chat-item">
+            <strong>{c.name}</strong>
+            <span style={{ opacity: 0.6, marginLeft: 8, fontSize: 12 }}>
+              {c.date}
+            </span>
+            <div style={{ marginTop: 4 }}>{c.text}</div>
+          </div>
+        ))}
+      </div>
 
-<div className="comment-bar">
-  <div className="comment-inner">
-    <input className="comment-input" placeholder="Add Comment" />
-    <button className="send-btn">Send</button>
-  </div>
-</div>
+      <div className="comment-bar">
+        <div className="comment-inner">
+          <input className="comment-input" placeholder="Add Comment" />
+          <button className="send-btn">Send</button>
+        </div>
+      </div>
     </div>
   );
 }
