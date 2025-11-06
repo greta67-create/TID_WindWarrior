@@ -8,7 +8,7 @@
   transform: translateX(-50%);
   width: 100%;
   max-width: 393px;
-  background-color: var(--text);
+  background-color: var(--primary);
   padding: 0.7rem 0;
   border-top-left-radius: 1.2rem;
   border-top-right-radius: 1.2rem;

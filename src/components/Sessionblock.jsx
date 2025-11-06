@@ -1,4 +1,5 @@
 import "../styles/Sessionblock.css";
+import JoinButton from "../components/JoinButton";
 import { Link } from "react-router-dom";
 
 export default function Sessionblock({
@@ -34,12 +35,11 @@ export default function Sessionblock({
           <div className="subtle">
             {dateLabel} | {timeLabel}
           </div>
-          <button
-            className={`join-button ${isJoined ? "joined" : ""}`}
+          <JoinButton
+            isJoined={isJoined}
             onClick={onJoin}
-          >
-            {isJoined ? joinedText : "Join"}
-          </button>
+            joinedText={joinedText}
+          />
         </div>
       </div>
 
