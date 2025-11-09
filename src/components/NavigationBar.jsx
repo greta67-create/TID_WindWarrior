@@ -5,7 +5,7 @@ import { GrMapLocation } from "react-icons/gr";
 import { IoPersonSharp } from "react-icons/io5";
 import "../styles/Navigationbar.css";
 
-export default function NavBar() {
+export default function Navbar() {
   return (
     <nav className="navbar">
       <ul className="navbar-list">
