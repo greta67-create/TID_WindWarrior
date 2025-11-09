@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import Sessionblock from "../components/Sessionblock";
+import Sessionblocklarge from "../components/SessionBlocklarge";
 import "../App.css";
 import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
