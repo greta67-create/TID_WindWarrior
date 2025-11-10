@@ -2,7 +2,7 @@
   background: var(--primary);
   font: var(--font-sans);
   font-size: 15px;
-  color: #ffffff;
+  color: var(--back);
   border: none;
   border-radius: 12px;
   padding: 8px 15px;

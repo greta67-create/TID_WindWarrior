@@ -16,6 +16,10 @@ export default function SessionViewPage({
 }) {
   const { id } = useParams();
 
+  useEffect(() => {
+    document.title = "Sessions";
+  }, []);
+
   const session = sessions.find((x) => x.id === id) ||
     sessions[0] || {
       id: "unknown",
