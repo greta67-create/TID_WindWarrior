@@ -18,7 +18,7 @@
 
 .profile-name {
   color: var(--text);
-  font: var(--font-sans);
+  font-family: var(--font-sans);
   margin-top: 1rem;
   font-size: 1.4rem;
   font-weight: 700;
@@ -26,7 +26,7 @@
 
 .profile-text {
   color: var(--text);
-  font: var(--font-sans);
+  font-family: var(--font-sans);
   margin: 0.3rem 0;
   font-size: 1rem;
 }
