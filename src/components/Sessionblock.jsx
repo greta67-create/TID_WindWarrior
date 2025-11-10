@@ -24,23 +24,15 @@ export default function Sessionblock({
   return (
     <div className="session-card">
       <div className="session-header">
-        <div className="session-title">
-          <Link
-            to={`/spot/${encodeURIComponent(spot)}`}
-            className="spot"
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
-            {spot}
-          </Link>
-          <div className="subtle">
-            {dateLabel} | {timeLabel}
-          </div>
-          <JoinButton
-            isJoined={isJoined}
-            onClick={onJoin}
-            joinedText={joinedText}
-          />
+        <div className="spot">{spot}</div>
+        <div className="subtle">
+          {dateLabel} | {timeLabel}
         </div>
+        <JoinButton
+          isJoined={isJoined}
+          onClick={onJoin}
+          joinedText={joinedText}
+        />
       </div>
 
       <div className="session-footer">

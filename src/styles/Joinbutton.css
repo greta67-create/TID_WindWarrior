@@ -14,3 +14,21 @@
 .join-button.joined {
   opacity: 0.7;
 }
+
+.join-buttonlarge {
+  background: var(--primary);
+  font: var(--font-sans);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--back);
+  height: 40px;
+  border: none;
+  border-radius: 15px;
+  /* padding: 8px 15px; */
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.join-buttonlarge.joined {
+  opacity: 0.7;
+}

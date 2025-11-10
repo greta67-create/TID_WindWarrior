@@ -85,13 +85,9 @@ export default function SessionViewPage({
       {/* Title */}
       <div className="page-header">
         <div className="page-title">{session.spot}</div>
-        <div className="page-title">Test</div>
-      </div>
-      <div className="section-subtitle">
-        Most important information for your session
-      </div>
-      <div className="section-subtitle">
-        Most important information for your session
+        <div className="subtle">
+          {session.dateLabel} | {session.timeLabel}
+        </div>
       </div>
 
       {/* Session card */}
