@@ -1,7 +1,8 @@
-import "../styles/SessionBlock.css";
+import "../styles/Sessionblock.css";
+import JoinButtonlarge from "../components/JoinButtonlarge";
 import { Link } from "react-router-dom";
 
-export default function SessionBlocklarge({
+export default function Sessionblocklarge({
   //fallbacks
   spot = "Amager Strand",
   dateLabel = "Apr 4th",
@@ -16,34 +17,33 @@ export default function SessionBlocklarge({
   joinedText = "Joining",
 }) {
   // show at most 3 avatars
-  const list = avatars;
+  const list = Array.isArray(avatars) ? avatars : avatars ? [avatars] : [];
   const shown = list.slice(0, 3);
-  const more = 3; // hardcoded for now
+  const more = 3; // calculate the number of additional avatars
 
   return (
-    <div className="session-card">
+    <div className="session-card-large">
+      <div className="session-card-title">Forecast for your session:</div>
       <div className="session-header">
-        <div className="session-title">
-          <div className="spot">{spot}</div>
-          <div className="subtle">
-            {dateLabel} | {timeLabel}
-          </div>
-          <button
-            className={`join-button ${isJoined ? "joined" : ""}`}
-            onClick={onJoin}
-          >
-            {isJoined ? joinedText : "Join"}
-          </button>
+        {/* <div className="spot">{spot}</div>
+        <div className="subtle">
+          {dateLabel} | {timeLabel}
+        </div> */}
+
+        <div className="metrics">
+          <div className="icon-badge-large">{windDir}</div>
+          <div className="metric-text-large">{windKts} knts</div>
+          <div className="icon-badge-large">{weather}</div>
+          <div className="metric-text-large">{tempC}°C</div>
         </div>
       </div>
 
       <div className="session-footer">
-        <div className="metrics">
-          <div className="icon-badge">{windDir}</div>
-          <div className="metric-text">{windKts} knts</div>
-          <div className="icon-badge">{weather}</div>
-          <div className="metric-text">{tempC}°C</div>
-        </div>
+        <JoinButtonlarge
+          isJoined={isJoined}
+          onClick={onJoin}
+          joinedText={joinedText}
+        />
 
         {list.length > 0 && (
           <div className="avatar-stack">

@@ -5,14 +5,10 @@
 
 /* Fixed comment bar above bottom nav */
 .comment-bar {
-  position: fixed; /*fix for scrolling*/
-  left: 50%;
-  transform: translateX(-50%);
+  position: fixed;
+  /* left: 50%; */
   bottom: 64px;
-  width: min(
-    var(--content),
-    calc(100vw - 32px)
-  ); /* align to the same column as .page (16px side padding) */
+  width: min(var(--content), calc(100vw - 32px));
   padding: 8px 0;
   background: transparent;
   z-index: 11;
@@ -59,8 +55,8 @@
   border: none;
   border-radius: 12px;
   padding: 0 14px;
-  font-weight: 700;
   cursor: pointer;
+  font-size: 15px;
 }
 
 /* Comments list (Session View) */
