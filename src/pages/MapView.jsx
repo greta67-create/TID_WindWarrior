@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Map from "react-map-gl/mapbox";
 import MapMarker from "../components/MapMarker";
 import "mapbox-gl/dist/mapbox-gl.css";
+import "/src/styles/Map.css";
 
 function MapView() {
   const [viewState, setViewState] = useState({
@@ -45,20 +46,7 @@ function MapView() {
 
   return (
     <>
-      <div
-        className="page"
-        style={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          zIndex: 1,
-          paddingBottom: 0,
-          backgroundColor: "white",
-          opacity: 0.9,
-          margin: "0 auto",
-          maxWidth: "var(--content)",
-        }}
-      >
+      <div className="page map-header">
         <div className="page-header">
           <div className="page-title">Live Map</div>
         </div>
@@ -71,7 +59,7 @@ function MapView() {
         <Map
           {...viewState}
           onMove={(evt) => setViewState(evt.viewState)}
-          style={{ width: "100%", height: "100vh" }}
+          style={{ width: "100%", height: "100vh" }} // couldnt extract to css as map wouldnt load without styling here
           mapStyle="mapbox://styles/mapbox/streets-v12"
           mapboxAccessToken={token}
         >
