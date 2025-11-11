@@ -19,16 +19,10 @@ function getArrowRotation(direction)  {
 function MapMarker({ spot_name, wind_direction, wind_power, latitude, longitude }) {
   
   const borderColor = wind_power >25 ? 'red' : wind_power > 15 ? 'green' : 'blue';
+  
   return (    
     <Marker latitude={latitude} longitude={longitude}>
-      <div style={{
-        backgroundColor: 'white',
-        padding: '5px',
-        borderRadius: '20px',
-        border: `2px solid ${borderColor}`,
-        textAlign: 'center',
-        boxShadow: '0 0 5px rgba(0,0,0,0.3)'
-      }}>
+      <div className="map-marker" style={{border: `2px solid ${borderColor}`}}>
         <strong>{spot_name}</strong>
         <br />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
