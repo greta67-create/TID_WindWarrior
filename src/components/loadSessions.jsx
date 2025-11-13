@@ -15,7 +15,7 @@ export default function loadSessions() {
         const results = await query.find();
 
         const mapped = results.map((obj) => {
-          const spotObj = obj.get("spotId");
+          const spotObj = obj.get("spotId.spotName");
           const date = obj.get("sessionDateTime");
 
           let dateLabel = "-";
@@ -63,6 +63,3 @@ export default function loadSessions() {
   const joinedSessionsList = sessions.filter((s) =>
     joinedSessions.includes(s.id)
   );
-
-  return { sessions, joinedSessions, joinedSessionsList, handleJoinSession };
-}
