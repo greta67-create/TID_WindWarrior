@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import loadSessions from "./components/loadSessions";
+// import loadSessions from "./components/loadSessions";
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import Parse from "./parse-init";
@@ -10,10 +10,36 @@ import SpotViewPage from "./pages/SpotView";
 import Navbar from "./components/Navigationbar";
 import MapView from "./pages/MapView";
 import Auth from "./pages/LogOn";
+import { getList } from "../backend/getParseFunctions";
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const { sessions, joinedSessions } = loadSessions();
+  const [sessions, setSessions] = useState([]);
+  const [joinedSessions, setJoinedSessions] = useState([]);
+
+  useEffect(() => {
+    const loadSessions = async () => {
+      const sessionQuery = new Parse.Query("Session_");
+      sessionQuery.include("spotId");
+      try {
+        const sessionData = await getList(sessionQuery);
+        const normalized = sessionData.map((s) => ({
+          ...s,
+          id: s.objectId, // use Parse objectId as our id
+        }));
+
+        setSessions(normalized);
+      } catch (error) {
+        console.error("Error fetching sessions:", error);
+      }
+      //   setSessions(sessionData);
+      // } catch (error) {
+      //   console.error("Error fetching sessions:", error);
+      // }
+    };
+
+    loadSessions();
+  }, []);
 
   useEffect(() => {
     const current = Parse.User.current();
@@ -50,6 +76,8 @@ export default function App() {
       </Router>
     );
   }
+
+  console.log("Sessions in App.jsx:", sessions);
 
   return (
     <Router>

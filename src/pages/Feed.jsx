@@ -19,6 +19,7 @@ function SessionFeedPage({
     }
     if (onJoinSession) onJoinSession(id);
   };
+
   return (
     <div className="page">
       <div className="page-header">
@@ -31,20 +32,31 @@ function SessionFeedPage({
         {sessions.map((s) => (
           <Link
             key={s.id}
-            to={`/session/${s.id}`}
+            to={`/session/${s.objectId}`}
             style={{ textDecoration: "none" }}
           >
             <SessionBlock
-              spot={s.spot}
-              dateLabel={s.dateLabel}
-              timeLabel={s.timeLabel}
-              windKts={s.windKts}
-              tempC={s.tempC}
-              weather={s.weather}
-              windDir={s.windDir}
+              spot={s.spotId.spotName}
+              dateLabel={
+                s.sessionDateTime
+                  ? new Date(s.sessionDateTime.iso).toLocaleDateString()
+                  : "-"
+              }
+              timeLabel={
+                s.sessionDateTime
+                  ? new Date(s.sessionDateTime.iso).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : "-"
+              }
+              windKts={s.windPower}
+              tempC={s.temperature}
+              weather={s.weatherType}
+              windDir={s.windDirection}
               avatars={defaultAvatars}
-              onJoin={handleJoin(s.id)}
-              isJoined={joinedSessions.includes(s.id)}
+              onJoin={handleJoin(s.objectId)}
+              isJoined={joinedSessions.includes(s.objectId)}
             />
           </Link>
         ))}
