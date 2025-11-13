@@ -15,7 +15,8 @@ export default function loadSessions() {
         const results = await query.find();
 
         const mapped = results.map((obj) => {
-          const spotObj = obj.get("spotId.spotName");
+          let sessionRaw = obj.toJSON();
+          const spotObj = obj.get("spotId");
           const date = obj.get("sessionDateTime");
 
           let dateLabel = "-";
@@ -28,7 +29,7 @@ export default function loadSessions() {
             });
           }
           console.log("Session raw:", obj.toJSON());
-          console.log("Spot pointer:", obj.get("spotId"));
+          console.log("Spot pointer:", sessionRaw.spotId.spotName);
 
           return {
             id: obj.id,
