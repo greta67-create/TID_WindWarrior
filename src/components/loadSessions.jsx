@@ -63,3 +63,6 @@ export default function loadSessions() {
   const joinedSessionsList = sessions.filter((s) =>
     joinedSessions.includes(s.id)
   );
+
+  return { sessions, joinedSessions, joinedSessionsList, handleJoinSession };
+}

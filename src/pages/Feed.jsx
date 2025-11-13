@@ -53,4 +53,4 @@ function SessionFeedPage({
   );
 }
 
-export default SessionFeedP
+export default SessionFeedPage;
