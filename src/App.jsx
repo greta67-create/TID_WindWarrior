@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import loadSessions from "./components/loadSessions";
 import React, { useState, useEffect } from "react";
+
 import "./App.css";
 import Parse from "./parse-init";
 import SessionFeedPage from "./pages/Feed";
@@ -10,7 +10,7 @@ import SpotViewPage from "./pages/SpotView";
 import Navbar from "./components/Navigationbar";
 import MapView from "./pages/MapView";
 import Auth from "./pages/LogOn";
-import { getList } from "../backend/getParseFunctions";
+import { getList, loadUserSessions } from "../backend/getParseFunctions";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -27,15 +27,10 @@ export default function App() {
           ...s,
           id: s.objectId, // use Parse objectId as our id
         }));
-
         setSessions(normalized);
       } catch (error) {
         console.error("Error fetching sessions:", error);
       }
-      //   setSessions(sessionData);
-      // } catch (error) {
-      //   console.error("Error fetching sessions:", error);
-      // }
     };
 
     loadSessions();
@@ -47,6 +42,11 @@ export default function App() {
       setUser(current);
     }
   }, []);
+
+  useEffect(() => {
+    if (!user) return; 
+    loadUserSessions(user).then(setJoinedSessions);
+  }, [user]);
 
   const handleJoinSession = (sessionId) => {
     setJoinedSessions((prev) => {
@@ -68,7 +68,7 @@ export default function App() {
     }
   };
 
-  // If not logged in, show login page
+
   if (!user) {
     return (
       <Router>
@@ -108,7 +108,7 @@ export default function App() {
             path="/profile"
             element={
               <ProfileView
-                sessions={sessions.filter((s) => joinedSessions.includes(s.id))}
+                onLogout={handleLogout}
                 onJoinSession={handleJoinSession}
                 joinedSessions={joinedSessions}
               />

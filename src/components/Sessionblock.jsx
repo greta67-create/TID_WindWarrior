@@ -3,7 +3,7 @@ import JoinButton from "../components/JoinButton";
 
 export default function Sessionblock({
   //fallbacks
-  spot = "Beach",
+  spot = "Fallback Spot",
   dateLabel = "Apr 4th",
   timeLabel = "12pm",
   windKts = 21,
