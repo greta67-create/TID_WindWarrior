@@ -1,27 +1,29 @@
 ## getList
+
 // Use this function to get data from Parse Server
 // pass a query as an argument i.e for Spots let query = new Parse.Query('Spot');
 
-
 write your code within the component like this
+
 ```javascript
 useEffect(() => {
-    const loadSpots = async () => {
-        const spotQuery = new Parse.Query('Spot');
-        try {
-            const spotsData = await getList(spotQuery);
-            setSpots(spotsData);
-        } catch (error) {
-            consfole.error('Error fetching s pots:', error);
-        }
-    };
+  const loadSpots = async () => {
+    const spotQuery = new Parse.Query("Spot");
+    try {
+      const spotsData = await getList(spotQuery);
+      setSpots(spotsData);
+    } catch (error) {
+      console.error("Error fetching s pots:", error);
+    }
+  };
 
-    loadSpots();
+  loadSpots();
 }, []);
 ```
 
 will render the full list of spots in JSON
-```json 
+
+```json
 [
     {
         "spotName": "Amager Strand",
@@ -50,7 +52,8 @@ will render the full list of spots in JSON
 ]
 ```
 
-you can then access your spots like 
+you can then access your spots like
+
 ```javascript
 spots.map((spot, index) => ( spot.spotName)
-```    
+```

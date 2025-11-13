@@ -1,11 +1,13 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Sessionblocklarge from "../components/SessionBlocklarge";
 import "../App.css";
+import Parse from "../parse-init";
 import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
-import { useState } from "react";
 import "../styles/SessionView.css";
+// import { getList } from "../../backend/getParseFunctions";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
@@ -20,29 +22,46 @@ export default function SessionViewPage({
     document.title = "Sessions";
   }, []);
 
-  const session = sessions.find((x) => x.id === id) ||
-    sessions[0] || {
-      id: "unknown",
-      spot: "Unknown Spot",
-      dateLabel: "-",
-      timeLabel: "-",
-      windKts: 0,
-      tempC: 0,
-      weather: "⛅️",
-      windDir: "↗",
-      avatars: [],
+  const session = sessions.find((s) => s.id === id) || sessions[0];
+  const [comments, setComments] = useState([]);
+
+  useEffect(() => {
+    const loadComments = async () => {
+      try {
+        const Comment = Parse.Object.extend("comment");
+        const query = new Parse.Query(Comment);
+
+        // only comments for THIS session
+        const sessionPointer = new Parse.Object("Session_");
+        sessionPointer.id = session.objectId; // the Parse id of this session
+        query.equalTo("sessionId", sessionPointer);
+
+        // also fetch the user so we can show their name
+        query.include("userId");
+        query.ascending("createdAt");
+
+        const results = await query.find();
+
+        const mapped = results.map((obj) => {
+          const user = obj.get("userId");
+          return {
+            id: obj.id,
+            name:
+              (user && (user.get("firstName") || user.get("username"))) ||
+              "Unknown user",
+            time: obj.createdAt.toLocaleString(),
+            text: obj.get("message"),
+          };
+        });
+
+        setComments(mapped);
+      } catch (error) {
+        console.error("Error fetching session comments:", error);
+      }
     };
 
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      name: "Carl",
-      time: "4 Apr 16:21",
-      text: "I'll be biking there at 11:30. 2 Seats left but don't bring too much stuff.",
-    },
-    { id: 2, name: "Ida", time: "4 Apr 16:25", text: "I'll join!" },
-    { id: 3, name: "Tim", time: "4 Apr 16:27", text: "Me too!" },
-  ]);
+    loadComments();
+  }, []);
 
   const proposedComment = [
     { id: 100, text: "I have a car and can offer a ride!" },
@@ -51,10 +70,8 @@ export default function SessionViewPage({
 
   const [input, setInput] = useState("");
 
-  const onJoin = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onJoinSession(session.id);
+  const onJoin = () => {
+    onJoinSession(session.objectId);
   };
 
   const handleSendClick = () => {
@@ -80,25 +97,36 @@ export default function SessionViewPage({
     setComments([...comments, newComment]); // Add the new comment to the array
   };
 
+  console.log("URL id:", id);
+  console.log("Sessions array:", sessions);
+  console.log("found session:", session);
+
   return (
     <div className="page">
       {/* Title */}
       <div className="page-header">
-        <div className="page-title">{session.spot}</div>
+        <div className="page-title">{session.spotId.spotName}</div>
         <div className="subtle">
-          {session.dateLabel} | {session.timeLabel}
+          {session.sessionDateTime
+            ? new Date(session.sessionDateTime.iso).toLocaleDateString()
+            : "-"}{" "}
+          |{" "}
+          {session.sessionDateTime
+            ? new Date(session.sessionDateTime.iso).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "-"}
         </div>
       </div>
 
       {/* Session card */}
       <Sessionblocklarge
-        spot={session.spot}
-        dateLabel={session.dateLabel}
-        timeLabel={session.timeLabel}
-        windKts={session.windKts}
-        tempC={session.tempC}
-        weather={session.weather}
-        windDir={session.windDir}
+        spot={session.objectId}
+        windKts={session.windPower}
+        tempC={session.temperature}
+        weather={session.weatherType}
+        windDir={session.windDirection}
         avatars={defaultAvatars}
         onJoin={onJoin}
         isJoined={joinedSessions.includes(session.id)}
