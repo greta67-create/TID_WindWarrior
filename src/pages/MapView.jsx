@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Parse from "../parse-init";
 import Map from "react-map-gl/mapbox";
 import MapMarker from "../components/MapMarker";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "/src/styles/Map.css";
+import { getList } from "../../backend/getParseFunctions";
 
 function MapView() {
   const [viewState, setViewState] = useState({
@@ -10,39 +12,24 @@ function MapView() {
     latitude: 55.65,
     zoom: 10,
   });
+  const [spots, setSpots] = useState(null);
 
   const token = import.meta.env.VITE_MAPBOX_TOKEN;
 
-  const markers = [
-    {
-      spot_name: "Amager Strand",
-      wind_direction: "N",
-      wind_power: 26,
-      latitude: 55.66,
-      longitude: 12.64,
-    },
-    {
-      spot_name: "Dragør",
-      wind_direction: "NW",
-      wind_power: 19,
-      latitude: 55.58,
-      longitude: 12.66,
-    },
-    {
-      spot_name: "Sydvestpynten",
-      wind_direction: "NW",
-      wind_power: 9,
-      latitude: 55.56,
-      longitude: 12.56,
-    },
-    {
-      spot_name: "Sydhavn",
-      wind_direction: "NE",
-      wind_power: 17,
-      latitude: 55.63,
-      longitude: 12.51,
-    },
-  ];
+  
+
+  useEffect(() => {
+    const loadSpots = async () => {
+      let spotQuery = new Parse.Query('Spot');
+      try {
+        const spotsData = await getList(spotQuery);
+        setSpots(spotsData); 
+      } catch (error) {
+        console.error("Error fetching spots:", error);
+      }
+    }
+    loadSpots();
+  }, []);
 
   return (
     <>
@@ -55,7 +42,8 @@ function MapView() {
         </div>
       </div>
 
-      <div className="page" style={{ padding: 0 }}>
+      <div className="page" style={{padding: 0}}>  {/* need to modify to remove padding */}
+        {spots && 
         <Map
           {...viewState}
           onMove={(evt) => setViewState(evt.viewState)}
@@ -63,17 +51,19 @@ function MapView() {
           mapStyle="mapbox://styles/mapbox/streets-v12"
           mapboxAccessToken={token}
         >
-          {markers.map((marker, index) => (
+          {spots.map((spot, index) => (
             <MapMarker
               key={index}
-              spot_name={marker.spot_name}
-              wind_direction={marker.wind_direction}
-              wind_power={marker.wind_power}
-              latitude={marker.latitude}
-              longitude={marker.longitude}
+              spot_id={spot.objectId}
+              spot_name={spot.spotName}
+              wind_direction={spot.currentWindDirection}
+              wind_power={spot.currentWindKnts}
+              latitude={spot.latitude}
+              longitude={spot.longitude}
             />
           ))}
         </Map>
+        }
       </div>
     </>
   );
