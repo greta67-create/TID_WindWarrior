@@ -22,7 +22,7 @@ function SessionFeedPage({
   return (
     <div className="page">
       <div className="page-header">
-        <div className="page-title">Session Feed</div>
+        <div className="page-title">Your Session Feed</div>
       </div>
       <div className="section-subtitle">
         Top sessions based on the weather forecast

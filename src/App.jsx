@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import loadSessions from "./components/loadSessions";
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import Parse from "./parse-init";
@@ -9,13 +10,10 @@ import SpotViewPage from "./pages/SpotView";
 import Navbar from "./components/Navigationbar";
 import MapView from "./pages/MapView";
 import Auth from "./pages/LogOn";
-import ava1 from "./assets/avatar1.png";
-import ava2 from "./assets/avatar2.png";
-import ava3 from "./assets/avatar3.png";
 
 export default function App() {
-  const [joinedSessions, setJoinedSessions] = useState([]);
   const [user, setUser] = useState(null);
+  const { sessions, joinedSessions } = loadSessions();
 
   useEffect(() => {
     const current = Parse.User.current();
@@ -23,56 +21,6 @@ export default function App() {
       setUser(current);
     }
   }, []);
-
-  // Local demo data (replace with API later)
-  const SESSIONS = [
-    {
-      id: "1",
-      spot: "Amager Strand",
-      dateLabel: " 4 Apr",
-      timeLabel: "12:00",
-      windKts: 21,
-      tempC: 18,
-      weather: "⛅️",
-      windDir: "↗",
-    },
-    {
-      id: "2",
-      spot: "Dragør",
-      dateLabel: "4 Apr",
-      timeLabel: "14:00",
-      windKts: 19,
-      tempC: 17,
-      weather: "🌤️",
-      windDir: "↗",
-    },
-    {
-      id: "3",
-      spot: "Sydvestpynten",
-      dateLabel: "4 Apr",
-      timeLabel: "16:00",
-      windKts: 17,
-      tempC: 16,
-      weather: "☀",
-      windDir: "↗",
-    },
-  ];
-
-  // Log on page
-
-  // Pages
-  function MapPage() {
-    return (
-      <div className="page">
-        <div className="page-header">
-          <div className="page-title">Map</div>
-        </div>
-      </div>
-    );
-  }
-
-  //export default function App() {
-  // const [joinedSessions, setJoinedSessions] = React.useState([]);
 
   const handleJoinSession = (sessionId) => {
     setJoinedSessions((prev) => {
@@ -94,7 +42,7 @@ export default function App() {
     }
   };
 
-  // ✅ If not logged in, show login page
+  // If not logged in, show login page
   if (!user) {
     return (
       <Router>
@@ -111,7 +59,7 @@ export default function App() {
             path="/"
             element={
               <SessionFeedPage
-                sessions={SESSIONS}
+                sessions={sessions}
                 onJoinSession={handleJoinSession}
                 joinedSessions={joinedSessions}
               />
@@ -121,7 +69,7 @@ export default function App() {
             path="/session/:id"
             element={
               <SessionViewPage
-                sessions={SESSIONS}
+                sessions={sessions}
                 onJoinSession={handleJoinSession}
                 joinedSessions={joinedSessions}
               />
@@ -132,7 +80,7 @@ export default function App() {
             path="/profile"
             element={
               <ProfileView
-                sessions={SESSIONS.filter((s) => joinedSessions.includes(s.id))}
+                sessions={sessions.filter((s) => joinedSessions.includes(s.id))}
                 onJoinSession={handleJoinSession}
                 joinedSessions={joinedSessions}
               />

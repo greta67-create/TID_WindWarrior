@@ -1,10 +1,10 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Sessionblocklarge from "../components/SessionBlocklarge";
 import "../App.css";
 import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
-import { useState } from "react";
 import "../styles/SessionView.css";
 
 const defaultAvatars = [ava1, ava2, ava3];
@@ -51,9 +51,7 @@ export default function SessionViewPage({
 
   const [input, setInput] = useState("");
 
-  const onJoin = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const onJoin = () => {
     onJoinSession(session.id);
   };
 

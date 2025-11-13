@@ -1,10 +1,9 @@
 import "../styles/Sessionblock.css";
 import JoinButton from "../components/JoinButton";
-import { Link } from "react-router-dom";
 
 export default function Sessionblock({
   //fallbacks
-  spot = "Amager Strand",
+  spot = "Beach",
   dateLabel = "Apr 4th",
   timeLabel = "12pm",
   windKts = 21,
