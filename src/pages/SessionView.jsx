@@ -1,9 +1,24 @@
-import { useParams } from "react-router-dom";
-import Sessionblock from "../components/Sessionblock";
+import { useParams, Link } from "react-router-dom";
+import Sessionblocklarge from "../components/SessionBlocklarge";
 import "../App.css";
+import ava1 from "../assets/avatar1.png";
+import ava2 from "../assets/avatar2.png";
+import ava3 from "../assets/avatar3.png";
+import { useState } from "react";
+import "../styles/SessionView.css";
 
-export default function SessionViewPage({ sessions = [] }) {
+const defaultAvatars = [ava1, ava2, ava3];
+
+export default function SessionViewPage({
+  sessions = [],
+  onJoinSession,
+  joinedSessions = [],
+}) {
   const { id } = useParams();
+
+  useEffect(() => {
+    document.title = "Sessions";
+  }, []);
 
   const session = sessions.find((x) => x.id === id) ||
     sessions[0] || {
@@ -15,9 +30,10 @@ export default function SessionViewPage({ sessions = [] }) {
       tempC: 0,
       weather: "⛅️",
       windDir: "↗",
+      avatars: [],
     };
 
-  const comments = [
+  const [comments, setComments] = useState([
     {
       id: 1,
       name: "Carl",
@@ -26,29 +42,56 @@ export default function SessionViewPage({ sessions = [] }) {
     },
     { id: 2, name: "Ida", time: "4 Apr 16:25", text: "I'll join!" },
     { id: 3, name: "Tim", time: "4 Apr 16:27", text: "Me too!" },
-    {
-      id: 4,
-      name: "Lia",
-      time: "4 Apr 16:43",
-      text: "I'll join a bit later by bike :)",
-    },
+  ]);
+
+  const proposedComment = [
+    { id: 100, text: "I have a car and can offer a ride!" },
+    { id: 101, text: "Can someone offer a ride?" },
   ];
+
+  const [input, setInput] = useState("");
 
   const onJoin = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    alert(`Join session ${session.id}`);
+    onJoinSession(session.id);
+  };
+
+  const handleSendClick = () => {
+    if (input.trim() === "") return; // Prevent adding empty comments
+
+    const newComment = {
+      id: Date.now(),
+      name: "You", // Static name for now
+      time: new Date().toLocaleString(), // Current time
+      text: input, // User input
+    };
+    setComments([...comments, newComment]); // Add the new comment to the array
+    setInput(""); // Clear the input field
+  };
+
+  const handlePropCommentClick = (text) => {
+    const newComment = {
+      id: Date.now(),
+      name: "You", // Static name for now
+      time: new Date().toLocaleString(), // Current time
+      text, // User input
+    };
+    setComments([...comments, newComment]); // Add the new comment to the array
   };
 
   return (
     <div className="page">
       {/* Title */}
       <div className="page-header">
-        <div className="page-title">Session View</div>
+        <div className="page-title">{session.spot}</div>
+        <div className="subtle">
+          {session.dateLabel} | {session.timeLabel}
+        </div>
       </div>
 
       {/* Session card */}
-      <Sessionblock
+      <Sessionblocklarge
         spot={session.spot}
         dateLabel={session.dateLabel}
         timeLabel={session.timeLabel}
@@ -56,7 +99,9 @@ export default function SessionViewPage({ sessions = [] }) {
         tempC={session.tempC}
         weather={session.weather}
         windDir={session.windDir}
+        avatars={defaultAvatars}
         onJoin={onJoin}
+        isJoined={joinedSessions.includes(session.id)}
       />
 
       {/* Subtitle */}
@@ -69,19 +114,42 @@ export default function SessionViewPage({ sessions = [] }) {
         {comments.map((c) => (
           <div key={c.id} className="chat-item">
             <strong>{c.name}</strong>
-            <span style={{ opacity: 0.6, marginLeft: 8, fontSize: 12 }}>
-              {c.time}
-            </span>
-            <div style={{ marginTop: 4 }}>{c.text}</div>
+            <time>{c.time}</time>
+            <div className="chat-text">{c.text}</div>
           </div>
         ))}
       </div>
 
       {/* Bottom text input (fixed above nav) */}
       <div className="comment-bar">
+        <div className="prop-comment">
+          {proposedComment.map((pc) => (
+            <button
+              key={pc.id}
+              type="button"
+              className="chip"
+              onClick={() => handlePropCommentClick(pc.text)}
+            >
+              {pc.text}
+            </button>
+          ))}
+        </div>
         <div className="comment-inner">
-          <input className="comment-input" placeholder="Add Comment" />
-          <button className="send-btn">Send</button>
+          <input
+            className="comment-input"
+            placeholder="Add Comment"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSendClick();
+              }
+            }}
+          />
+          <button className="send-btn" onClick={handleSendClick}>
+            Send
+          </button>
         </div>
       </div>
     </div>

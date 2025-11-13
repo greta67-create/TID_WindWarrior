@@ -1,8 +1,8 @@
 import "../styles/Sessionblock.css";
-import JoinButton from "../components/JoinButton";
+import JoinButtonlarge from "../components/JoinButtonlarge";
 import { Link } from "react-router-dom";
 
-export default function Sessionblock({
+export default function Sessionblocklarge({
   //fallbacks
   spot = "Amager Strand",
   dateLabel = "Apr 4th",
@@ -22,26 +22,28 @@ export default function Sessionblock({
   const more = 3; // calculate the number of additional avatars
 
   return (
-    <div className="session-card">
+    <div className="session-card-large">
+      <div className="session-card-title">Forecast for your session:</div>
       <div className="session-header">
-        <div className="spot">{spot}</div>
+        {/* <div className="spot">{spot}</div>
         <div className="subtle">
           {dateLabel} | {timeLabel}
+        </div> */}
+
+        <div className="metrics">
+          <div className="icon-badge-large">{windDir}</div>
+          <div className="metric-text-large">{windKts} knts</div>
+          <div className="icon-badge-large">{weather}</div>
+          <div className="metric-text-large">{tempC}°C</div>
         </div>
-        <JoinButton
+      </div>
+
+      <div className="session-footer">
+        <JoinButtonlarge
           isJoined={isJoined}
           onClick={onJoin}
           joinedText={joinedText}
         />
-      </div>
-
-      <div className="session-footer">
-        <div className="metrics">
-          <div className="icon-badge">{windDir}</div>
-          <div className="metric-text">{windKts} knts</div>
-          <div className="icon-badge">{weather}</div>
-          <div className="metric-text">{tempC}°C</div>
-        </div>
 
         {list.length > 0 && (
           <div className="avatar-stack">

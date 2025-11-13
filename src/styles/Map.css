@@ -1,0 +1,19 @@
+.map-header {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  padding-bottom: 0;
+  background-color: white;
+  opacity: 0.9;
+  margin: 0 auto;
+  max-width: var(--content);
+}
+
+.map-marker {
+    background-color: white;
+    padding: 5px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3)
+}
