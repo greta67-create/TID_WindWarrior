@@ -4,7 +4,7 @@ import Map from "react-map-gl/mapbox";
 import MapMarker from "../components/MapMarker";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "/src/styles/Map.css";
-import { getList } from "../../backend/getParseFunctions";
+import { getList } from "../services/getParseFunctions";
 
 function MapView() {
   const [viewState, setViewState] = useState({

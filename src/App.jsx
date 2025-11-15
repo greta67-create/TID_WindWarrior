@@ -10,7 +10,7 @@ import SpotViewPage from "./pages/SpotView";
 import Navbar from "./components/Navigationbar";
 import MapView from "./pages/MapView";
 import Auth from "./pages/LogOn";
-import { getList, loadUserSessions } from "../backend/getParseFunctions";
+import { getList, loadUserSessions } from "./services/getParseFunctions";
 
 export default function App() {
   const [user, setUser] = useState(null);
