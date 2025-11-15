@@ -25,7 +25,7 @@ export default function App() {
         const sessionData = await getList(sessionQuery);
         const normalized = sessionData.map((s) => ({
           ...s,
-          id: s.objectId, // use Parse objectId as our id
+          id: s.objectId,
         }));
         setSessions(normalized);
       } catch (error) {
@@ -44,7 +44,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!user) return; 
+    if (!user) return;
     loadUserSessions(user).then(setJoinedSessions);
   }, [user]);
 
@@ -67,7 +67,6 @@ export default function App() {
       console.error("Error logging out:", error);
     }
   };
-
 
   if (!user) {
     return (

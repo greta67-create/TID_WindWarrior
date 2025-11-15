@@ -66,13 +66,15 @@ export default function ProfileView({
     //split joinedSessions into past and future sessions
     const now = new Date();
     console.log("Now is:", now);
-    const upcoming = joinedSessions.filter((s) => Date.parse(s.sessionDateTime.iso) >= now);
-    const past = joinedSessions.filter((s) => Date.parse(s.sessionDateTime.iso) < now);
+    const upcoming = joinedSessions.filter(
+      (s) => Date.parse(s.sessionDateTime.iso) >= now
+    );
+    const past = joinedSessions.filter(
+      (s) => Date.parse(s.sessionDateTime.iso) < now
+    );
     setUpcomingSessions(upcoming);
     setPastSessions(past);
   }, [joinedSessions]);
-
-
 
   const handleJoin = (id) => (e) => {
     if (e && e.preventDefault) {
@@ -104,9 +106,6 @@ export default function ProfileView({
           skillLevel={skillLevel}
         />
 
-
-
-
         <div className="section-subtitle">
           <h2 className="page-title">Planned Sessions</h2>
           <div className="stack">
@@ -133,9 +132,6 @@ export default function ProfileView({
             ))}
           </div>
         </div>
-      
-
-
 
         <div className="section-subtitle">
           <h2 className="page-title">Past Sessions</h2>
@@ -162,7 +158,6 @@ export default function ProfileView({
             ))}
           </div>
         </div>
-
       </div>
     </div>
   );
