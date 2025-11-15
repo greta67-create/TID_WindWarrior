@@ -1,6 +1,6 @@
 // Use this function to get data from Parse Server
 // pass a query as an argument i.e for Spots let query = new Parse.Query('Spot');
-import Parse from "../src/parse-init";
+import Parse from "../parse-init";
 
 export const getList = async (query) => {
     query.include();
