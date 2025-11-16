@@ -20,6 +20,8 @@ function SessionFeedPage({
     if (onJoinSession) onJoinSession(id);
   };
 
+  console.log("Rendering SessionFeedPage with sessions:", sessions);
+
   return (
     <div className="page">
       <div className="page-header">
@@ -32,19 +34,17 @@ function SessionFeedPage({
         {sessions.map((s) => (
           <Link
             key={s.id}
-            to={`/session/${s.objectId}`}
+            to={`/session/${s.id}`}
             style={{ textDecoration: "none" }}
           >
             <SessionBlock
-              spot={s.spotId.spotName}
+              spot={s.spotName}
               dateLabel={
-                s.sessionDateTime
-                  ? new Date(s.sessionDateTime.iso).toLocaleDateString()
-                  : "-"
+                s.sessionDateTime ? s.sessionDateTime.toLocaleDateString() : "-"
               }
               timeLabel={
                 s.sessionDateTime
-                  ? new Date(s.sessionDateTime.iso).toLocaleTimeString([], {
+                  ? s.sessionDateTime.toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
                     })

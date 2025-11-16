@@ -10,7 +10,7 @@ import SpotViewPage from "./pages/SpotView";
 import Navbar from "./components/Navigationbar";
 import MapView from "./pages/MapView";
 import Auth from "./pages/LogOn";
-import { getList, loadUserSessions } from "./services/getParseFunctions";
+import { fetchAllSessions, fetchUserSessions } from "./services/sessionService";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -18,20 +18,14 @@ export default function App() {
   const [joinedSessions, setJoinedSessions] = useState([]);
 
   useEffect(() => {
-    const loadSessions = async () => {
-      const sessionQuery = new Parse.Query("Session_");
-      sessionQuery.include("spotId");
+    async function loadSessions() {
       try {
-        const sessionData = await getList(sessionQuery);
-        const normalized = sessionData.map((s) => ({
-          ...s,
-          id: s.objectId, // use Parse objectId as our id
-        }));
-        setSessions(normalized);
+        const sessionData = await fetchAllSessions();
+        setSessions(sessionData);
       } catch (error) {
         console.error("Error fetching sessions:", error);
       }
-    };
+    }
 
     loadSessions();
   }, []);
@@ -44,8 +38,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!user) return; 
-    loadUserSessions(user).then(setJoinedSessions);
+    if (!user) return;
+    fetchUserSessions(user)
+      .then(setJoinedSessions)
+      .catch((err) => console.error("Error fetching user sessions:", err));
   }, [user]);
 
   const handleJoinSession = (sessionId) => {
@@ -67,7 +63,6 @@ export default function App() {
       console.error("Error logging out:", error);
     }
   };
-
 
   if (!user) {
     return (
@@ -97,7 +92,6 @@ export default function App() {
             path="/session/:id"
             element={
               <SessionViewPage
-                sessions={sessions}
                 onJoinSession={handleJoinSession}
                 joinedSessions={joinedSessions}
               />

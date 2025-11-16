@@ -7,61 +7,62 @@ import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
 import "../styles/SessionView.css";
+import {
+  fetchSessionById,
+  fetchSessionComments,
+} from "../services/sessionService";
 // import { getList } from "../../backend/getParseFunctions";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
 export default function SessionViewPage({
-  sessions = [],
   onJoinSession,
   joinedSessions = [],
 }) {
   const { id } = useParams();
 
+  const [session, setSession] = useState(null);
+  const [comments, setComments] = useState([]);
+
   useEffect(() => {
     document.title = "Sessions";
   }, []);
 
-  const session = sessions.find((s) => s.id === id) || sessions[0];
-  const [comments, setComments] = useState([]);
+  useEffect(() => {
+    document.title = "Sessions";
+  }, []);
+
+  // Load this one session by id
+  useEffect(() => {
+    if (!id) return;
+
+    async function loadSession() {
+      try {
+        console.log("SessionView – URL id:", id);
+        const data = await fetchSessionById(id);
+        setSession(data);
+      } catch (error) {
+        console.error("Error fetching session by id:", error);
+      }
+    }
+
+    loadSession();
+  }, [id]);
 
   useEffect(() => {
+    if (!session) return;
+
     const loadComments = async () => {
       try {
-        const Comment = Parse.Object.extend("comment");
-        const query = new Parse.Query(Comment);
-
-        // only comments for THIS session
-        const sessionPointer = new Parse.Object("Session_");
-        sessionPointer.id = session.objectId; // the Parse id of this session
-        query.equalTo("sessionId", sessionPointer);
-
-        // also fetch the user so we can show their name
-        query.include("userId");
-        query.ascending("createdAt");
-
-        const results = await query.find();
-
-        const mapped = results.map((obj) => {
-          const user = obj.get("userId");
-          return {
-            id: obj.id,
-            name:
-              (user && (user.get("firstName") || user.get("username"))) ||
-              "Unknown user",
-            time: obj.createdAt.toLocaleString(),
-            text: obj.get("message"),
-          };
-        });
-
-        setComments(mapped);
+        const data = await fetchSessionComments(session.id);
+        setComments(data);
       } catch (error) {
         console.error("Error fetching session comments:", error);
       }
     };
 
     loadComments();
-  }, []);
+  }, [session]);
 
   const proposedComment = [
     { id: 100, text: "I have a car and can offer a ride!" },
@@ -71,7 +72,7 @@ export default function SessionViewPage({
   const [input, setInput] = useState("");
 
   const onJoin = () => {
-    onJoinSession(session.objectId);
+    onJoinSession(session.id);
   };
 
   const handleSendClick = () => {
@@ -97,22 +98,23 @@ export default function SessionViewPage({
     setComments([...comments, newComment]); // Add the new comment to the array
   };
 
-  console.log("URL id:", id);
-  console.log("Sessions array:", sessions);
-  console.log("found session:", session);
+  // to avoid that session is null before data loads
+  if (!session) {
+    return <div className="page">Loading session…</div>;
+  }
 
   return (
     <div className="page">
       {/* Title */}
       <div className="page-header">
-        <div className="page-title">{session.spotId.spotName}</div>
+        <div className="page-title">{session.spotName}</div>
         <div className="subtle">
           {session.sessionDateTime
-            ? new Date(session.sessionDateTime.iso).toLocaleDateString()
+            ? session.sessionDateTime.toLocaleDateString()
             : "-"}{" "}
           |{" "}
           {session.sessionDateTime
-            ? new Date(session.sessionDateTime.iso).toLocaleTimeString([], {
+            ? session.sessionDateTime.toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               })
@@ -122,7 +124,7 @@ export default function SessionViewPage({
 
       {/* Session card */}
       <Sessionblocklarge
-        spot={session.objectId}
+        spot={session.spotName}
         windKts={session.windPower}
         tempC={session.temperature}
         weather={session.weatherType}
