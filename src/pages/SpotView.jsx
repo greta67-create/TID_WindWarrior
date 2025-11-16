@@ -3,6 +3,7 @@ import Sessionblock from "../components/Sessionblock";
 import Parse from "../parse-init";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { fetchSpotByName, fetchCommentsToSpotId, fetchUpcomingSessionsToSpotId } from "../services/spotService";
 
 export default function SpotViewPage() {
   const { spotName } = useParams();
@@ -12,140 +13,41 @@ export default function SpotViewPage() {
   const [spot, setSpot] = useState(null);       
   const [comments, setComments] = useState([]); 
   const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState(null);     
+  const [error, ] = useState(null);     
   // Sessions for this spot (loaded from backend)
   const [sessions, setSessions] = useState([]);
 
+
+
   useEffect(() => {
-    if (!name) {
-      setLoading(false);
-      return;
-    }
-
-    let isCancelled = false;
-
-    async function fetchSpotAndComments() {
+    const loadSpot = async () => {
       try {
-        setLoading(true);
-        setError(null);
+        fetchSpotByName(spotName)
+          .then((spot) => {
+            
+            fetchCommentsToSpotId(spot.id)
+            .then((loadedComments) => {
+            console.log("Loaded comments:", loadedComments);
+            setComments(loadedComments);
+            })
 
-        // 1) Load the Spot by name
-        const Spot = Parse.Object.extend("Spot");
-        const spotQuery = new Parse.Query(Spot);
-        spotQuery.equalTo("spotName", name);
-        const spotObj = await spotQuery.first();
-
-        if (!spotObj) {
-          if (!isCancelled) {
-            setError("Spot not found");
+            fetchUpcomingSessionsToSpotId(spot.id)
+            .then((loadedSessions) => {
+            console.log("Loaded sessions:", loadedSessions);
+              setSessions(loadedSessions);
+            })
+          
+            setSpot(spot);
             setLoading(false);
-          }
-          return;
+          })
+        } catch (error) {
+            console.error("Error:", error);
+            setComments([]);
         }
+      };
+    loadSpot();
+  }, []);
 
-        if (!isCancelled) {
-          setSpot(spotObj);
-        }
-
-        // 2) Load upcoming sessions for this spot from Session_
-        const Session = Parse.Object.extend("Session_");
-        const sessionQuery = new Parse.Query(Session);
-        sessionQuery.equalTo("spotId", spotObj); // pointer to this Spot
-        // TODO: when there is future data, re-enable this filter to only show upcoming sessions
-        // sessionQuery.greaterThanOrEqualTo("sessionDateTime", new Date());
-        // sort by windPower (strongest first)
-        sessionQuery.descending("windPower");
-        sessionQuery.limit(3);
-        const sessionResults = await sessionQuery.find();
-        console.log("Loaded sessions for", name, "=", sessionResults.length);
-
-        if (!isCancelled) {
-          const mappedSessions = sessionResults.map((s) => {
-            const dt = s.get("sessionDateTime");
-            let dateLabel = "";
-            let timeLabel = "";
-            if (dt) {
-              dateLabel = dt.toLocaleDateString("en-GB", {
-                month: "short",
-                day: "numeric",
-              });
-              timeLabel = dt.toLocaleTimeString("en-GB", {
-                hour: "numeric",
-                minute: "2-digit",
-              });
-            }
-
-            return {
-              id: s.id,
-              spot: spotObj.get("spotName") || name,
-              dateLabel,
-              timeLabel,
-              windKts: s.get("windPower"),
-              tempC: s.get("temperature"),
-              weather: s.get("weatherType"),
-              windDir: s.get("windDirection"),
-            };
-          });
-
-          setSessions(mappedSessions);
-        }
-
-        // 3) Load comments for this spot
-        const Comment = Parse.Object.extend("comment");
-        const commentQuery = new Parse.Query(Comment);
-        commentQuery.equalTo("spotId", spotObj);  // pointer to this Spot
-        commentQuery.include("userId");           // so we can show the user name
-        commentQuery.descending("createdAt");     // newest first
-
-        const results = await commentQuery.find();
-        if (!isCancelled) {
-          const mappedComments = results.map((c) => {
-            const user = c.get("userId");
-            const username =
-              (user &&
-                (user.get("username") ||
-                  user.get("name") ||
-                  user.get("firstName"))) ||
-              "Unknown rider";
-
-            const created = c.createdAt;
-            let dateLabel = "";
-            if (created) {
-              dateLabel =
-                created.toLocaleDateString("de-DE") +
-                " " +
-                created.toLocaleTimeString("de-DE", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                });
-            }
-
-            return {
-              id: c.id,
-              name: username,
-              date: dateLabel,
-              text: c.get("message") || "",
-            };
-          });
-
-          setComments(mappedComments);
-          setLoading(false);
-        }
-      } catch (err) {
-        console.error("Failed to load spot or comments", err);
-        if (!isCancelled) {
-          setError("Could not load this spot. Please try again.");
-          setLoading(false);
-        }
-      }
-    }
-
-    fetchSpotAndComments();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [name]);
 
   // Error handling
   if (loading) {
@@ -175,10 +77,10 @@ export default function SpotViewPage() {
       {/* Header */}
       <div className="page-header">
         <div>
-          <div className="page-title">{spot?.get("spotName") || name}</div>
-          {spot?.get("mainText") && (
+          <div className="page-title">{spot?.name || name}</div>
+          {spot?.mainText && (
             <div className="spot-description">
-              {spot.get("mainText")}
+              {spot.mainText}
             </div>
           )}
           <div className="section-subtitle" style={{ marginTop: 12 }}>
@@ -192,13 +94,13 @@ export default function SpotViewPage() {
         {sessions.map((s) => (
           <Sessionblock
             key={s.id}
-            spot={s.spot}
+            spot={s.spotName}
             dateLabel={s.dateLabel}
             timeLabel={s.timeLabel}
-            windKts={s.windKts}
-            tempC={s.tempC}
-            weather={s.weather}
-            windDir={s.windDir}
+            windKts={s.windPower}
+            tempC={s.temperature}
+            weather={s.weatherType}
+            windDir={s.windDirection}
             onJoin={() => navigate(`/session/${s.id}`)}
           />
         ))}
@@ -216,7 +118,7 @@ export default function SpotViewPage() {
         )}
         {comments.map((c) => (
           <div key={c.id} className="chat-item">
-            <strong>{c.name}</strong>
+            <strong>{c.userName}</strong>
             <span style={{ opacity: 0.6, marginLeft: 8, fontSize: 12 }}>
               {c.date}
             </span>

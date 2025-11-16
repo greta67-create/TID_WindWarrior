@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import Parse from "../parse-init";
+import { useEffect, useState } from "react";
 import Map from "react-map-gl/mapbox";
 import MapMarker from "../components/MapMarker";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "/src/styles/Map.css";
-import { getList } from "../services/getParseFunctions";
+import { fetchSpots } from "../services/spotService";
 
 function MapView() {
   const [viewState, setViewState] = useState({
@@ -20,14 +19,14 @@ function MapView() {
 
   useEffect(() => {
     const loadSpots = async () => {
-      let spotQuery = new Parse.Query('Spot');
       try {
-        const spotsData = await getList(spotQuery);
-        setSpots(spotsData); 
+        const spots = await fetchSpots();
+        setSpots(spots);
       } catch (error) {
-        console.error("Error fetching spots:", error);
+        console.error("Error loading Spots:", error);
+        setSpots([]);
       }
-    }
+    };
     loadSpots();
   }, []);
 
@@ -51,11 +50,11 @@ function MapView() {
           mapStyle="mapbox://styles/mapbox/streets-v12"
           mapboxAccessToken={token}
         >
-          {spots.map((spot, index) => (
+          {spots.map((spot) => (
             <MapMarker
-              key={index}
-              spot_id={spot.objectId}
-              spot_name={spot.spotName}
+              key={spot.id}
+              spot_id={spot.id}
+              spot_name={spot.name}
               wind_direction={spot.currentWindDirection}
               wind_power={spot.currentWindKnts}
               latitude={spot.latitude}
