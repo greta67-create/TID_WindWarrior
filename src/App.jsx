@@ -94,6 +94,7 @@ export default function App() {
               <SessionViewPage
                 onJoinSession={handleJoinSession}
                 joinedSessions={joinedSessions}
+                currentUser={user}
               />
             }
           />
