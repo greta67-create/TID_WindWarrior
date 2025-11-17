@@ -8,6 +8,7 @@ import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
 import { useState, useEffect, use } from "react";
+import { getCurrentUserInfo } from "../services/userservice";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
@@ -16,56 +17,24 @@ export default function ProfileView({
   joinedSessions = [],
   onLogout,
 }) {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [avatar, setAvatar] = useState(ava1);
-  const [age, setAge] = useState(null);
-  const [skillLevel, setSkillLevel] = useState("");
+  const [user, setUser] = useState({});
   const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [pastSessions, setPastSessions] = useState([]);
 
   useEffect(() => {
+    async function loadUser() {
+      const info = await getCurrentUserInfo();
+      setUser(info);
+      console.log("User info from service:", info);
+    }
+    loadUser();
     document.title = "Profile";
-    // Get info from db
-    const current = Parse.User.current();
-    if (!current) return;
-
-    current
-      .fetch()
-      .then((user) => {
-        // Get name fields
-        const nm = user.get("name") || user.get("username") || "";
-        const fn = user.get("firstName") || nm;
-        const ln = user.get("lastName") || "";
-        setFirstName(fn);
-        setLastName(ln);
-
-        // Get avatar
-        let url = ava1;
-        const avatarField = user.get("avatar");
-        const avatarUrlField = user.get("avatarUrl");
-        if (avatarField && typeof avatarField.url === "function") {
-          url = avatarField.url();
-        } else if (typeof avatarField === "string" && avatarField) {
-          url = avatarField;
-        } else if (typeof avatarUrlField === "string" && avatarUrlField) {
-          url = avatarUrlField;
-        }
-        setAvatar(url);
-
-        // Get age and skill level
-        const ageVal = user.get("age");
-        const levelVal = user.get("skillLevel") || user.get("level");
-        if (ageVal !== undefined && ageVal !== null) setAge(ageVal);
-        if (levelVal) setSkillLevel(levelVal);
-      })
-      .catch((e) => console.warn("Failed to fetch user:", e));
   }, []);
 
   useEffect(() => {
     //split joinedSessions into past and future sessions
     const now = new Date();
-    console.log("Now is:", now);
+    // console.log("Now is:", now);
     const upcoming = joinedSessions.filter(
       (s) => Date.parse(s.sessionDateTime.iso) >= now
     );
@@ -99,11 +68,11 @@ export default function ProfileView({
       </div>
       <div className="page-content">
         <ProfileCard
-          firstName={firstName}
-          lastName={lastName}
-          avatar={avatar}
-          age={age}
-          skillLevel={skillLevel}
+          firstName={user.firstName}
+          lastName={user.lastName}
+          avatar={user.avatar}
+          age={user.age}
+          skillLevel={user.skillLevel}
         />
 
         <div className="section-subtitle">
