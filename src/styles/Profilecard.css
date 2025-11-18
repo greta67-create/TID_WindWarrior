@@ -27,8 +27,9 @@
 .profile-text {
   color: var(--text);
   font-family: var(--font-sans);
-  margin: 0.3rem 0;
+  margin: 0.3rem;
   font-size: 1rem;
+  text-align: center;
 }
 
 .profile-button {
@@ -37,7 +38,7 @@
   border: none;
   border-radius: 1rem;
   padding: 0.5rem 1.2rem;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 500;

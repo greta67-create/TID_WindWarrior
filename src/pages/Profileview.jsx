@@ -1,7 +1,6 @@
 import "../App.css";
 import Parse from "../parse-init";
 import ProfileCard from "../components/Profilecard";
-import "../styles/Logoutbutton.css";
 import Sessionblock from "../components/Sessionblock";
 import { Link } from "react-router-dom";
 import ava1 from "../assets/avatar1.png";
@@ -9,6 +8,8 @@ import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
 import { useState, useEffect, use } from "react";
 import { getCurrentUserInfo } from "../services/userservice";
+import LogOutButton from "../components/LogOutButton";
+import "../styles/BrowseSessions.css";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
@@ -57,14 +58,7 @@ export default function ProfileView({
     <div className="page">
       <div className="page-header">
         <div className="page-title">Profile</div>
-        {onLogout && (
-          <button
-            className="logout-button logout-button--top-right"
-            onClick={onLogout}
-          >
-            Log Out
-          </button>
-        )}
+        <LogOutButton onLogout={onLogout} />
       </div>
       <div className="page-content">
         <ProfileCard
@@ -75,56 +69,71 @@ export default function ProfileView({
           skillLevel={user.skillLevel}
         />
 
-        <div className="section-subtitle">
+        <div className="section-subtitle--spaced">
           <h2 className="page-title">Planned Sessions</h2>
           <div className="stack">
-            {upcomingSessions.map((s) => (
-              <Link
-                key={s.objectId}
-                to={`/session/${s.objectId}`}
-                style={{ textDecoration: "none" }}
-              >
-                <Sessionblock
+            {upcomingSessions.length > 0 ? (
+              upcomingSessions.map((s) => (
+                <Link
                   key={s.objectId}
-                  spot={s.spotId.spotName}
-                  dateLabel={s.dateLabel}
-                  timeLabel={s.timeLabel}
-                  windKts={s.windPower}
-                  tempC={s.temperature}
-                  weather={s.weatherType}
-                  windDir={s.windDirection}
-                  avatars={defaultAvatars}
-                  onJoin={handleJoin(s.id)}
-                  isJoined={joinedSessions.includes(s.id)}
-                />
-              </Link>
-            ))}
+                  to={`/session/${s.objectId}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <Sessionblock
+                    key={s.objectId}
+                    spot={s.spotId.spotName}
+                    dateLabel={s.dateLabel}
+                    timeLabel={s.timeLabel}
+                    windKts={s.windPower}
+                    tempC={s.temperature}
+                    weather={s.weatherType}
+                    windDir={s.windDirection}
+                    avatars={defaultAvatars}
+                    onJoin={handleJoin(s.id)}
+                    isJoined={joinedSessions.includes(s.id)}
+                  />
+                </Link>
+              ))
+            ) : (
+              <div className="profile-text">
+                <p>No Planned Sessions</p>
+                <Link to="/">
+                  <button className="browse-button">Click for Sessions</button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="section-subtitle">
+        <div className="section-subtitle--spaced">
           <h2 className="page-title">Past Sessions</h2>
           <div className="stack">
-            {pastSessions.map((s) => (
-              <Link
-                key={s.objectId}
-                to={`/session/${s.objectId}`}
-                style={{ textDecoration: "none" }}
-              >
-                <Sessionblock
-                  spot={s.spotId.spotName}
-                  dateLabel={s.dateLabel}
-                  timeLabel={s.timeLabel}
-                  windKts={s.windPower}
-                  tempC={s.temperature}
-                  weather={s.weatherType}
-                  windDir={s.windDirection}
-                  avatars={defaultAvatars}
-                  onJoin={handleJoin(s.id)}
-                  isJoined={joinedSessions.includes(s.id)}
-                />
-              </Link>
-            ))}
+            {upcomingSessions.length > 0 ? (
+              pastSessions.map((s) => (
+                <Link
+                  key={s.objectId}
+                  to={`/session/${s.objectId}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <Sessionblock
+                    spot={s.spotId.spotName}
+                    dateLabel={s.dateLabel}
+                    timeLabel={s.timeLabel}
+                    windKts={s.windPower}
+                    tempC={s.temperature}
+                    weather={s.weatherType}
+                    windDir={s.windDirection}
+                    avatars={defaultAvatars}
+                    onJoin={handleJoin(s.id)}
+                    isJoined={joinedSessions.includes(s.id)}
+                  />
+                </Link>
+              ))
+            ) : (
+              <div className="profile-text">
+                <p>Join a Session to Build Your History</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

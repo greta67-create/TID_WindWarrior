@@ -79,18 +79,23 @@ body {
 .section-subtitle {
   margin-top: 20px;
   margin-bottom: 12px;
-  font-weight: 600;        /* stronger weight for presence */
-  font-size: 1.05rem;      /* slightly larger than body text */
-  color: var(--text);      /* keep main text color for emphasis */
+  font-weight: 600; /* stronger weight for presence */
+  font-size: 1.05rem; /* slightly larger than body text */
+  color: var(--text); /* keep main text color for emphasis */
+}
+
+.section-subtitle--spaced {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
 .spot-description {
-  font-size: 0.95rem;      /* slightly smaller than subtitles */
-  font-weight: 300;        /* lighter text */
+  font-size: 0.95rem; /* slightly smaller than subtitles */
+  font-weight: 300; /* lighter text */
   line-height: 1.4;
   margin-top: 8px;
   margin-bottom: 12px;
-  color: var(--sub);        /* softer secondary color */
+  color: var(--sub); /* softer secondary color */
   max-width: 32rem;
 }
 
