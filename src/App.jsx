@@ -11,6 +11,7 @@ import Navbar from "./components/Navigationbar";
 import MapView from "./pages/MapView";
 import Auth from "./pages/LogOn";
 import { fetchAllSessions, fetchUserSessions } from "./services/sessionService";
+import { logOut } from "./services/authService";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -55,15 +56,7 @@ export default function App() {
     });
   };
 
-  const handleLogout = async () => {
-    try {
-      await Parse.User.logOut();
-      setUser(null);
-    } catch (error) {
-      console.error("Error logging out:", error);
-    }
-  };
-
+  // logic to show login page if not logged in
   if (!user) {
     return (
       <Router>
@@ -71,6 +64,16 @@ export default function App() {
       </Router>
     );
   }
+
+  // log out-function - uses authService to keep logic centralized
+  const onLogout = async () => {
+    try {
+      await logOut(); // Call the service function
+      setUser(null); // Clear user state in App
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   console.log("Sessions in App.jsx:", sessions);
 
@@ -103,8 +106,8 @@ export default function App() {
             path="/profile"
             element={
               <ProfileView
-                onLogout={handleLogout}
-                onJoinSession={handleJoinSession}
+                onLogout={onLogout}
+                onJoioeon={handleJoinSession}
                 joinedSessions={joinedSessions}
               />
             }
