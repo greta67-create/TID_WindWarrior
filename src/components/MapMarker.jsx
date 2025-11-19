@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Marker } from "react-map-gl/mapbox";
 import getArrowRotation from "../utils/getArrowRotation";
+import { FaLocationArrow } from "react-icons/fa";
 
 function MapMarker({
   spot_id,
@@ -26,11 +27,16 @@ function MapMarker({
         >
           <strong>{spot_name}</strong>
           <br />
-          <div className="map-marker-arrowbox" >
-              <div className="map-marker-arrow" style={{transform: `rotate(${getArrowRotation(wind_direction)}deg)`}}>
-                  <FaLocationArrow />
-              </div>
-              <span> {wind_power} knts</span>
+          <div className="map-marker-arrowbox">
+            <div
+              className="map-marker-arrow"
+              style={{
+                transform: `rotate(${getArrowRotation(wind_direction)}deg)`,
+              }}
+            >
+              <FaLocationArrow />
+            </div>
+            <span> {wind_power} knts</span>
           </div>
         </div>
       </Marker>

@@ -11,6 +11,7 @@ import MapView from "./pages/MapView";
 import Auth from "./pages/LogOn";
 import { fetchUserSessions } from "./services/usersessionService";
 import { fetchAllSessions } from "./services/sessionService";
+import { logOut } from "./services/authService";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -55,12 +56,20 @@ export default function App() {
     });
   };
 
-  //login and logout logic
+  // logic to show login page if not logged in
+  if (!user) {
+    return (
+      <Router>
+        <Auth onLogin={(loggedUser) => setUser(loggedUser)} />
+      </Router>
+    );
+  }
 
-  const handleLogout = async () => {
+  // log out-function - uses authService to keep logic centralized
+  const onLogout = async () => {
     try {
-      await Parse.User.logOut();
-      setUser(null);
+      await logOut(); // Call the service function
+      setUser(null); // Clear user state in App
     } catch (error) {
       console.error("Error logging out:", error);
     }

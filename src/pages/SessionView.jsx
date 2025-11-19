@@ -6,9 +6,6 @@ import "../App.css";
 import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
-
-
-
 import "../styles/SessionView.css";
 import {
   fetchSessionById,
@@ -24,7 +21,7 @@ import Chat from "../components/Chat";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
-export default function SessionViewPage() {
+export default function SessionViewPage(currentUser) {
   const { id } = useParams();
   const [session, setSession] = useState(null);
   const [comments, setComments] = useState([]);
@@ -115,29 +112,6 @@ export default function SessionViewPage() {
 
   const [input, setInput] = useState("");
 
-  const handleSendClick = () => {
-    if (input.trim() === "") return; // Prevent adding empty comments
-
-    const newComment = {
-      id: Date.now(),
-      name: "You", // Static name for now
-      time: new Date().toLocaleString(), // Current time
-      text: input, // User input
-    };
-    setComments([...comments, newComment]); // Add the new comment to the array
-    setInput(""); // Clear the input field
-  };
-
-  const handlePropCommentClick = (text) => {
-    const newComment = {
-      id: Date.now(),
-      name: "You", // Static name for now
-      time: new Date().toLocaleString(), // Current time
-      text, // User input
-    };
-    setComments([...comments, newComment]); // Add the new comment to the array
-  };
-
   // to avoid that session is null before data loads
   if (!session) {
     return <div className="page">Loading session…</div>;
@@ -179,12 +153,13 @@ export default function SessionViewPage() {
         Communicate with others joining this session:
       </div>
 
-      <Chat 
-        comments={comments} 
-        currentUser={currentUser} 
-        setComments={setComments} 
+      <Chat
+        comments={comments}
+        currentUser={currentUser}
+        setComments={setComments}
         session={session}
-        spot={null} />
+        spot={null}
+      />
     </div>
   );
 }
