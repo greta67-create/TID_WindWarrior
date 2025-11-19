@@ -33,7 +33,7 @@
 }
 
 .profile-button {
-  background-color: var(--text);
+  background-color: var(--primary);
   color: var(--back);
   border: none;
   border-radius: 1rem;

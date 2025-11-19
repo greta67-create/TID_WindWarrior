@@ -12,7 +12,6 @@ import {
   joinSession,
   unjoinSession,
 } from "../services/usersessionService";
-import { useState, useEffect, use } from "react";
 import { getCurrentUserInfo } from "../services/userservice";
 import LogOutButton from "../components/LogOutButton";
 import "../styles/BrowseSessions.css";
@@ -104,7 +103,9 @@ export default function ProfileView({
               <div className="profile-text">
                 <p>No Planned Sessions</p>
                 <Link to="/">
-                  <button className="browse-button">Click for Sessions</button>
+                  <button className="browse-button">
+                    Click to see upcoming Sessions
+                  </button>
                 </Link>
               </div>
             )}
