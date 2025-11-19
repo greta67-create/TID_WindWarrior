@@ -15,5 +15,16 @@
     padding: 5px;
     border-radius: 20px;
     text-align: center;
-    box-shadow: 0 0 5px rgba(0,0,0,0.3)
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    min-width: 90px;
+}
+
+
+.map-marker-arrowbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.map-marker-arrow {
+    padding: 0 8px;
 }
