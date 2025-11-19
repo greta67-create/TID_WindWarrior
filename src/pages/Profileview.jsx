@@ -18,14 +18,11 @@ import "../styles/BrowseSessions.css";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
-export default function ProfileView({
-  onJoinSession,
-  joinedSessions = [],
-  onLogout,
-}) {
+export default function ProfileView({ onJoinSession, onLogout }) {
   const [user, setUser] = useState({});
   const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [pastSessions, setPastSessions] = useState([]);
+  const [joinedSessions, setJoinedSessions] = useState([]);
 
   useEffect(() => {
     async function loadUser() {
@@ -37,18 +34,40 @@ export default function ProfileView({
     document.title = "Profile";
   }, []);
 
+  //load current, joined user sessions
+  useEffect(() => {
+    const user = Parse.User.current();
+    if (!user) return;
+
+    async function loadUserSessions() {
+      try {
+        const sessions = await fetchUserSessions(user);
+        console.log("Loaded user sessions in ProfileView:", sessions);
+        setJoinedSessions(sessions);
+      } catch (err) {
+        console.error("Error loading user sessions in ProfileView:", err);
+      }
+    }
+
+    loadUserSessions();
+  }, []);
+
   useEffect(() => {
     //split joinedSessions into past and future sessions
+    console.log("joinedSessions after state update:", joinedSessions);
     const now = new Date();
-    // console.log("Now is:", now);
+    console.log("Now is:", now);
     const upcoming = joinedSessions.filter(
-      (s) => Date.parse(s.sessionDateTime.iso) >= now
+      (s) => s.sessionDateTime && s.sessionDateTime >= now
     );
+
     const past = joinedSessions.filter(
-      (s) => Date.parse(s.sessionDateTime.iso) < now
+      (s) => s.sessionDateTime && s.sessionDateTime < now
     );
     setUpcomingSessions(upcoming);
     setPastSessions(past);
+    console.log("Upcoming user sessions:", upcoming);
+    console.log("Past user sessions:", past);
   }, [joinedSessions]);
 
   const handleJoin = (id) => (e) => {
@@ -80,22 +99,33 @@ export default function ProfileView({
             {upcomingSessions.length > 0 ? (
               upcomingSessions.map((s) => (
                 <Link
-                  key={s.objectId}
-                  to={`/session/${s.objectId}`}
+                  key={s.id}
+                  to={`/session/${s.id}`}
                   style={{ textDecoration: "none" }}
                 >
                   <Sessionblock
-                    key={s.objectId}
-                    spot={s.spotId.spotName}
-                    dateLabel={s.dateLabel}
-                    timeLabel={s.timeLabel}
+                    key={s.id}
+                    spot={s.spotName}
+                    dateLabel={
+                      s.sessionDateTime
+                        ? s.sessionDateTime.toLocaleDateString()
+                        : "-"
+                    }
+                    timeLabel={
+                      s.sessionDateTime
+                        ? s.sessionDateTime.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "-"
+                    }
                     windKts={s.windPower}
                     tempC={s.temperature}
                     weather={s.weatherType}
                     windDir={s.windDirection}
                     avatars={defaultAvatars}
                     onJoin={handleJoin(s.id)}
-                    isJoined={joinedSessions.includes(s.id)}
+                    isJoined={true}
                   />
                 </Link>
               ))
@@ -118,14 +148,25 @@ export default function ProfileView({
             {upcomingSessions.length > 0 ? (
               pastSessions.map((s) => (
                 <Link
-                  key={s.objectId}
-                  to={`/session/${s.objectId}`}
+                  key={s.id}
+                  to={`/session/${s.id}`}
                   style={{ textDecoration: "none" }}
                 >
                   <Sessionblock
-                    spot={s.spotId.spotName}
-                    dateLabel={s.dateLabel}
-                    timeLabel={s.timeLabel}
+                    spot={s.spotName}
+                    dateLabel={
+                      s.sessionDateTime
+                        ? s.sessionDateTime.toLocaleDateString()
+                        : "-"
+                    }
+                    timeLabel={
+                      s.sessionDateTime
+                        ? s.sessionDateTime.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "-"
+                    }
                     windKts={s.windPower}
                     tempC={s.temperature}
                     weather={s.weatherType}
