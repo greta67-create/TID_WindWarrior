@@ -3,6 +3,7 @@ import Sessionblock from "../components/Sessionblock";
 import Parse from "../parse-init";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Chat from "../components/Chat";
 import { fetchSpotByName, fetchCommentsToSpotId, fetchUpcomingSessionsToSpotId } from "../services/spotService";
 
 export default function SpotViewPage() {
@@ -109,30 +110,12 @@ export default function SpotViewPage() {
       <div className="section-subtitle" style={{ marginTop: 16 }}>
         What others say about this place:
       </div>
-
-      <div className="chat-list">
-        {comments.length === 0 && (
-          <div style={{ opacity: 0.7, fontSize: 14 }}>
-            No comments yet. Be the first to share your experience.
-          </div>
-        )}
-        {comments.map((c) => (
-          <div key={c.id} className="chat-item">
-            <strong>{c.userName}</strong>
-            <span style={{ opacity: 0.6, marginLeft: 8, fontSize: 12 }}>
-              {c.date}
-            </span>
-            <div style={{ marginTop: 4 }}>{c.text}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="comment-bar">
-        <div className="comment-inner">
-          <input className="comment-input" placeholder="Add Comment" />
-          <button className="send-btn">Send</button>
-        </div>
-      </div>
+      <Chat 
+        comments={comments} 
+        currentUser={Parse.User.current()} 
+        setComments={setComments} 
+        session={null}
+        spot={spot} />
     </div>
   );
 }

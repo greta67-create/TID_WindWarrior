@@ -1,4 +1,6 @@
 import Parse from "parse";
+import { commentToPlainObject } from "./commentService";
+
 
 /**
  * Service layer for Spot operations
@@ -59,30 +61,24 @@ export async function fetchSpotByName(spotName) {
 export async function fetchCommentsToSpotId(spotId) {
     const Comment = Parse.Object.extend("comment");
     const query = new Parse.Query(Comment);
-    query.include("spotId");
-    query.equalTo('spotId', {
-      __type: 'Pointer',
-      className: 'Spot',
-      objectId: spotId
-    });
-    console.log("Fetching comments for Spot ID:", spotId);
+    const spotPointer = new Parse.Object("Spot");
+    spotPointer.id = spotId;
+    query.equalTo("spotId", spotPointer);
+    query.ascending("createdAt");
     query.include("userId");
+
+    console.log("Fetching Comments for Spot ID:", spotId);
 
     try {
         const results = await query.find();
-        
-        return results.map(commentObj => ({
-            id: commentObj.id,
-            text: commentObj.get("message"),
-            userName: commentObj.get("userId") ? commentObj.get("userId").get("username") : "Unknown rider",
-            createdAt: commentObj.get("createdAt"),
-            updatedAt: commentObj.get("updatedAt"),
-        }));
+        console.log("Fetched Comments:", results);
+        return results.map(commentToPlainObject);
     } catch (error) {
         console.error("Error fetching comments for Spot:", error);
         throw error;
     }
 }
+
 
 // move to sessionsService.js later?
 async function loadUpcomingUserSessions(user) {

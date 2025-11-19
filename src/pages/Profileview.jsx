@@ -1,7 +1,6 @@
 import "../App.css";
 import Parse from "../parse-init";
 import ProfileCard from "../components/Profilecard";
-import "../styles/Logoutbutton.css";
 import Sessionblock from "../components/Sessionblock";
 import { Link } from "react-router-dom";
 import ava1 from "../assets/avatar1.png";
@@ -13,6 +12,10 @@ import {
   joinSession,
   unjoinSession,
 } from "../services/usersessionService";
+import { useState, useEffect, use } from "react";
+import { getCurrentUserInfo } from "../services/userservice";
+import LogOutButton from "../components/LogOutButton";
+import "../styles/BrowseSessions.css";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
@@ -21,56 +24,24 @@ export default function ProfileView({
   joinedSessions = [],
   onLogout,
 }) {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [avatar, setAvatar] = useState(ava1);
-  const [age, setAge] = useState(null);
-  const [skillLevel, setSkillLevel] = useState("");
+  const [user, setUser] = useState({});
   const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [pastSessions, setPastSessions] = useState([]);
 
   useEffect(() => {
+    async function loadUser() {
+      const info = await getCurrentUserInfo();
+      setUser(info);
+      console.log("User info from service:", info);
+    }
+    loadUser();
     document.title = "Profile";
-    // Get info from db
-    const current = Parse.User.current();
-    if (!current) return;
-
-    current
-      .fetch()
-      .then((user) => {
-        // Get name fields
-        const nm = user.get("name") || user.get("username") || "";
-        const fn = user.get("firstName") || nm;
-        const ln = user.get("lastName") || "";
-        setFirstName(fn);
-        setLastName(ln);
-
-        // Get avatar
-        let url = ava1;
-        const avatarField = user.get("avatar");
-        const avatarUrlField = user.get("avatarUrl");
-        if (avatarField && typeof avatarField.url === "function") {
-          url = avatarField.url();
-        } else if (typeof avatarField === "string" && avatarField) {
-          url = avatarField;
-        } else if (typeof avatarUrlField === "string" && avatarUrlField) {
-          url = avatarUrlField;
-        }
-        setAvatar(url);
-
-        // Get age and skill level
-        const ageVal = user.get("age");
-        const levelVal = user.get("skillLevel") || user.get("level");
-        if (ageVal !== undefined && ageVal !== null) setAge(ageVal);
-        if (levelVal) setSkillLevel(levelVal);
-      })
-      .catch((e) => console.warn("Failed to fetch user:", e));
   }, []);
 
   useEffect(() => {
     //split joinedSessions into past and future sessions
     const now = new Date();
-    console.log("Now is:", now);
+    // console.log("Now is:", now);
     const upcoming = joinedSessions.filter(
       (s) => Date.parse(s.sessionDateTime.iso) >= now
     );
@@ -93,74 +64,82 @@ export default function ProfileView({
     <div className="page">
       <div className="page-header">
         <div className="page-title">Profile</div>
-        {onLogout && (
-          <button
-            className="logout-button logout-button--top-right"
-            onClick={onLogout}
-          >
-            Log Out
-          </button>
-        )}
+        <LogOutButton onLogout={onLogout} />
       </div>
       <div className="page-content">
         <ProfileCard
-          firstName={firstName}
-          lastName={lastName}
-          avatar={avatar}
-          age={age}
-          skillLevel={skillLevel}
+          firstName={user.firstName}
+          lastName={user.lastName}
+          avatar={user.avatar}
+          age={user.age}
+          skillLevel={user.skillLevel}
         />
 
-        <div className="section-subtitle">
+        <div className="section-subtitle--spaced">
           <h2 className="page-title">Planned Sessions</h2>
           <div className="stack">
-            {upcomingSessions.map((s) => (
-              <Link
-                key={s.objectId}
-                to={`/session/${s.objectId}`}
-                style={{ textDecoration: "none" }}
-              >
-                <Sessionblock
+            {upcomingSessions.length > 0 ? (
+              upcomingSessions.map((s) => (
+                <Link
                   key={s.objectId}
-                  spot={s.spotId.spotName}
-                  dateLabel={s.dateLabel}
-                  timeLabel={s.timeLabel}
-                  windKts={s.windPower}
-                  tempC={s.temperature}
-                  weather={s.weatherType}
-                  windDir={s.windDirection}
-                  avatars={defaultAvatars}
-                  onJoin={handleJoin(s.id)}
-                  isJoined={joinedSessions.includes(s.id)}
-                />
-              </Link>
-            ))}
+                  to={`/session/${s.objectId}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <Sessionblock
+                    key={s.objectId}
+                    spot={s.spotId.spotName}
+                    dateLabel={s.dateLabel}
+                    timeLabel={s.timeLabel}
+                    windKts={s.windPower}
+                    tempC={s.temperature}
+                    weather={s.weatherType}
+                    windDir={s.windDirection}
+                    avatars={defaultAvatars}
+                    onJoin={handleJoin(s.id)}
+                    isJoined={joinedSessions.includes(s.id)}
+                  />
+                </Link>
+              ))
+            ) : (
+              <div className="profile-text">
+                <p>No Planned Sessions</p>
+                <Link to="/">
+                  <button className="browse-button">Click for Sessions</button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="section-subtitle">
+        <div className="section-subtitle--spaced">
           <h2 className="page-title">Past Sessions</h2>
           <div className="stack">
-            {pastSessions.map((s) => (
-              <Link
-                key={s.objectId}
-                to={`/session/${s.objectId}`}
-                style={{ textDecoration: "none" }}
-              >
-                <Sessionblock
-                  spot={s.spotId.spotName}
-                  dateLabel={s.dateLabel}
-                  timeLabel={s.timeLabel}
-                  windKts={s.windPower}
-                  tempC={s.temperature}
-                  weather={s.weatherType}
-                  windDir={s.windDirection}
-                  avatars={defaultAvatars}
-                  onJoin={handleJoin(s.id)}
-                  isJoined={joinedSessions.includes(s.id)}
-                />
-              </Link>
-            ))}
+            {upcomingSessions.length > 0 ? (
+              pastSessions.map((s) => (
+                <Link
+                  key={s.objectId}
+                  to={`/session/${s.objectId}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <Sessionblock
+                    spot={s.spotId.spotName}
+                    dateLabel={s.dateLabel}
+                    timeLabel={s.timeLabel}
+                    windKts={s.windPower}
+                    tempC={s.temperature}
+                    weather={s.weatherType}
+                    windDir={s.windDirection}
+                    avatars={defaultAvatars}
+                    onJoin={handleJoin(s.id)}
+                    isJoined={joinedSessions.includes(s.id)}
+                  />
+                </Link>
+              ))
+            ) : (
+              <div className="profile-text">
+                <p>Join a Session to Build Your History</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

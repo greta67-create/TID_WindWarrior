@@ -88,8 +88,8 @@ export default function App() {
             path="/profile"
             element={
               <ProfileView
-                onLogout={handleLogout}
-                onJoinSession={handleJoinSession}
+                onLogout={onLogout}
+                onJoioeon={handleJoinSession}
                 joinedSessions={joinedSessions}
               />
             }

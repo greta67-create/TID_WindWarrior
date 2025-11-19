@@ -1,4 +1,5 @@
 import Parse from "../parse-init";
+import { commentToPlainObject } from "./commentService";
 
 // Service layer for Session_ operations
 const Session = Parse.Object.extend("Session_");
@@ -40,20 +41,11 @@ export default function sessionToPlainObject(parseObj) {
     // Spot info (string + ids)
     spotName: spotObj ? spotObj.get("spotName") : "Unknown spot",
     spotId: spotObj ? spotObj.id : null,
+    
   };
 }
 
-function commentToPlainObject(parseObj) {
-  const user = parseObj.get("userId");
-  return {
-    id: parseObj.id,
-    name:
-      (user && (user.get("firstName") || user.get("username"))) ||
-      "Unknown user",
-    time: parseObj.createdAt.toLocaleString(),
-    text: parseObj.get("message"),
-  };
-}
+
 
 /**
  * Fetch all sessions from the Parse backend

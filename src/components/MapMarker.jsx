@@ -26,22 +26,11 @@ function MapMarker({
         >
           <strong>{spot_name}</strong>
           <br />
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              style={{
-                transform: `rotate(${getArrowRotation(wind_direction)}deg)`,
-                padding: "0 8px",
-              }}
-            >
-              ➤
-            </div>
-            <span> {wind_power} knts</span>
+          <div className="map-marker-arrowbox" >
+              <div className="map-marker-arrow" style={{transform: `rotate(${getArrowRotation(wind_direction)}deg)`}}>
+                  <FaLocationArrow />
+              </div>
+              <span> {wind_power} knts</span>
           </div>
         </div>
       </Marker>

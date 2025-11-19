@@ -6,6 +6,9 @@ import "../App.css";
 import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
+
+
+
 import "../styles/SessionView.css";
 import {
   fetchSessionById,
@@ -16,6 +19,7 @@ import {
   joinSession,
   unjoinSession,
 } from "../services/usersessionService";
+import Chat from "../components/Chat";
 // import { getList } from "../../backend/getParseFunctions";
 
 const defaultAvatars = [ava1, ava2, ava3];
@@ -94,6 +98,7 @@ export default function SessionViewPage() {
     const loadComments = async () => {
       try {
         const data = await fetchSessionComments(session.id);
+        console.log("Fetched session comments:", data);
         setComments(data);
       } catch (error) {
         console.error("Error fetching session comments:", error);
@@ -174,49 +179,12 @@ export default function SessionViewPage() {
         Communicate with others joining this session:
       </div>
 
-      {/* Comments */}
-      <div className="chat-list">
-        {comments.map((c) => (
-          <div key={c.id} className="chat-item">
-            <strong>{c.name}</strong>
-            <time>{c.time}</time>
-            <div className="chat-text">{c.text}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Bottom text input (fixed above nav) */}
-      <div className="comment-bar">
-        <div className="prop-comment">
-          {proposedComment.map((pc) => (
-            <button
-              key={pc.id}
-              type="button"
-              className="chip"
-              onClick={() => handlePropCommentClick(pc.text)}
-            >
-              {pc.text}
-            </button>
-          ))}
-        </div>
-        <div className="comment-inner">
-          <input
-            className="comment-input"
-            placeholder="Add Comment"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                handleSendClick();
-              }
-            }}
-          />
-          <button className="send-btn" onClick={handleSendClick}>
-            Send
-          </button>
-        </div>
-      </div>
+      <Chat 
+        comments={comments} 
+        currentUser={currentUser} 
+        setComments={setComments} 
+        session={session}
+        spot={null} />
     </div>
   );
 }
