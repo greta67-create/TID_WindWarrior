@@ -6,6 +6,12 @@ import { Link } from "react-router-dom";
 import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
+import { useState, useEffect } from "react";
+import {
+  fetchUserSessions,
+  joinSession,
+  unjoinSession,
+} from "../services/usersessionService";
 import { useState, useEffect, use } from "react";
 import { getCurrentUserInfo } from "../services/userservice";
 import LogOutButton from "../components/LogOutButton";

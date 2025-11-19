@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-
 import "./App.css";
 import Parse from "./parse-init";
 import SessionFeedPage from "./pages/Feed";
@@ -10,8 +9,8 @@ import SpotViewPage from "./pages/SpotView";
 import Navbar from "./components/Navigationbar";
 import MapView from "./pages/MapView";
 import Auth from "./pages/LogOn";
-import { fetchAllSessions, fetchUserSessions } from "./services/sessionService";
-import { logOut } from "./services/authService";
+import { fetchUserSessions } from "./services/usersessionService";
+import { fetchAllSessions } from "./services/sessionService";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -47,7 +46,7 @@ export default function App() {
 
   const handleJoinSession = (sessionId) => {
     setJoinedSessions((prev) => {
-      // If already joined, remove it (toggle functionality)
+      // If already joined, remove it
       if (prev.includes(sessionId)) {
         return prev.filter((id) => id !== sessionId);
       }
@@ -56,7 +55,17 @@ export default function App() {
     });
   };
 
-  // logic to show login page if not logged in
+  //login and logout logic
+
+  const handleLogout = async () => {
+    try {
+      await Parse.User.logOut();
+      setUser(null);
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
   if (!user) {
     return (
       <Router>
@@ -65,41 +74,14 @@ export default function App() {
     );
   }
 
-  // log out-function - uses authService to keep logic centralized
-  const onLogout = async () => {
-    try {
-      await logOut(); // Call the service function
-      setUser(null); // Clear user state in App
-    } catch (error) {
-      console.error("Error logging out:", error);
-    }
-  };
-
-  console.log("Sessions in App.jsx:", sessions);
-
   return (
     <Router>
       <div className="app">
         <Routes>
-          <Route
-            path="/"
-            element={
-              <SessionFeedPage
-                sessions={sessions}
-                onJoinSession={handleJoinSession}
-                joinedSessions={joinedSessions}
-              />
-            }
-          />
+          <Route path="/" element={<SessionFeedPage sessions={sessions} />} />
           <Route
             path="/session/:id"
-            element={
-              <SessionViewPage
-                onJoinSession={handleJoinSession}
-                joinedSessions={joinedSessions}
-                currentUser={user}
-              />
-            }
+            element={<SessionViewPage joinedSessions={joinedSessions} />}
           />
           <Route path="/map" element={<MapView />} />
           <Route

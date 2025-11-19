@@ -3,7 +3,6 @@ import { commentToPlainObject } from "./commentService";
 
 // Service layer for Session_ operations
 const Session = Parse.Object.extend("Session_");
-const UserSessions = Parse.Object.extend("UserSessions");
 const Comment = Parse.Object.extend("comment");
 
 /**
@@ -12,7 +11,7 @@ const Comment = Parse.Object.extend("comment");
  * @returns {Object} Plain JavaScript object with session data
  */
 
-function sessionToPlainObject(parseObj) {
+export default function sessionToPlainObject(parseObj) {
   const spotObj = parseObj.get("spotId");
   const date = parseObj.get("sessionDateTime"); // this is already a JS Date
 
@@ -88,37 +87,37 @@ export async function fetchSessionById(id) {
   }
 }
 
-/**
- * Fetch all sessions for a given user from the UserSessions join table
- * @param {Parse.User} user - The current logged-in user
- * @returns {Promise<Array>} Array of sessions as plain JS objects
- */
-export async function fetchUserSessions(user) {
-  if (!user) {
-    throw new Error("User must be provided to fetch user sessions");
-  }
+// /**
+//  * Fetch all sessions for a given user from the UserSessions join table
+//  * @param {Parse.User} user - The current logged-in user
+//  * @returns {Promise<Array>} Array of sessions as plain JS objects
+//  */
+// export async function fetchUserSessions(user) {
+//   if (!user) {
+//     throw new Error("User must be provided to fetch user sessions");
+//   }
 
-  const query = new Parse.Query(UserSessions);
+//   const query = new Parse.Query(UserSessions);
 
-  // Filter by current user and fetch related data
-  query.equalTo("userId", user);
-  query.include("sessionId"); // include the Session_ object
-  query.include("sessionId.spotId"); // include the Spot for the session
+//   // Filter by current user and fetch related data
+//   query.equalTo("userId", user);
+//   query.include("sessionId"); // include the Session_ object
+//   query.include("sessionId.spotId"); // include the Spot for the session
 
-  try {
-    const userSessionsData = await query.find();
+//   try {
+//     const userSessionsData = await query.find();
 
-    // For each UserSessions row, take its sessionId and convert to plain object
-    const sessions = userSessionsData
-      .map((userSession) => userSession.get("sessionId"))
-      .map(sessionToPlainObject);
+//     // For each UserSessions row, take its sessionId and convert to plain object
+//     const sessions = userSessionsData
+//       .map((userSession) => userSession.get("sessionId"))
+//       .map(sessionToPlainObject);
 
-    return sessions;
-  } catch (error) {
-    console.error("Error fetching user sessions:", error);
-    throw error;
-  }
-}
+//     return sessions;
+//   } catch (error) {
+//     console.error("Error fetching user sessions:", error);
+//     throw error;
+//   }
+// }
 
 export async function fetchSessionComments(sessionId) {
   if (!sessionId) {
@@ -141,5 +140,3 @@ export async function fetchSessionComments(sessionId) {
     throw error;
   }
 }
-
-// missing: create, update delete Session
