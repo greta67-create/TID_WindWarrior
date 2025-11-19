@@ -70,6 +70,7 @@
 .chat-item {
   background: var(--back);
   border: 1px solid var(--light);
+  border-color: var(--light);
   border-radius: 15px;
   padding: 8px 10px;
   box-shadow: 0 6px 24px var(--shadow);

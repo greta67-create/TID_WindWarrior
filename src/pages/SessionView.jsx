@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Sessionblocklarge from "../components/SessionBlocklarge";
+import "../styles/Sessionview.css";
 import "../App.css";
-import Parse from "../parse-init";
 import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
@@ -11,26 +11,20 @@ import {
   fetchSessionById,
   fetchSessionComments,
 } from "../services/sessionService";
+import {
+  fetchUserSessions,
+  joinSession,
+  unjoinSession,
+} from "../services/usersessionService";
 // import { getList } from "../../backend/getParseFunctions";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
-export default function SessionViewPage({
-  onJoinSession,
-  joinedSessions = [],
-}) {
+export default function SessionViewPage() {
   const { id } = useParams();
-
   const [session, setSession] = useState(null);
   const [comments, setComments] = useState([]);
-
-  useEffect(() => {
-    document.title = "Sessions";
-  }, []);
-
-  useEffect(() => {
-    document.title = "Sessions";
-  }, []);
+  const [isJoined, setIsJoined] = useState(false);
 
   // Load this one session by id
   useEffect(() => {
@@ -38,7 +32,7 @@ export default function SessionViewPage({
 
     async function loadSession() {
       try {
-        console.log("SessionView – URL id:", id);
+        console.log("SessionView URL id:", id);
         const data = await fetchSessionById(id);
         setSession(data);
       } catch (error) {
@@ -49,6 +43,51 @@ export default function SessionViewPage({
     loadSession();
   }, [id]);
 
+  // check if user has joined this session
+  useEffect(() => {
+    if (!session) return;
+
+    const user = Parse.User.current();
+    if (!user) return;
+
+    async function loadJoinState() {
+      try {
+        const userSessions = await fetchUserSessions(user);
+        const ids = userSessions.map((s) => s.id); // or s.sessionId depending on your service
+        setIsJoined(ids.includes(session.id));
+      } catch (err) {
+        console.error("Error loading joined state in SessionView:", err);
+      }
+    }
+
+    loadJoinState();
+  }, [session]);
+
+  // join/unjoin logic: call backend and update local state
+  const onJoin = async () => {
+    if (!session) return; //dont do anything if data haven't loaded yet
+    const sessionId = session.id;
+    console.log("Join button clicked", id);
+    const currentlyJoined = isJoined;
+
+    // optimistic toggle (show UI change immediately)
+    setIsJoined(!currentlyJoined);
+
+    try {
+      if (currentlyJoined) {
+        await unjoinSession(sessionId);
+        console.log("Usersession deleted in DB", id);
+      } else {
+        await joinSession(sessionId);
+        console.log("Usersession saved in DB", id);
+      }
+    } catch (error) {
+      console.error("Error toggling join state:", error);
+      setIsJoined(currentlyJoined);
+    }
+  };
+
+  // Load comments for this session
   useEffect(() => {
     if (!session) return;
 
@@ -70,10 +109,6 @@ export default function SessionViewPage({
   ];
 
   const [input, setInput] = useState("");
-
-  const onJoin = () => {
-    onJoinSession(session.id);
-  };
 
   const handleSendClick = () => {
     if (input.trim() === "") return; // Prevent adding empty comments
@@ -131,7 +166,7 @@ export default function SessionViewPage({
         windDir={session.windDirection}
         avatars={defaultAvatars}
         onJoin={onJoin}
-        isJoined={joinedSessions.includes(session.id)}
+        isJoined={isJoined}
       />
 
       {/* Subtitle */}

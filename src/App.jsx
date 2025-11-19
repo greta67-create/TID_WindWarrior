@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-
 import "./App.css";
 import Parse from "./parse-init";
 import SessionFeedPage from "./pages/Feed";
@@ -10,7 +9,8 @@ import SpotViewPage from "./pages/SpotView";
 import Navbar from "./components/Navigationbar";
 import MapView from "./pages/MapView";
 import Auth from "./pages/LogOn";
-import { fetchAllSessions, fetchUserSessions } from "./services/sessionService";
+import { fetchUserSessions } from "./services/usersessionService";
+import { fetchAllSessions } from "./services/sessionService";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -46,7 +46,7 @@ export default function App() {
 
   const handleJoinSession = (sessionId) => {
     setJoinedSessions((prev) => {
-      // If already joined, remove it (toggle functionality)
+      // If already joined, remove it
       if (prev.includes(sessionId)) {
         return prev.filter((id) => id !== sessionId);
       }
@@ -54,6 +54,8 @@ export default function App() {
       return [...prev, sessionId];
     });
   };
+
+  //login and logout logic
 
   const handleLogout = async () => {
     try {
@@ -72,30 +74,14 @@ export default function App() {
     );
   }
 
-  console.log("Sessions in App.jsx:", sessions);
-
   return (
     <Router>
       <div className="app">
         <Routes>
-          <Route
-            path="/"
-            element={
-              <SessionFeedPage
-                sessions={sessions}
-                onJoinSession={handleJoinSession}
-                joinedSessions={joinedSessions}
-              />
-            }
-          />
+          <Route path="/" element={<SessionFeedPage sessions={sessions} />} />
           <Route
             path="/session/:id"
-            element={
-              <SessionViewPage
-                onJoinSession={handleJoinSession}
-                joinedSessions={joinedSessions}
-              />
-            }
+            element={<SessionViewPage joinedSessions={joinedSessions} />}
           />
           <Route path="/map" element={<MapView />} />
           <Route

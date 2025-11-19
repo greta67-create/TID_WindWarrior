@@ -1,5 +1,6 @@
 import "../styles/Sessionblock.css";
 import JoinButton from "../components/JoinButton";
+import getWeatherIcon from "../utils/getWeatherIcon";
 
 export default function Sessionblock({
   //fallbacks
@@ -36,9 +37,9 @@ export default function Sessionblock({
 
       <div className="session-footer">
         <div className="metrics">
-          <div className="icon-badge">{windDir}</div>
+          <div className={`windDir-icon windDir-icon--${windDir}`}>↑</div>
           <div className="metric-text">{windKts} knts</div>
-          <div className="icon-badge">{weather}</div>
+          <div className="weather-type">{getWeatherIcon(weather)}</div>
           <div className="metric-text">{tempC}°C</div>
         </div>
 

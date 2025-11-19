@@ -7,7 +7,12 @@ import { Link } from "react-router-dom";
 import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
+import {
+  fetchUserSessions,
+  joinSession,
+  unjoinSession,
+} from "../services/usersessionService";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
