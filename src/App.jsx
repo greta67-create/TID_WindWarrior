@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import Parse from "./parse-init";
 import SessionFeedPage from "./pages/Feed";
@@ -11,7 +11,7 @@ import MapView from "./pages/MapView";
 import Auth from "./pages/LogOn";
 import { fetchUserSessions } from "./services/usersessionService";
 import { fetchAllSessions } from "./services/sessionService";
-import { logOut } from "./services/authService";
+
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -56,20 +56,10 @@ export default function App() {
     });
   };
 
-  // logic to show login page if not logged in
-  if (!user) {
-    return (
-      <Router>
-        <Auth onLogin={(loggedUser) => setUser(loggedUser)} />
-      </Router>
-    );
-  }
-
-  // log out-function - uses authService to keep logic centralized
-  const onLogout = async () => {
+  const handleLogout = async () => {
     try {
-      await logOut(); // Call the service function
-      setUser(null); // Clear user state in App
+      await Parse.User.logOut();
+      setUser(null);
     } catch (error) {
       console.error("Error logging out:", error);
     }
@@ -97,8 +87,8 @@ export default function App() {
             path="/profile"
             element={
               <ProfileView
-                onLogout={onLogout}
-                onJoioeon={handleJoinSession}
+                onLogout={handleLogout}
+                onJoinSession={handleJoinSession}
                 joinedSessions={joinedSessions}
               />
             }

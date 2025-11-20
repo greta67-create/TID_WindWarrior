@@ -53,6 +53,7 @@ export default function ProfileView({ onJoinSession, onLogout }) {
   }, []);
 
   useEffect(() => {
+    console.log("Joined sessions:", joinedSessions);
     //split joinedSessions into past and future sessions
     console.log("joinedSessions after state update:", joinedSessions);
     const now = new Date();

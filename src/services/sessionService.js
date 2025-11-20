@@ -104,6 +104,7 @@ export async function fetchSessionById(id) {
 //   query.include("sessionId"); // include the Session_ object
 //   query.include("sessionId.spotId"); // include the Spot for the session
 
+
 //   try {
 //     const userSessionsData = await query.find();
 
@@ -111,7 +112,6 @@ export async function fetchSessionById(id) {
 //     const sessions = userSessionsData
 //       .map((userSession) => userSession.get("sessionId"))
 //       .map(sessionToPlainObject);
-
 //     return sessions;
 //   } catch (error) {
 //     console.error("Error fetching user sessions:", error);
