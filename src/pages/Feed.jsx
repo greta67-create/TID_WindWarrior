@@ -6,12 +6,16 @@ import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
 import Parse from "../parse-init";
+<<<<<<< HEAD
 
 import {
   joinSession,
   unjoinSession,
 } from "../services/usersessionService";
 
+=======
+import { BsFilterSquare } from "react-icons/bs";
+>>>>>>> ba54a90 (load sessions cloud)
 const defaultAvatars = [ava1, ava2, ava3];
 
 function SessionFeedPage() {
@@ -59,6 +63,21 @@ function SessionFeedPage() {
     }
   };
 
+<<<<<<< HEAD
+=======
+  useEffect(() => {
+    async function fetchData() {
+      const futureSessions = await Parse.Cloud.run("loadSessions", { 
+        user: user.id,
+        filters:{}
+      });
+      console.log("Loaded sessions in Feed:", futureSessions);
+      setSurfSessions(futureSessions);
+    }
+    fetchData();
+  }, []);
+
+>>>>>>> ba54a90 (load sessions cloud)
 
 
   // Render session feed
