@@ -20,7 +20,7 @@ const defaultAvatars = [ava1, ava2, ava3];
 
 export default function ProfileView({ onJoinSession, onLogout }) {
   const [user, setUser] = useState({});
-  const [upcomingSessions, setUpcomingSessions] = useState([]);
+  const [upcomingSessions, setUpcomingSessions] = useState([]); //Is it necessary to have this state?
   const [pastSessions, setPastSessions] = useState([]);
   const [joinedSessions, setJoinedSessions] = useState([]);
 
