@@ -1,5 +1,5 @@
 import "../App.css";
-import SessionBlock from "../components/Sessionblock";
+import Sessionblock from "../components/Sessionblock";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ava1 from "../assets/avatar1.png";
@@ -16,6 +16,7 @@ const defaultAvatars = [ava1, ava2, ava3];
 function SessionFeedPage({ sessions = [] }) {
   const [joinedSessions, setJoinedSessions] = useState([]);
   const user = Parse.User.current();
+  const [upcomingSessions, setUpcomingSessions] = useState([]);
 
   //load joined sessions by user once
   useEffect(() => {
@@ -35,7 +36,18 @@ function SessionFeedPage({ sessions = [] }) {
     loadJoinedSessions();
   }, [user]);
 
-  const onJoin = (id) => async (e) => {
+  // keep only upcoming sessions for the feed
+  useEffect(() => {
+    const now = new Date();
+    const upcoming = sessions.filter(
+      (s) => s.sessionDateTime && s.sessionDateTime >= now
+    );
+    setUpcomingSessions(upcoming);
+    console.log("Upcoming sessions in feed:", upcoming);
+  }, [sessions]);
+
+  //hande join/unjoin and add usersession to DB
+  const handleJoin = (id) => async (e) => {
     if (e && e.preventDefault) {
       e.preventDefault();
       e.stopPropagation();
@@ -75,27 +87,30 @@ function SessionFeedPage({ sessions = [] }) {
         Top sessions based on the weather forecast
       </div>
       <div className="stack">
-        {sessions.map((s) => (
+        {upcomingSessions.map((s) => (
           <Link key={s.id} to={`/session/${s.id}`}>
-            <SessionBlock
+            <Sessionblock
+              key={s.id}
               spot={s.spotName}
-              dateLabel={
-                s.sessionDateTime ? s.sessionDateTime.toLocaleDateString() : "-"
-              }
-              timeLabel={
-                s.sessionDateTime
-                  ? s.sessionDateTime.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
-                  : "-"
-              }
+              dateLabel={s.dateLabel}
+              timeLabel={s.timeLabel}
+              // dateLabel={
+              //   s.sessionDateTime ? s.sessionDateTime.toLocaleDateString() : "-"
+              // }
+              // timeLabel={
+              //   s.sessionDateTime
+              //     ? s.sessionDateTime.toLocaleTimeString([], {
+              //         hour: "2-digit",
+              //         minute: "2-digit",
+              //       })
+              //     : "-"
+              // }
               windKts={s.windPower}
               tempC={s.temperature}
               weather={s.weatherType}
               windDir={s.windDirection}
               avatars={defaultAvatars}
-              onJoin={onJoin(s.id)}
+              onJoin={handleJoin(s.id)}
               isJoined={joinedSessions.includes(s.id)}
             />
           </Link>
