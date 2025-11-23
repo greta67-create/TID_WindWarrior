@@ -45,17 +45,6 @@ export default function App() {
       .catch((err) => console.error("Error fetching user sessions:", err));
   }, [user]);
 
-  const handleJoinSession = (sessionId) => {
-    setJoinedSessions((prev) => {
-      // If already joined, remove it
-      if (prev.includes(sessionId)) {
-        return prev.filter((id) => id !== sessionId);
-      }
-      // If not joined, add it
-      return [...prev, sessionId];
-    });
-  };
-
   // logic to show login page if not logged in
   if (!user) {
     return (
@@ -95,13 +84,7 @@ export default function App() {
           <Route path="/map" element={<MapView />} />
           <Route
             path="/profile"
-            element={
-              <ProfileView
-                onLogout={onLogout}
-                onJoioeon={handleJoinSession}
-                joinedSessions={joinedSessions}
-              />
-            }
+            element={<ProfileView onLogout={onLogout} />}
           />
           <Route path="/spot/:spotName" element={<SpotViewPage />} />
         </Routes>
