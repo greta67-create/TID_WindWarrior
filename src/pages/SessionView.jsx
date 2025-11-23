@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Sessionblocklarge from "../components/SessionBlocklarge";
 import "../styles/Sessionview.css";
@@ -138,6 +138,15 @@ export default function SessionViewPage(currentUser) {
         onJoin={onJoin}
         isJoined={isJoined}
       />
+
+      <div className="spot-reference">
+        <div className="spot-text">Check out more about the spot here:</div>
+        <div className="spot-link">
+          <Link to={`/spot/${session.spotName}`}>
+            <strong>{session.spotName}</strong>
+          </Link>
+        </div>
+      </div>
 
       {/* Subtitle */}
       <div className="section-subtitle">
