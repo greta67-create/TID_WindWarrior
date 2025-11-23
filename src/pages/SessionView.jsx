@@ -123,8 +123,8 @@ export default function SessionViewPage(currentUser) {
       <div className="page-header">
         <div className="page-title">{session.spotName}</div>
         <div className="subtle">
-          {session.sessionDateTime
-            ? session.sessionDateTime.toLocaleDateString()
+          {session.dateLabel} | {session.timeLabel}
+          {/* ? session.sessionDateTime.toLocaleDateString()
             : "-"}{" "}
           |{" "}
           {session.sessionDateTime
@@ -132,7 +132,7 @@ export default function SessionViewPage(currentUser) {
                 hour: "2-digit",
                 minute: "2-digit",
               })
-            : "-"}
+            : "-"} */}
         </div>
       </div>
 

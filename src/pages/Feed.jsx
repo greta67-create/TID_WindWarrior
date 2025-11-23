@@ -88,23 +88,12 @@ function SessionFeedPage({ sessions = [] }) {
       </div>
       <div className="stack">
         {upcomingSessions.map((s) => (
-          <Link key={s.id} to={`/session/${s.id}`}>
+          <Link key={s.id} to={`/session/${s.id}`} className="session-link">
             <Sessionblock
               key={s.id}
               spot={s.spotName}
               dateLabel={s.dateLabel}
               timeLabel={s.timeLabel}
-              // dateLabel={
-              //   s.sessionDateTime ? s.sessionDateTime.toLocaleDateString() : "-"
-              // }
-              // timeLabel={
-              //   s.sessionDateTime
-              //     ? s.sessionDateTime.toLocaleTimeString([], {
-              //         hour: "2-digit",
-              //         minute: "2-digit",
-              //       })
-              //     : "-"
-              // }
               windKts={s.windPower}
               tempC={s.temperature}
               weather={s.weatherType}
