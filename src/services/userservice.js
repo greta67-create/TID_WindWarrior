@@ -31,7 +31,7 @@ function UserToPlainObject(parseUser) {
   };
 }
 
-// Hvad betyder hele denne???
+// use this function to get the currently logged-in user's info
 export async function getCurrentUserInfo() {
   const current = Parse.User.current();
   if (!current) return null;
