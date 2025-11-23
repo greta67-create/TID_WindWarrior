@@ -146,7 +146,7 @@ export default function SpotViewPage() {
       {/* Sessions list */}
       <div className="stack" style={{ marginTop: 12 }}>
         {upcomingSessions.map((s) => (
-          <Link key={s.id} to={`/session/${s.id}`}>
+          <Link key={s.id} to={`/session/${s.id}`} className="session-link">
             <Sessionblock
               key={s.id}
               spot={s.spotName}
