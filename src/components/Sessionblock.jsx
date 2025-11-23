@@ -15,6 +15,7 @@ export default function Sessionblock({
   onJoin = () => {},
   isJoined = false,
   joinedText = "Joining",
+  showJoin = true, //per default show join button (exeption: Profileview, past sessions
 }) {
   // show at most 3 avatars
   const list = Array.isArray(avatars) ? avatars : avatars ? [avatars] : [];
@@ -28,11 +29,13 @@ export default function Sessionblock({
         <div className="subtle">
           {dateLabel} | {timeLabel}
         </div>
-        <JoinButton
-          isJoined={isJoined}
-          onClick={onJoin}
-          joinedText={joinedText}
-        />
+        {showJoin && (
+          <JoinButton
+            isJoined={isJoined}
+            onClick={onJoin}
+            joinedText={joinedText}
+          />
+        )}
       </div>
 
       <div className="session-footer">
