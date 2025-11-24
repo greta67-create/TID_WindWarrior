@@ -115,11 +115,7 @@ export default function ProfileView({ onLogout }) {
           <div className="stack">
             {upcomingSessions.length > 0 ? (
               upcomingSessions.map((s) => (
-                <Link
-                  key={s.id}
-                  to={`/session/${s.id}`}
-                  className="session-link"
-                >
+                <Link key={s.id} to={`/session/${s.id}`}>
                   <Sessionblock
                     key={s.id}
                     spot={s.spotName}
