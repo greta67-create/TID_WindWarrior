@@ -1,7 +1,27 @@
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap");
 @import "/src/App.css";
 
-/* Proposed Comment */
+/* Spot link */
+.spot-reference {
+  margin-top: 10px;
+  padding-top: 10px;
+  justify-content: space-between;
+}
+
+.spot-text {
+  font: var(--font-sans);
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 0.2px;
+}
+.spot-link {
+  font: var(--font-sans);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 0.2px;
+}
 
 /* Fixed comment bar above bottom nav */
 .comment-bar {
