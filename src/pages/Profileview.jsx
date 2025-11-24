@@ -118,7 +118,7 @@ export default function ProfileView({ onLogout }) {
                 <Link
                   key={s.id}
                   to={`/session/${s.id}`}
-                  style={{ textDecoration: "none" }}
+                  className="session-link"
                 >
                   <Sessionblock
                     key={s.id}
