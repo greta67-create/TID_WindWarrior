@@ -104,6 +104,7 @@ body {
 .stack > a {
   display: block;
   width: 100%;
+  text-decoration: none; /* Remove underline from session card links */
 }
 
 .session-card {

@@ -6,7 +6,7 @@ import SessionFeedPage from "./pages/Feed";
 import SessionViewPage from "./pages/SessionView";
 import ProfileView from "./pages/Profileview";
 import SpotViewPage from "./pages/SpotView";
-import Navbar from "./components/Navigationbar";
+import Navbar from "./components/NavigationBar";
 import MapView from "./pages/MapView";
 import Auth from "./pages/LogOn";
 import { fetchUserSessions } from "./services/usersessionService";

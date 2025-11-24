@@ -20,7 +20,7 @@ const defaultAvatars = [ava1, ava2, ava3];
 export default function ProfileView({ onLogout }) {
   const [user, setUser] = useState({});
   const [joinedSessions, setJoinedSessions] = useState([]);
-  const [upcomingSessions, setUpcomingSessions] = useState([]); //Is it necessary to have this state?
+  const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [pastSessions, setPastSessions] = useState([]);
 
   // flow is fetchUserSessions → setJoinedSessions → effect runs → setUpcomingSessions + setPastSessions
@@ -35,7 +35,7 @@ export default function ProfileView({ onLogout }) {
     loadUser();
   }, []);
 
-  //load current, joined user sessions
+  // load current, joined user sessions
   useEffect(() => {
     const user = Parse.User.current();
     if (!user) return;
@@ -115,11 +115,7 @@ export default function ProfileView({ onLogout }) {
           <div className="stack">
             {upcomingSessions.length > 0 ? (
               upcomingSessions.map((s) => (
-                <Link
-                  key={s.id}
-                  to={`/session/${s.id}`}
-                  style={{ textDecoration: "none" }}
-                >
+                <Link key={s.id} to={`/session/${s.id}`}>
                   <Sessionblock
                     key={s.id}
                     spot={s.spotName}
@@ -151,7 +147,7 @@ export default function ProfileView({ onLogout }) {
         <div className="section-subtitle--spaced">
           <h2 className="page-title">Past Sessions</h2>
           <div className="stack">
-            {upcomingSessions.length > 0 ? (
+            {pastSessions.length > 0 ? (
               pastSessions.map((s) => (
                 <Link
                   key={s.id}
