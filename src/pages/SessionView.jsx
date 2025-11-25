@@ -17,6 +17,7 @@ import {
   unjoinSession,
 } from "../services/usersessionService";
 import Chat from "../components/Chat";
+import getWindfinderlink from "../utils/getWindfinderlink";
 // import { getList } from "../../backend/getParseFunctions";
 
 const defaultAvatars = [ava1, ava2, ava3];
@@ -26,6 +27,10 @@ export default function SessionViewPage(currentUser) {
   const [session, setSession] = useState(null);
   const [comments, setComments] = useState([]);
   const [isJoined, setIsJoined] = useState(false);
+  const proposedComments = [
+    { id: 100, text: "I have a car and can offer a ride!" },
+    { id: 101, text: "Can someone offer a ride?" },
+  ];
 
   // Load this one session by id
   useEffect(() => {
@@ -110,12 +115,12 @@ export default function SessionViewPage(currentUser) {
     { id: 101, text: "Can someone offer a ride?" },
   ];
 
-  const [input, setInput] = useState("");
-
   // to avoid that session is null before data loads
   if (!session) {
     return <div className="page">Loading session…</div>;
   }
+  // const for weather link
+  // const weatherLink = getWindfinderlink(session.spotName);
 
   return (
     <div className="page">
@@ -139,12 +144,28 @@ export default function SessionViewPage(currentUser) {
         isJoined={isJoined}
       />
 
-      <div className="spot-reference">
-        <div className="spot-text">Check out more about the spot here:</div>
-        <div className="spot-link">
-          <Link to={`/spot/${session.spotName}`}>
-            <strong>{session.spotName}</strong>
+      {/* Get more information section */}
+      <div className="info-section">
+        <div className="info-title">Get more information:</div>
+
+        <div className="info-buttons">
+          {/* Left button: to SpotView */}
+          <Link
+            to={`/spot/${session.spotName}`}
+            className="info-btn info-btn-primary"
+          >
+            About the spot
           </Link>
+
+          {/* Right button: external link ( weather link) */}
+          <a
+            href={getWindfinderlink(session.spotName)}
+            target="_blank"
+            className="info-btn info-btn-secondary"
+          >
+            <span>About the weather</span>
+            <span className="external-icon">↗</span>
+          </a>
         </div>
       </div>
 
@@ -159,6 +180,7 @@ export default function SessionViewPage(currentUser) {
         setComments={setComments}
         session={session}
         spot={null}
+        proposedComments={proposedComments}
       />
     </div>
   );
