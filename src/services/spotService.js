@@ -85,14 +85,14 @@ async function loadUpcomingUserSessions(user) {
     const userSessionsQuery = new Parse.Query("UserSessions");
     // Filter by current user
     userSessionsQuery.equalTo("userId", user);
-    userSessionsQuery.include("sessionId");
-    // userSessionsQuery.filter('sessionId.sessionDateTime', '>=', new Date());
+    userSessionsQuery.include("surfSession");
+    // userSessionsQuery.filter('surfSession.sessionDateTime', '>=', new Date());
 
     const userSessions = await userSessionsQuery.find();
 
     const to_return = userSessions.map((commentObj) => ({
       id: commentObj.id,
-      sessionId: commentObj.get("sessionId").id,
+      surfSession: commentObj.get("surfSession").id,
     }));
     console.log(to_return);
     return to_return;
@@ -102,7 +102,7 @@ async function loadUpcomingUserSessions(user) {
 }
 
 export async function fetchUpcomingSessionsToSpotId(spotId) {
-  const session = Parse.Object.extend("Session_");
+  const session = Parse.Object.extend("SurfSessions");
   const query = new Parse.Query(session);
   query.include("spotId.spotName");
   query.equalTo("spotId", {
@@ -125,7 +125,7 @@ export async function fetchUpcomingSessionsToSpotId(spotId) {
     //mtch upcoming sessions with user sessions to mark joined with isJoined = True
     const upcoming_sessions_with_joined = upcoming_sessions.map((session) => {
       const isJoined = upcoming_user_sessions.some(
-        (user_session) => user_session.sessionId === session.id
+        (user_session) => user_session.surfSession === session.id
       );
       return {
         ...session,

@@ -1,12 +1,12 @@
 import Parse from "../parse-init";
 import { commentToPlainObject } from "./commentService";
 
-// Service layer for Session_ operations
-const Session = Parse.Object.extend("Session_");
+// Service layer for SurfSessions operations
+const Session = Parse.Object.extend("SurfSessions");
 const Comment = Parse.Object.extend("comment");
 
 /**
- * Convert a Parse Session_ object to a plain JavaScript object
+ * Convert a Parse SurfSessions object to a plain JavaScript object
  * @param {Parse.Object} parseObj - The Parse object to convert
  * @returns {Object} Plain JavaScript object with session data
  */
@@ -122,16 +122,16 @@ export async function fetchSessionById(id) {
 //   }
 // }
 
-export async function fetchSessionComments(sessionId) {
-  if (!sessionId) {
+export async function fetchSessionComments(surfSession) {
+  if (!surfSession) {
     throw new Error("Session ID missing");
   }
 
   const query = new Parse.Query(Comment);
-  const sessionPointer = new Parse.Object("Session_");
-  sessionPointer.id = sessionId;
+  const sessionPointer = new Parse.Object("SurfSessions");
+  sessionPointer.id = surfSession;
 
-  query.equalTo("sessionId", sessionPointer);
+  query.equalTo("surfSession", sessionPointer);
   query.include("userId");
   query.ascending("createdAt");
 

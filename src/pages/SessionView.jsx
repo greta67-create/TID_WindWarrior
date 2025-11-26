@@ -54,7 +54,7 @@ export default function SessionViewPage(currentUser) {
     async function loadJoinState() {
       try {
         const userSessions = await fetchUserSessions(user);
-        const ids = userSessions.map((s) => s.id); // or s.sessionId depending on your service
+        const ids = userSessions.map((s) => s.id); // or s.surfSession depending on your service
         setIsJoined(ids.includes(session.id));
       } catch (err) {
         console.error("Error loading joined state in SessionView:", err);
@@ -67,7 +67,7 @@ export default function SessionViewPage(currentUser) {
   // join/unjoin logic: call backend and update local state
   const onJoin = async () => {
     if (!session) return; //dont do anything if data haven't loaded yet
-    const sessionId = session.id;
+    const surfSession = session.id;
     console.log("Join button clicked", id);
     const currentlyJoined = isJoined;
 
@@ -76,10 +76,10 @@ export default function SessionViewPage(currentUser) {
 
     try {
       if (currentlyJoined) {
-        await unjoinSession(sessionId);
+        await unjoinSession(surfSession);
         console.log("Usersession deleted in DB", id);
       } else {
-        await joinSession(sessionId);
+        await joinSession(surfSession);
         console.log("Usersession saved in DB", id);
       }
     } catch (error) {
