@@ -104,7 +104,7 @@ export default function ProfileView({ onLogout }) {
       <div className="page-content">
         <ProfileCard
           firstName={user.firstName}
-          lastName={user.lastName}
+          typeofSport={user.typeofSport}
           avatar={user.avatar}
           age={user.age}
           skillLevel={user.skillLevel}
