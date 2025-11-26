@@ -1,7 +1,7 @@
 import React from "react";
-import "../styles/JoinButton.css";
+import "../styles/Joinbutton.css";
 
-export default function JoinButton({
+export default function JoinButtonlarge({
   isJoined = false,
   onClick = () => {},
   joinedText = "Joining",
@@ -18,7 +18,7 @@ export default function JoinButton({
   return (
     <button
       type="button"
-      className={`join-button ${isJoined ? "joined" : ""} ${className}`}
+      className={`join-buttonlarge ${isJoined ? "joined" : ""} ${className}`}
       onClick={handleClick}
       {...rest}
     >
