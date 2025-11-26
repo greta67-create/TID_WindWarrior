@@ -1,9 +1,12 @@
 import "../styles/Sessionblock.css";
-import JoinButton from "../components/JoinButton";
-import getWeatherIcon from "../utils/getWeatherIcon";
+import JoinButtonlarge from "../components/JoinButtonlarge";
+import { Link } from "react-router-dom";
 
 export default function Sessionblocklarge({
   //fallbacks
+  spot = "Amager Strand",
+  dateLabel = "Apr 4th",
+  timeLabel = "12pm",
   windKts = 21,
   tempC = 18,
   weather = "⛅️",
@@ -22,16 +25,21 @@ export default function Sessionblocklarge({
     <div className="session-card-large">
       <div className="session-card-title">Forecast for your session:</div>
       <div className="session-header">
+        {/* <div className="spot">{spot}</div>
+        <div className="subtle">
+          {dateLabel} | {timeLabel}
+        </div> */}
+
         <div className="metrics">
-          <div className={`windDir-icon-large windDir-icon--${windDir}`}>↑</div>
+          <div className="icon-badge-large">{windDir}</div>
           <div className="metric-text-large">{windKts} knts</div>
-          <div className="weather-type-large">{getWeatherIcon(weather)}</div>
+          <div className="icon-badge-large">{weather}</div>
           <div className="metric-text-large">{tempC}°C</div>
         </div>
       </div>
 
       <div className="session-footer">
-        <JoinButton
+        <JoinButtonlarge
           isJoined={isJoined}
           onClick={onJoin}
           joinedText={joinedText}

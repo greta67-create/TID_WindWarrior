@@ -1,38 +1,32 @@
 import React from "react";
-import defaultAvatar from "../assets/Default.png";
+import ava1 from "../assets/avatar1.png";
 import "../styles/Profilecard.css";
 
 export default function ProfileCard({
-  firstName,
-  typeofSport,
+  firstName = "",
+  lastName = "",
+  //name = "",
   age,
   skillLevel,
-  avatar = defaultAvatar,
+  avatar = ava1,
 }) {
-  const UserName = firstName;
-  const fallbackAvatar = avatar || defaultAvatar;
+  const displayName = firstName || name || "";
 
   return (
     <div className="profile-card">
       <div className="profile-image-container">
         <img
-          src={fallbackAvatar}
-          alt={UserName}
-          onError={(e) => (e.target.src = defaultAvatar)}
+          src={avatar}
+          alt={displayName ? `${displayName} avatar` : "Profile"}
         />
       </div>
-      <h2 className="profile-name">{UserName}</h2>
-      {typeofSport && <p className="profile-text">{typeofSport}</p>}
+      <h2 className="profile-name">{displayName}</h2>
+      {lastName && <p className="profile-text">{lastName}</p>}
       {age !== undefined && age !== null && (
         <p className="profile-text">Age: {age}</p>
       )}
       {skillLevel && <p className="profile-text">Level: {skillLevel}</p>}
-      <button
-        className="profile-button"
-        onClick={() => alert("Edit Profile feature coming soon!")}
-      >
-        Edit Profile
-      </button>
+      <button className="profile-button">Edit Profile</button>
     </div>
   );
 }

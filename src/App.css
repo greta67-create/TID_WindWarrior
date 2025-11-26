@@ -6,9 +6,8 @@
   --sub: #5b6b96;
   --light: #e4e9f2;
   --back: #ffffff;
-  --primary: #23449c;
+  --primary: #1d3a8a;
   --shadow: #19306e66;
-  --highlight: #c02f2f;
   --font-sans: "Ubuntu", system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
   --content: 560px;
@@ -78,21 +77,9 @@ body {
 }
 
 .section-subtitle {
-  margin-top: 15px;
-  margin-bottom: 8px;
-  font-weight: 600; /* stronger weight for presence */
-  font-size: 1.05rem; /* slightly larger than body text */
-  color: var(--text); /* keep main text color for emphasis */
-}
-
-.spot-description {
-  font-size: 0.95rem; /* slightly smaller than subtitles */
-  font-weight: 300; /* lighter text */
-  line-height: 1.4;
-  margin-top: 8px;
+  margin-top: 16px;
   margin-bottom: 12px;
-  color: var(--sub); /* softer secondary color */
-  max-width: 32rem;
+  font-weight: 400;
 }
 
 .stack {
@@ -105,7 +92,6 @@ body {
 .stack > a {
   display: block;
   width: 100%;
-  text-decoration: none; /* Remove underline from session card links */
 }
 
 .session-card {
@@ -151,23 +137,22 @@ body {
 }
 
 /* Fixed comment bar above bottom nav */
-/* .comment-bar {
+.comment-bar {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 64px; 
+  bottom: 64px; /* sit above the nav */
   padding: 8px 16px;
   background: transparent;
   z-index: 9;
-} */
-
-/* .comment-inner {
+}
+.comment-inner {
   max-width: var(--content);
   margin: 0 auto;
   display: flex;
   gap: 8px;
-} */
-/* .comment-input {
+}
+.comment-input {
   flex: 1;
   background: var(--back);
   border: 1px solid var(--light);
@@ -182,9 +167,9 @@ body {
   border-radius: 12px;
   padding: 0 14px;
   font-weight: 700;
-} */
+}
 
-/* Comments list (Session View)
+/* Comments list (Session View) */
 .chat-list {
   display: grid;
   gap: 12px;
@@ -192,27 +177,27 @@ body {
 }
 
 /* Single comment bubble */
-/* .chat-item {
+.chat-item {
   background: var(--back);
   border: 1px solid var(--light);
   border-radius: 16px;
   padding: 12px 14px;
   box-shadow: 0 6px 24px var(--shadow);
-} */
+}
 
-/* Author styling
+/* Author styling */
 .chat-item strong {
   font-weight: 700;
   color: var(--text);
 }
 
 /* Global link reset — make links inherit color */
-/* a {
+a {
   color: inherit;
   text-decoration: none;
-} */
+}
 
-/* a:hover {
+a:hover {
   text-decoration: underline;
   cursor: pointer;
-} */
+}
