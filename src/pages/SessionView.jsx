@@ -22,7 +22,7 @@ import getWindfinderlink from "../utils/getWindfinderlink";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
-export default function SessionViewPage(currentUser) {
+export default function SessionViewPage() {
   const { id } = useParams();
   const [session, setSession] = useState(null);
   const [comments, setComments] = useState([]);
@@ -31,6 +31,8 @@ export default function SessionViewPage(currentUser) {
     { id: 100, text: "I have a car and can offer a ride!" },
     { id: 101, text: "Can someone offer a ride?" },
   ];
+  const currentUser = Parse.User.current();
+  console.log("SessionView currentUser:", currentUser);
 
   // Load this one session by id
   useEffect(() => {
@@ -124,51 +126,52 @@ export default function SessionViewPage(currentUser) {
 
   return (
     <div className="page">
-      {/* Title */}
-      <div className="page-header">
-        <div className="page-title">{session.spotName}</div>
-        <div className="subtle">
-          {session.dateLabel} | {session.timeLabel}
+      <div>
+        {/* Title */}
+        <div className="page-header">
+          <div className="page-title">{session.spotName}</div>
+          <div className="subtle">
+            {session.dateLabel} | {session.timeLabel}
+          </div>
+        </div>
+
+        {/* Session card */}
+        <Sessionblocklarge
+          spot={session.spotName}
+          windKts={session.windPower}
+          tempC={session.temperature}
+          weather={session.weatherType}
+          windDir={session.windDirection}
+          avatars={defaultAvatars}
+          onJoin={onJoin}
+          isJoined={isJoined}
+        />
+
+        {/* Get more information section */}
+        <div className="info-section">
+          <div className="info-title">Get more information:</div>
+
+          <div className="info-buttons">
+            {/* Left button: to SpotView */}
+            <Link
+              to={`/spot/${session.spotName}`}
+              className="info-btn info-btn-primary"
+            >
+              About the spot
+            </Link>
+
+            {/* Right button: external link ( weather link) */}
+            <a
+              href={getWindfinderlink(session.spotName)}
+              target="_blank"
+              className="info-btn info-btn-secondary"
+            >
+              <span>About the weather</span>
+              <span className="external-icon">↗</span>
+            </a>
+          </div>
         </div>
       </div>
-
-      {/* Session card */}
-      <Sessionblocklarge
-        spot={session.spotName}
-        windKts={session.windPower}
-        tempC={session.temperature}
-        weather={session.weatherType}
-        windDir={session.windDirection}
-        avatars={defaultAvatars}
-        onJoin={onJoin}
-        isJoined={isJoined}
-      />
-
-      {/* Get more information section */}
-      <div className="info-section">
-        <div className="info-title">Get more information:</div>
-
-        <div className="info-buttons">
-          {/* Left button: to SpotView */}
-          <Link
-            to={`/spot/${session.spotName}`}
-            className="info-btn info-btn-primary"
-          >
-            About the spot
-          </Link>
-
-          {/* Right button: external link ( weather link) */}
-          <a
-            href={getWindfinderlink(session.spotName)}
-            target="_blank"
-            className="info-btn info-btn-secondary"
-          >
-            <span>About the weather</span>
-            <span className="external-icon">↗</span>
-          </a>
-        </div>
-      </div>
-
       {/* Subtitle */}
       <div className="section-subtitle">
         Communicate with others joining this session:

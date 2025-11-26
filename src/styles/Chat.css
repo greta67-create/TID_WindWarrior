@@ -70,8 +70,7 @@
 /* Fixed comment bar above bottom nav */
 .comment {
   position: fixed;
-  /* margin: 0 auto; */
-  bottom: 64px; /* sit above the nav */
+  bottom: 50px; /* sit above the nav */
   padding: 0px;
   width: 100%;
   max-width: var(--content);
@@ -105,12 +104,22 @@
   font-weight: 700;
 }
 
-/* Comments list (Session View) */
+/* Comments list (Session View)
 .chat-list {
   display: grid;
   gap: 12px;
   margin-top: 8px;
   padding-bottom: 80px;
+} */
+
+.chat-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 8px;
+  /* only this area scrolls */
+  max-height: calc(100vh - 260px);
+  overflow-y: auto;
+  padding-bottom: 16px;
 }
 
 /* Single comment bubble */
