@@ -15,7 +15,7 @@ export default function Navbar() {
             className={({ isActive }) => (isActive ? "active" : "")}
             end
           >
-            <GoHomeFill size={24} />
+            <GoHomeFill />
           </NavLink>
         </li>
 
@@ -24,7 +24,7 @@ export default function Navbar() {
             to="/map"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
-            <GrMapLocation size={24} />
+            <GrMapLocation />
           </NavLink>
         </li>
 
@@ -33,7 +33,7 @@ export default function Navbar() {
             to="/profile"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
-            <IoPersonSharp size={24} />
+            <IoPersonSharp />
           </NavLink>
         </li>
       </ul>

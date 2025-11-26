@@ -1,157 +1,190 @@
 import { useParams, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Sessionblocklarge from "../components/SessionBlocklarge";
+import "../styles/Sessionview.css";
 import "../App.css";
 import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
-import { useState } from "react";
 import "../styles/SessionView.css";
+import {
+  fetchSessionById,
+  fetchSessionComments,
+} from "../services/sessionService";
+import {
+  fetchUserSessions,
+  joinSession,
+  unjoinSession,
+} from "../services/usersessionService";
+import Chat from "../components/Chat";
+import getWindfinderlink from "../utils/getWindfinderlink";
+// import { getList } from "../../backend/getParseFunctions";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
-export default function SessionViewPage({
-  sessions = [],
-  onJoinSession,
-  joinedSessions = [],
-}) {
+export default function SessionViewPage() {
   const { id } = useParams();
+  const [session, setSession] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [isJoined, setIsJoined] = useState(false);
+  const proposedComments = [
+    { id: 100, text: "I have a car and can offer a ride!" },
+    { id: 101, text: "Can someone offer a ride?" },
+  ];
+  const currentUser = Parse.User.current();
+  console.log("SessionView currentUser:", currentUser);
 
+  // Load this one session by id
   useEffect(() => {
-    document.title = "Sessions";
-  }, []);
+    if (!id) return;
 
-  const session = sessions.find((x) => x.id === id) ||
-    sessions[0] || {
-      id: "unknown",
-      spot: "Unknown Spot",
-      dateLabel: "-",
-      timeLabel: "-",
-      windKts: 0,
-      tempC: 0,
-      weather: "⛅️",
-      windDir: "↗",
-      avatars: [],
+    async function loadSession() {
+      try {
+        console.log("SessionView URL id:", id);
+        const data = await fetchSessionById(id);
+        setSession(data);
+      } catch (error) {
+        console.error("Error fetching session by id:", error);
+      }
+    }
+
+    loadSession();
+  }, [id]);
+
+  // check if user has joined this session
+  useEffect(() => {
+    if (!session) return;
+
+    const user = Parse.User.current();
+    if (!user) return;
+
+    async function loadJoinState() {
+      try {
+        const userSessions = await fetchUserSessions(user);
+        const ids = userSessions.map((s) => s.id); // or s.sessionId depending on your service
+        setIsJoined(ids.includes(session.id));
+      } catch (err) {
+        console.error("Error loading joined state in SessionView:", err);
+      }
+    }
+
+    loadJoinState();
+  }, [session]);
+
+  // join/unjoin logic: call backend and update local state
+  const onJoin = async () => {
+    if (!session) return; //dont do anything if data haven't loaded yet
+    const sessionId = session.id;
+    console.log("Join button clicked", id);
+    const currentlyJoined = isJoined;
+
+    // optimistic toggle (show UI change immediately)
+    setIsJoined(!currentlyJoined);
+
+    try {
+      if (currentlyJoined) {
+        await unjoinSession(sessionId);
+        console.log("Usersession deleted in DB", id);
+      } else {
+        await joinSession(sessionId);
+        console.log("Usersession saved in DB", id);
+      }
+    } catch (error) {
+      console.error("Error toggling join state:", error);
+      setIsJoined(currentlyJoined);
+    }
+  };
+
+  // Load comments for this session
+  useEffect(() => {
+    if (!session) return;
+
+    const loadComments = async () => {
+      try {
+        const data = await fetchSessionComments(session.id);
+        console.log("Fetched session comments:", data);
+        setComments(data);
+      } catch (error) {
+        console.error("Error fetching session comments:", error);
+      }
     };
 
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      name: "Carl",
-      time: "4 Apr 16:21",
-      text: "I'll be biking there at 11:30. 2 Seats left but don't bring too much stuff.",
-    },
-    { id: 2, name: "Ida", time: "4 Apr 16:25", text: "I'll join!" },
-    { id: 3, name: "Tim", time: "4 Apr 16:27", text: "Me too!" },
-  ]);
+    loadComments();
+  }, [session]);
 
   const proposedComment = [
     { id: 100, text: "I have a car and can offer a ride!" },
     { id: 101, text: "Can someone offer a ride?" },
   ];
 
-  const [input, setInput] = useState("");
-
-  const onJoin = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onJoinSession(session.id);
-  };
-
-  const handleSendClick = () => {
-    if (input.trim() === "") return; // Prevent adding empty comments
-
-    const newComment = {
-      id: Date.now(),
-      name: "You", // Static name for now
-      time: new Date().toLocaleString(), // Current time
-      text: input, // User input
-    };
-    setComments([...comments, newComment]); // Add the new comment to the array
-    setInput(""); // Clear the input field
-  };
-
-  const handlePropCommentClick = (text) => {
-    const newComment = {
-      id: Date.now(),
-      name: "You", // Static name for now
-      time: new Date().toLocaleString(), // Current time
-      text, // User input
-    };
-    setComments([...comments, newComment]); // Add the new comment to the array
-  };
+  // to avoid that session is null before data loads
+  if (!session) {
+    return <div className="page">Loading session…</div>;
+  }
+  // const for weather link
+  // const weatherLink = getWindfinderlink(session.spotName);
 
   return (
     <div className="page">
-      {/* Title */}
-      <div className="page-header">
-        <div className="page-title">{session.spot}</div>
-        <div className="subtle">
-          {session.dateLabel} | {session.timeLabel}
+      <div>
+        {/* Title */}
+        <div className="page-header">
+          <div className="page-title">{session.spotName}</div>
+          <div className="subtle">
+            {session.dateLabel} | {session.timeLabel}
+          </div>
+        </div>
+
+        {/* Session card */}
+        <Sessionblocklarge
+          spot={session.spotName}
+          windKts={session.windPower}
+          tempC={session.temperature}
+          weather={session.weatherType}
+          windDir={session.windDirection}
+          avatars={defaultAvatars}
+          onJoin={onJoin}
+          isJoined={isJoined}
+        />
+
+        {/* Get more information section */}
+        <div className="info-section">
+          <div className="info-title">Get more information:</div>
+
+          <div className="info-buttons">
+            {/* Left button: to SpotView */}
+            <Link
+              to={`/spot/${session.spotName}`}
+              className="info-btn info-btn-primary"
+            >
+              About the spot
+            </Link>
+
+            {/* Right button: external link ( weather link) */}
+            <a
+              href={getWindfinderlink(session.spotName)}
+              target="_blank"
+              className="info-btn info-btn-secondary"
+            >
+              <span>About the weather</span>
+              <span className="external-icon">↗</span>
+            </a>
+          </div>
         </div>
       </div>
-
-      {/* Session card */}
-      <Sessionblocklarge
-        spot={session.spot}
-        dateLabel={session.dateLabel}
-        timeLabel={session.timeLabel}
-        windKts={session.windKts}
-        tempC={session.tempC}
-        weather={session.weather}
-        windDir={session.windDir}
-        avatars={defaultAvatars}
-        onJoin={onJoin}
-        isJoined={joinedSessions.includes(session.id)}
-      />
-
       {/* Subtitle */}
       <div className="section-subtitle">
         Communicate with others joining this session:
       </div>
 
-      {/* Comments */}
-      <div className="chat-list">
-        {comments.map((c) => (
-          <div key={c.id} className="chat-item">
-            <strong>{c.name}</strong>
-            <time>{c.time}</time>
-            <div className="chat-text">{c.text}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Bottom text input (fixed above nav) */}
-      <div className="comment-bar">
-        <div className="prop-comment">
-          {proposedComment.map((pc) => (
-            <button
-              key={pc.id}
-              type="button"
-              className="chip"
-              onClick={() => handlePropCommentClick(pc.text)}
-            >
-              {pc.text}
-            </button>
-          ))}
-        </div>
-        <div className="comment-inner">
-          <input
-            className="comment-input"
-            placeholder="Add Comment"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                handleSendClick();
-              }
-            }}
-          />
-          <button className="send-btn" onClick={handleSendClick}>
-            Send
-          </button>
-        </div>
-      </div>
+      <Chat
+        comments={comments}
+        currentUser={currentUser}
+        setComments={setComments}
+        session={session}
+        spot={null}
+        proposedComments={proposedComments}
+      />
     </div>
   );
 }
