@@ -23,6 +23,11 @@ function spotToPlainObject(parseObj) {
     currentWindDirection: parseObj.get("currentWindDirection"),
     currentWindKnts: parseObj.get("currentWindKnts"),
     mainText: parseObj.get("mainText"),
+    activities: parseObj.get("activities"),           
+    skillLevel: parseObj.get("skillLevel"),           
+    amenities: parseObj.get("amenities"),             
+    spotImage: parseObj.get("spotImage"), 
+    windfinderLink: parseObj.get("windfinderLink"),            
     createdAt: parseObj.get("createdAt"),
     updatedAt: parseObj.get("updatedAt"),
   };
