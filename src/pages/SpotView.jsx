@@ -14,6 +14,7 @@ import {
   unjoinSession,
   fetchUserSessions,
 } from "../services/usersessionService";
+import getWindfinderlink from "../utils/getWindfinderlink";
 
 export default function SpotViewPage() {
   const { spotName } = useParams();
@@ -26,6 +27,10 @@ export default function SpotViewPage() {
   const [user, setUser] = useState(Parse.User.current());
   const [joinedSessions, setJoinedSessions] = useState([]);
   const [upcomingSessions, setUpcomingSessions] = useState([]);
+  const proposedComments = [
+    { id: 100, text: "I can recommend this spot, nice conditions!" },
+    { id: 101, text: "Pay attention with" },
+  ];
 
   //load spot information
   useEffect(() => {
@@ -137,14 +142,23 @@ export default function SpotViewPage() {
           {spot?.mainText && (
             <div className="spot-description">{spot.mainText}</div>
           )}
-          <div className="section-subtitle" style={{ marginTop: 12 }}>
-            Top sessions for the next days
+          <div className="info-buttons">
+            <a
+              href={getWindfinderlink(spot.name)}
+              target="_blank"
+              className="info-btn info-btn-secondary"
+            >
+              <span>Get more info about the weather</span>
+              <span className="external-icon">↗</span>
+            </a>
           </div>
+
+          <div className="section-subtitle">Top sessions for the next days</div>
         </div>
       </div>
 
       {/* Sessions list */}
-      <div className="stack" style={{ marginTop: 12 }}>
+      <div className="stack">
         {upcomingSessions.map((s) => (
           <Link key={s.id} to={`/session/${s.id}`} className="session-link">
             <Sessionblock
@@ -170,6 +184,7 @@ export default function SpotViewPage() {
         setComments={setComments}
         session={null}
         spot={spot}
+        proposedComments={proposedComments}
       />
     </div>
   );
