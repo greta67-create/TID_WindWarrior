@@ -18,6 +18,7 @@ import {
 import Map from "react-map-gl/mapbox";
 import MapMarker from "../components/MapMarker";
 import "mapbox-gl/dist/mapbox-gl.css";
+import getWindfinderlink from "../utils/getWindfinderlink";
 
 export default function SpotViewPage() {
   const { spotName } = useParams();
@@ -37,6 +38,10 @@ export default function SpotViewPage() {
   });
   const [activeTab, setActiveTab] = useState('sessions');
 
+  const proposedComments = [
+    { id: 100, text: "I can recommend this spot, nice conditions!" },
+    { id: 101, text: "Pay attention with" },
+  ];
 
   //load spot information
   useEffect(() => {
@@ -224,6 +229,54 @@ export default function SpotViewPage() {
         wind_power={spot.currentWindKnts}
         latitude={spot.latitude}
         longitude={spot.longitude}
+        <div>
+          <div className="page-title">{spot?.name || name}</div>
+          {spot?.mainText && (
+            <div className="spot-description">{spot.mainText}</div>
+          )}
+          <div className="info-buttons">
+            <a
+              href={getWindfinderlink(spot.name)}
+              target="_blank"
+              className="info-btn info-btn-secondary"
+            >
+              <span>Get more info about the weather</span>
+              <span className="external-icon">↗</span>
+            </a>
+          </div>
+
+          <div className="section-subtitle">Top sessions for the next days</div>
+        </div>
+      </div>
+
+      {/* Sessions list */}
+      <div className="stack">
+        {upcomingSessions.map((s) => (
+          <Link key={s.id} to={`/session/${s.id}`} className="session-link">
+            <Sessionblock
+              key={s.id}
+              spot={s.spotName}
+              dateLabel={s.dateLabel}
+              timeLabel={s.timeLabel}
+              windKts={s.windPower}
+              tempC={s.temperature}
+              weather={s.weatherType}
+              windDir={s.windDirection}
+              onJoin={handleJoin(s.id)}
+              isJoined={joinedSessions.includes(s.id)}
+            />
+          </Link>
+        ))}
+      </div>
+      {/* Comments section */}
+      <div className="section-subtitle">What others say about this place:</div>
+      <Chat
+        comments={comments}
+        currentUser={Parse.User.current()}
+        setComments={setComments}
+        session={null}
+        spot={spot}
+        proposedComments={proposedComments}
       />
     </Map>
   )}

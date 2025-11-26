@@ -4,7 +4,7 @@ import "../styles/Profilecard.css";
 
 export default function ProfileCard({
   firstName,
-  lastName,
+  typeofSport,
   age,
   skillLevel,
   avatar = defaultAvatar,
@@ -22,12 +22,17 @@ export default function ProfileCard({
         />
       </div>
       <h2 className="profile-name">{UserName}</h2>
-      {lastName && <p className="profile-text">{lastName}</p>}
+      {typeofSport && <p className="profile-text">{typeofSport}</p>}
       {age !== undefined && age !== null && (
         <p className="profile-text">Age: {age}</p>
       )}
       {skillLevel && <p className="profile-text">Level: {skillLevel}</p>}
-      <button className="profile-button">Edit Profile</button>
+      <button
+        className="profile-button"
+        onClick={() => alert("Edit Profile feature coming soon!")}
+      >
+        Edit Profile
+      </button>
     </div>
   );
 }

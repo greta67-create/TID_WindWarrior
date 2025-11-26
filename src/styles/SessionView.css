@@ -1,111 +1,56 @@
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap");
 @import "/src/App.css";
 
-/* Spot link */
-.spot-reference {
-  margin-top: 10px;
-  padding-top: 10px;
-  justify-content: space-between;
+/* Get more information section */
+.info-section {
+  margin-top: 15px;
 }
 
-.spot-text {
-  font: var(--font-sans);
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--text);
-  letter-spacing: 0.2px;
-}
-.spot-link {
-  font: var(--font-sans);
+.info-title {
+  font-family: var(--font-sans);
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 400;
   color: var(--text);
-  letter-spacing: 0.2px;
+  margin-bottom: 8px;
 }
 
-/* Fixed comment bar above bottom nav */
-.comment-bar {
-  position: fixed;
-  /* left: 50%; */
-  bottom: 64px;
-  width: min(var(--content), calc(100vw - 32px));
-  padding: 8px 0;
-  background: transparent;
-  z-index: 11;
-}
-
-.prop-comment {
-  margin-bottom: 5px;
-  padding: 12px 14px;
+.info-buttons {
   display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
+  gap: 12px;
+  flex-direction: row; /* Change to row to make buttons appear next to each other */
+  width: 100%;
+  flex-wrap: nowrap;
+}
+
+.info-btn {
+  display: inline-flex;
   align-items: center;
-}
-
-.chip {
-  border: 1px solid var(--sub);
-  background: transparent;
-  color: var(--text);
-  border-radius: 12px;
-  padding: 8px 14px;
-  box-shadow: 0 6px 24px var(--shadow);
+  justify-content: center;
+  padding: 5px 12px;
+  border-radius: 8px;
   font-family: var(--font-sans);
-  font-weight: 200;
-  font-style: italic;
-  cursor: pointer;
-}
-
-.comment-inner {
-  display: flex;
-  gap: 5px;
-  padding: 0 16px;
-}
-.comment-input {
+  font-size: 14px;
+  text-decoration: none;
+  border: 1px solid var(--primary);
+  box-shadow: 0 8px 20px var(--shadow);
   flex: 1;
-  background: var(--back);
-  border: 1px solid var(--light);
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-family: var(--font-sans);
+  text-align: center;
 }
-.send-btn {
+
+.info-btn-primary {
   background: var(--primary);
   color: var(--back);
-  border: none;
-  border-radius: 12px;
-  padding: 0 14px;
-  cursor: pointer;
-  font-size: 15px;
+  width: 100%; /* Adjust width to fit content */
 }
 
-/* Comments list (Session View) */
-.chat-list {
-  display: grid;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-/* Single comment bubble */
-.chat-item {
-  background: var(--back);
-  border: 1px solid var(--light);
-  border-color: var(--light);
-  border-radius: 15px;
-  padding: 8px 10px;
-  box-shadow: 0 6px 24px var(--shadow);
-}
-
-.chat-item time {
-  font-size: 12px;
+.info-btn-secondary {
+  /* background: var(--back); */
   color: var(--text);
-  margin-left: 8px;
-  opacity: 0.6;
+  width: 100%; /* Adjust width to fit content */
 }
 
-.chat-text {
-  color: var(--text);
-  margin-top: 6px;
+.external-icon {
+  margin-left: 6px;
   font-size: 12px;
 }
 
