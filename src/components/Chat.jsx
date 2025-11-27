@@ -3,7 +3,7 @@ import ChatActions from "./CommentChatActions";
 import { createComment, deleteComment } from "../services/commentService";
 
 
-export default function Chat({ comments, currentUser, setComments, session, spot }) {
+export default function Chat({ comments, currentUser, setComments, session, spot, hideProposedComments = false }) {
     const [input, setInput] = useState("");
     const [proposedComments, setProposedComments] = useState([
         { id: 100, text: "I have a car and can offer a ride!" },
@@ -69,18 +69,21 @@ export default function Chat({ comments, currentUser, setComments, session, spot
             </div>
 
             <div className="comment-bar">
-                <div className="prop-comment">
-                {proposedComments.map((pc) => (
-                    <button
-                    key={pc.id}
-                    type="button"
-                    className="chip"
-                    onClick={() => handlePropCommentClick(pc.text, pc.id)}
-                    >
-                    {pc.text}
-                    </button>
-                ))}
-                </div>
+                {!hideProposedComments && (
+                    <div className="prop-comment">
+                        {proposedComments.map((pc) => (
+                        <button
+                            key={pc.id}
+                            type="button"
+                            className="chip"
+                            onClick={() => handlePropCommentClick(pc.text, pc.id)}
+                        >
+                            {pc.text}
+                        </button>
+                        ))}
+                    </div>
+                    )}
+                    
                 <div className="comment-inner">
                 <input
                     className="comment-input"
