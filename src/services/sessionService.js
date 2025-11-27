@@ -47,6 +47,7 @@ export default function sessionToPlainObject(parseObj) {
     // Spot info
     spotName: spotObj ? spotObj.get("spotName") : "Unknown spot",
     spotId: spotObj ? spotObj.id : null,
+    coastDirection: spotObj ? spotObj.get("coastDirection") : null,
   };
 }
 

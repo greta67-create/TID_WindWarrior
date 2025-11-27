@@ -8,6 +8,7 @@
   --back: #ffffff;
   --primary: #23449c;
   --shadow: #19306e66;
+  --highlight: #c02f2f;
   --font-sans: "Ubuntu", system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
   --content: 560px;
@@ -77,8 +78,8 @@ body {
 }
 
 .section-subtitle {
-  margin-top: 28px;
-  margin-bottom: 12px;
+  margin-top: 15px;
+  margin-bottom: 8px;
   font-weight: 600; /* stronger weight for presence */
   font-size: 1.05rem; /* slightly larger than body text */
   color: var(--text); /* keep main text color for emphasis */
