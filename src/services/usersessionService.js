@@ -76,15 +76,6 @@ export async function createUserSession(user, surfSessionId) {
   userSession.set("surfSessionId", sessionPointer); // pointer to SurfSessions
 
 
-
-  // REMOVE WHEN COMPLETELY MERGED TO surfSessionId
-  //
-  const sesh_pointer = new Parse.Object("Session_");
-  sesh_pointer.id = surfSessionId;
-  userSession.set("sessionId", sesh_pointer);
-
-
-
   console.log("Saving new user session:", userSession);
   const result = await userSession.save();
   console.log("Created user session:");
