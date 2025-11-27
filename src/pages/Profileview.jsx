@@ -55,6 +55,7 @@ export default function ProfileView({ onLogout }) {
 
   //split joinedSessions into past and future sessions whenever joinedSessions changes
   useEffect(() => {
+    console.log("Joined sessions:", joinedSessions);
     //split joinedSessions into past and future sessions
     const now = new Date();
     console.log("Now is:", now);

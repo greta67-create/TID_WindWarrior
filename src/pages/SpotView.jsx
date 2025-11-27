@@ -27,7 +27,7 @@ export default function SpotViewPage() {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error] = useState(null);
-  const [sessions, setSessions] = useState([]);
+  const [surfSessions, setSurfSessions] = useState([]);
   const [user, setUser] = useState(Parse.User.current());
   const [joinedSessions, setJoinedSessions] = useState([]);
   const [upcomingSessions, setUpcomingSessions] = useState([]);
@@ -53,14 +53,25 @@ export default function SpotViewPage() {
             setComments(loadedComments);
           });
 
-          fetchUpcomingSessionsToSpotId(spot.id).then((loadedSessions) => {
-            console.log("Loaded sessions:", loadedSessions);
-            setSessions(loadedSessions);
-          });
+          // fetchUpcomingSessionsToSpotId(spot.id).then((loadedSessions) => {
+          //   console.log("Loaded sessions:", loadedSessions);
+          //   setSessions(loadedSessions);
+          // });
+          const loadSessions = async () => {
+            const futureSessions = await Parse.Cloud.run("loadSessions", { 
+              user: user.id,
+              filters:{ spotIds: [spot.id] }
+              });
+            console.log("Loaded sessions in Feed:", futureSessions);
+            setSurfSessions(futureSessions);
+          };
+          loadSessions();
+          
 
           setSpot(spot);
           setLoading(false);
         });
+        
       } catch (error) {
         console.error("Error:", error);
         setComments([]);
@@ -70,35 +81,35 @@ export default function SpotViewPage() {
   }, []);
 
   //load current, joined user sessions
-  useEffect(() => {
-    const user = Parse.User.current();
-    if (!user) return;
-    //load Usersessions for specific user from backend
-    async function loadUserSessions() {
-      try {
-        const sessions = await fetchUserSessions(user);
-        console.log("Loaded user sessions in SpotView:", sessions);
-        const ids = sessions.map((s) => s.id); // 👈 keep only ids
-        setJoinedSessions(ids);
-      } catch (err) {
-        console.error("Error loading user sessions in SpotView:", err);
-      }
-    }
+  // useEffect(() => {
+  //   const user = Parse.User.current();
+  //   if (!user) return;
+  //   //load Usersessions for specific user from backend
+  //   async function loadUserSessions() {
+  //     try {
+  //       const sessions = await fetchUserSessions(user);
+  //       console.log("Loaded user sessions in SpotView:", sessions);
+  //       const ids = sessions.map((s) => s.id); // 👈 keep only ids
+  //       setJoinedSessions(ids);
+  //     } catch (err) {
+  //       console.error("Error loading user sessions in SpotView:", err);
+  //     }
+  //   }
 
-    loadUserSessions();
-  }, []);
+  //   loadUserSessions();
+  // }, []);
 
   // keep only upcoming sessions for the feed
-  useEffect(() => {
-    const now = new Date();
+  // useEffect(() => {
+  //   const now = new Date();
 
-    const upcoming = sessions
-      .filter((s) => s.sessionDateTime && s.sessionDateTime >= now)
-      .sort((a, b) => a.sessionDateTime - b.sessionDateTime); // earliest → latest
+  //   const upcoming = sessions
+  //     .filter((s) => s.sessionDateTime && s.sessionDateTime >= now)
+  //     .sort((a, b) => a.sessionDateTime - b.sessionDateTime); // earliest → latest
 
-    setUpcomingSessions(upcoming);
-    console.log("Upcoming sessions in spot view:", upcoming);
-  }, [sessions]);
+  //   setUpcomingSessions(upcoming);
+  //   console.log("Upcoming sessions in spot view:", upcoming);
+  // }, [sessions]);
 
   // updates the map center once the spot data loads
   useEffect(() => {
@@ -112,32 +123,28 @@ export default function SpotViewPage() {
   }, [spot]);
 
   //hande join/unjoin and add usersession to DB
-  const handleJoin = (id) => async (e) => {
+  const onJoin = (id) => async (e) => {
     if (e && e.preventDefault) {
       e.preventDefault();
       e.stopPropagation();
     }
-
     console.log("Join button clicked", id);
-
-    const currentlyJoined = joinedSessions.includes(id);
-
-    // optimistic UI: toggle locally
-    setJoinedSessions((prev) =>
-      currentlyJoined ? prev.filter((sid) => sid !== id) : [...prev, id]
+    const currentlyJoined = surfSessions.some(s => s.id === id && s.isJoined);
+    // UI Toggle 
+    setSurfSessions(prev => 
+      prev.map(s => s.id === id ? { ...s, isJoined: !s.isJoined } : s)
     );
-
     try {
       if (currentlyJoined) {
         await unjoinSession(id);
       } else {
         await joinSession(id);
-        console.log("(Un-)oined session from ProfileView:", id);
-      }
+      }  
     } catch (error) {
       console.error("Error toggling user session in feed:", error);
-      setJoinedSessions((prev) =>
-        currentlyJoined ? [...prev, id] : prev.filter((sid) => sid !== id)
+      // UI Toggle back on error
+      setSurfSessions(prev => 
+        prev.map(s => s.id === id ? { ...s, isJoined: !s.isJoined } : s)
       );
     }
   };
@@ -261,7 +268,7 @@ export default function SpotViewPage() {
 
 {activeTab === 'sessions' ? (
   <div className="sessions-container">
-    {upcomingSessions.map((s) => (
+    {surfSessions.map((s) => (
       <Link key={s.id} to={`/session/${s.id}`} className="session-link">
         <Sessionblock
           key={s.id}
@@ -273,8 +280,8 @@ export default function SpotViewPage() {
           weather={s.weatherType}
           windDir={s.windDirection}
           coastDirection={s.coastDirection}
-          onJoin={handleJoin(s.id)}
-          isJoined={joinedSessions.includes(s.id)}
+          onJoin={onJoin(s.id)}
+          isJoined={s.isJoined}
         />
       </Link>
     ))}
