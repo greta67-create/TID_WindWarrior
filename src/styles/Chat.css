@@ -102,6 +102,7 @@
   display: grid;
   gap: 12px;
   margin-top: 8px;
+  padding-bottom: 22px;
 }
 
 /* Single comment bubble */
@@ -117,4 +118,43 @@
 .chat-item strong {
   font-weight: 700;
   color: var(--text);
+}
+
+/* Proposed comments container */
+.prop-comment {
+  position: fixed;
+  bottom: 105px; 
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px 16px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  z-index: 8;
+  background: transparent;
+}
+
+.prop-comment::-webkit-scrollbar {
+  display: none;
+}
+
+/* Chip button */
+.chip {
+  background: var(--back);
+  border: 1px solid var(--light);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.chip:hover {
+  background: var(--light);
 }
