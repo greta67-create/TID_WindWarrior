@@ -69,12 +69,14 @@
 }
 
 /* Fixed comment bar above bottom nav */
-.comment {
+.comment-bar {
   position: fixed;
-  margin: 0 auto;
   bottom: 64px; /* sit above the nav */
+  left: 0;
+  right: 0;
   padding: 0px 16px;
   z-index: 9;
+  background: transparent;
 }
 
 .comment-inner {
