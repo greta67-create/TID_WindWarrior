@@ -80,6 +80,7 @@ export default function Chat({
                 />
               ) : null}
             </div>
+            <div className="chat-text">{c.text}</div>
           </div>
         ))}
       </div>
@@ -113,6 +114,9 @@ export default function Chat({
               }
             }}
           />
+          <button className="send-btn" onClick={handleSendClick}>
+            Send
+          </button>
         </div>
       </div>
     </div>

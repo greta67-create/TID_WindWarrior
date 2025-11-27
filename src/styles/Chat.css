@@ -4,6 +4,7 @@
   align-items: center;
   position: relative;
 }
+
 .chat-actions {
   position: relative;
 }
@@ -70,16 +71,13 @@
 /* Fixed comment bar above bottom nav */
 .comment {
   position: fixed;
-  bottom: 50px; /* sit above the nav */
-  padding: 0px;
-  width: 100%;
-  max-width: var(--content);
-  /* padding-bottom: 64px; /* extra space for bottom nav */
-  /* backdrop-filter: blur(10px); */
-  /* -webkit-backdrop-filter: blur(10px); */
+  margin: 0 auto;
+  bottom: 64px; /* sit above the nav */
+  padding: 0px 16px;
   z-index: 9;
 }
-.comment-bar {
+
+.comment-inner {
   max-width: var(--content);
   margin: 0;
   display: flex;
@@ -87,6 +85,7 @@
   align-items: center;
   padding-right: 32px;
 }
+
 .comment-input {
   flex: 1;
   background: var(--back);
@@ -95,6 +94,7 @@
   padding: 12px 14px;
   font-family: var(--font-sans);
 }
+
 .send-btn {
   background: var(--primary);
   color: var(--back);
@@ -140,7 +140,7 @@
 /* Proposed comments container */
 .prop-comment {
   position: fixed;
-  bottom: 105px; 
+  bottom: 105px;
   left: 0;
   right: 0;
   display: flex;
