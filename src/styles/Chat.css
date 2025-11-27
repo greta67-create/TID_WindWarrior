@@ -137,41 +137,41 @@
   color: var(--text);
 }
 
-.chat-item time {
-  font-size: 12px;
-  color: var(--text);
-  margin-left: 8px;
-  opacity: 0.6;
-}
-
-/* .prop-comment {
-  margin-bottom: 5px;
-  padding: 0px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  align-items: center;
-} */
+/* Proposed comments container */
 .prop-comment {
-  max-width: var(--content);
-  margin: 0 auto 8px;
-  padding-right: 32px;
-  padding-top: 8px;
+  position: fixed;
+  bottom: 105px; 
+  left: 0;
+  right: 0;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
-  align-items: center;
+  overflow-x: auto;
+  padding: 8px 16px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  z-index: 8;
+  background: transparent;
 }
 
+.prop-comment::-webkit-scrollbar {
+  display: none;
+}
+
+/* Chip button */
 .chip {
-  border: 1px solid var(--sub);
-  background: transparent;
-  color: var(--text);
-  border-radius: 12px;
-  padding: 8px 14px;
-  box-shadow: 0 6px 24px var(--shadow);
+  background: var(--back);
+  border: 1px solid var(--light);
+  border-radius: 20px;
+  padding: 8px 16px;
   font-family: var(--font-sans);
-  font-weight: 200;
-  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--text);
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.chip:hover {
+  background: var(--light);
 }

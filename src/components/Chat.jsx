@@ -8,7 +8,12 @@ export default function Chat({
   setComments,
   session,
   spot,
-  proposedComments: initialProposedComments = [],
+  hideProposedComments = false,
+  // optional: allow passing initial proposed comments from props
+  proposedComments: initialProposedComments = [
+    { id: 100, text: "I have a car and can offer a ride!" },
+    { id: 101, text: "Can someone offer a ride?" },
+  ],
 }) {
   const [input, setInput] = useState("");
   const [proposedComments, setProposedComments] = useState(
@@ -24,19 +29,22 @@ export default function Chat({
         console.error("Error deleting comment:", error);
       });
   };
+
   const handleEditComment = () => {
     alert("Edit comment feature coming soon!");
   };
 
   const handleSendClick = () => {
     if (input.trim() === "") return; // Prevent adding empty comments
+
     console.log("Creating comment:", input);
-    // either session or spot is null so it will be created accordingly
+
     if (session) {
       console.log("Creating comment for session:", session.id);
     } else if (spot) {
       console.log("Creating comment for spot:", spot.id);
     }
+
     createComment(session?.id, spot?.id, currentUser, input)
       .then((savedComment) => {
         setComments([...comments, savedComment]);
@@ -44,12 +52,12 @@ export default function Chat({
       .catch((error) => {
         console.error("Error creating comment:", error);
       });
+
     setInput(""); // Clear the input field
   };
 
   const handlePropCommentClick = (text, id) => {
     setInput(text);
-    // remove proposed comment from the list
     setProposedComments((prev) => prev.filter((pc) => pc.id !== id));
   };
 
@@ -63,6 +71,7 @@ export default function Chat({
                 <strong>{c.name}</strong>
                 <time>{c.time || "Date Unknown"}</time>
               </div>
+
               {c.user_id === currentUser.id ? (
                 <ChatActions
                   commentId={c.id}
@@ -71,25 +80,27 @@ export default function Chat({
                 />
               ) : null}
             </div>
-            <div className="chat-text">{c.text}</div>
           </div>
         ))}
       </div>
 
-      <div className="comment">
-        <div className="prop-comment">
-          {proposedComments.map((pc) => (
-            <button
-              key={pc.id}
-              type="button"
-              className="chip"
-              onClick={() => handlePropCommentClick(pc.text, pc.id)}
-            >
-              {pc.text}
-            </button>
-          ))}
-        </div>
-        <div className="comment-bar">
+      <div className="comment-bar">
+        {!hideProposedComments && (
+          <div className="prop-comment">
+            {proposedComments.map((pc) => (
+              <button
+                key={pc.id}
+                type="button"
+                className="chip"
+                onClick={() => handlePropCommentClick(pc.text, pc.id)}
+              >
+                {pc.text}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="comment-inner">
           <input
             className="comment-input"
             placeholder="Add Comment"
@@ -102,9 +113,6 @@ export default function Chat({
               }
             }}
           />
-          <button className="send-btn" onClick={handleSendClick}>
-            Send
-          </button>
         </div>
       </div>
     </div>

@@ -276,7 +276,19 @@ export default function SpotViewPage() {
           onJoin={handleJoin(s.id)}
           isJoined={joinedSessions.includes(s.id)}
         />
-      )}
+      </Link>
+    ))}
+  </div>
+) : (
+  <Chat
+    comments={comments}
+    currentUser={Parse.User.current()}
+    setComments={setComments}
+    session={null}
+    spot={spot}
+    hideProposedComments={true}
+  />
+)}
     </div>
   );
 }
