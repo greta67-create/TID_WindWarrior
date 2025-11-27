@@ -18,7 +18,6 @@ import {
 } from "../services/usersessionService";
 import Chat from "../components/Chat";
 import getWindfinderlink from "../utils/getWindfinderlink";
-// import { getList } from "../../backend/getParseFunctions";
 
 const defaultAvatars = [ava1, ava2, ava3];
 

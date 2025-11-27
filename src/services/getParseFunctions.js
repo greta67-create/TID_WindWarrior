@@ -43,40 +43,40 @@ export const loadUserSessions = async (user) => {
 
 
 
-function sessionToPlainObject(parseObj) {
-  const spotObj = parseObj.get("spotId");
-  const date = parseObj.get("sessionDateTime"); // this is already a JS Date
+// function sessionToPlainObject(parseObj) {
+//   const spotObj = parseObj.get("spotId");
+//   const date = parseObj.get("sessionDateTime"); // this is already a JS Date
 
-  let dateLabel = "-";
-  let timeLabel = "-";
+//   let dateLabel = "-";
+//   let timeLabel = "-";
 
-  if (date) {
-    dateLabel = date.toLocaleDateString();
-    timeLabel = date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
+//   if (date) {
+//     dateLabel = date.toLocaleDateString();
+//     timeLabel = date.toLocaleTimeString([], {
+//       hour: "2-digit",
+//       minute: "2-digit",
+//     });
+//   }
 
-  return {
-    // IDs
-    id: parseObj.id, // use this everywhere in the UI
+//   return {
+//     // IDs
+//     id: parseObj.id, // use this everywhere in the UI
 
-    // Session info from your backend
-    durationHours: parseObj.get("durationHours"),
-    windPower: parseObj.get("windPower"),
-    weatherType: parseObj.get("weatherType"),
-    temperature: parseObj.get("temperature"),
-    windDirection: parseObj.get("windDirection"),
-    sessionDateTime: date,
+//     // Session info from your backend
+//     durationHours: parseObj.get("durationHours"),
+//     windPower: parseObj.get("windPower"),
+//     weatherType: parseObj.get("weatherType"),
+//     temperature: parseObj.get("temperature"),
+//     windDirection: parseObj.get("windDirection"),
+//     sessionDateTime: date,
 
-    // Spot info (string + ids)
-    spotName: spotObj ? spotObj.get("spotName") : "Unknown spot",
-    spotId: spotObj ? spotObj.id : null,
-    isJoined: false, // default value; will be updated later
+//     // Spot info (string + ids)
+//     spotName: spotObj ? spotObj.get("spotName") : "Unknown spot",
+//     spotId: spotObj ? spotObj.id : null,
+//     isJoined: false, // default value; will be updated later
     
-  };
-}
+//   };
+// }
 
 export const loadSessions = async (user, filters = {}) => {
   try {
@@ -148,3 +148,107 @@ export const loadSessions = async (user, filters = {}) => {
   }
 };
 
+function sessionToPlainObject(parseObj) {
+  const spotObj = parseObj.get("spotId");
+  const date = parseObj.get("sessionDateTime"); 
+
+  let dateLabel = "-";
+  let timeLabel = "-";
+
+  if (date) {
+    dateLabel = date.toLocaleDateString();
+    timeLabel = date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  return {
+
+    id: parseObj.id, 
+    durationHours: parseObj.get("durationHours"),
+    windPower: parseObj.get("windPower"),
+    weatherType: parseObj.get("weatherType"),
+    temperature: parseObj.get("temperature"),
+    windDirection: parseObj.get("windDirection"),
+    sessionDateTime: date,
+    dateLabel,
+    timeLabel,
+    spotName: spotObj ? spotObj.get("spotName") : "Unknown spot",
+    spotId: spotObj ? spotObj.id : null,
+    isJoined: false, // default value; will be updated later
+  };
+}
+
+export const loadSurfSessions = async (user, filters = {}) => {
+  try {
+   
+    
+    if (!user) {
+      throw new Error("User must be authenticated");
+    }
+
+    const Session = Parse.Object.extend("SurfSessions");
+    const query = new Parse.Query(Session);
+    query.include("spotId");
+    
+    // Apply filters to query
+    if (filters.futureOnly) {
+      query.greaterThanOrEqualTo("sessionDateTime", new Date());
+    }
+    
+    if (filters.spotIds && filters.spotIds.length > 0) {
+      const spotPointers = filters.spotIds.map(spotId => ({
+        __type: 'Pointer',
+        className: 'Spot',
+        objectId: spotId
+      }));
+      query.containedIn("spotId", spotPointers);
+    }
+    
+    let sessionResults = await query.find();
+    console.log("sessionResults:", sessionResults);
+
+    sessionResults = sessionResults.map((session) => sessionToPlainObject(session));
+
+    const userSessionsQuery = new Parse.Query("UserSessions");
+
+    // Filter by current user and fetch related data
+    userSessionsQuery.equalTo("userId", user);
+    userSessionsQuery.include("surfSessionId");
+    userSessionsQuery.include("surfSessionId.spotId");
+    
+    // Only query UserSessions for the session IDs we already retrieved
+    if (sessionResults.length > 0) {
+      const sessionPointers = sessionResults.map(session => ({
+        __type: 'Pointer',
+        className: 'SurfSessions',
+        objectId: session.id
+      }));
+      userSessionsQuery.containedIn("surfSessionId", sessionPointers);
+    }
+
+    const userSessionsData = await userSessionsQuery.find();
+    console.log("User sessions data:", userSessionsData);
+    // For each UserSessions row, take its sessionId and convert to plain object
+    const userSessionIDs = userSessionsData.map((userSession) => {
+      return userSession.get("surfSessionId").id;
+    });
+    console.log("User sessions data:", userSessionIDs);
+    console.log("sessionResults:", sessionResults);
+
+    // add isJoined flag to sessions
+    sessionResults = sessionResults.map((session) => {
+      return {
+        ...session,
+        isJoined: userSessionIDs.includes(session.id),
+      };
+    });
+    
+    return sessionResults;
+  } catch (error) {
+    console.error("Error fetching user sessions:", error);
+    throw error;
+  }
+};
+export default loadSurfSessions;

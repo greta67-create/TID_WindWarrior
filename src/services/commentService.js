@@ -20,17 +20,17 @@ export function commentToPlainObject(parseObj) {
     };
 }
 
-export async function createComment(sessionId  = null, spotId = null, userId, message, mother_comment_id = null) {
+export async function createComment(surfSessionId  = null, spotId = null, userId, message, mother_comment_id = null) {
     const comment = new Comment();
     comment.set("userId", userId);
     comment.set("message", message);
-    if (sessionId) {
+    if (surfSessionId) {
         const sessionPointer = {
             __type: 'Pointer',
-            className: 'Session_',
-            objectId: sessionId
+            className: 'SurfSessions',
+            objectId: surfSessionId
         };
-        comment.set("sessionId", sessionPointer);
+        comment.set("surfSessionId", sessionPointer);
     }
     if (spotId) {
         const spotPointer = {
@@ -45,6 +45,7 @@ export async function createComment(sessionId  = null, spotId = null, userId, me
     }
     try {
         const savedComment = await comment.save();
+        console.log("Created LALLA:", savedComment);
         return commentToPlainObject(savedComment);
     } catch (error) {
         console.error("Error creating comment:", error);

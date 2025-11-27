@@ -11,14 +11,11 @@ import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
 import Parse from "../parse-init";
 import loadSurfSessions from "../services/getParseFunctions";
-
 import {
   joinSession,
   unjoinSession,
 } from "../services/usersessionService";
 
-
-import { BsFilterSquare } from "react-icons/bs";
 const defaultAvatars = [ava1, ava2, ava3];
 
 
@@ -27,12 +24,12 @@ const defaultAvatars = [ava1, ava2, ava3];
 
 function SessionFeedPage() {
   const [surfSessions, setSurfSessions] = useState([]);
-  const user = Parse.User.current();
+
 // Load sessions from Parse Cloud Function
   useEffect(() => {
     async function fetchData() {
       const futureSessions = await Parse.Cloud.run("loadSessions", { 
-        user: user.id,
+      // const futureSessions = await loadSurfSessions(user, { 
         filters:{}
       });
       console.log("Loaded sessions in Feed:", futureSessions);

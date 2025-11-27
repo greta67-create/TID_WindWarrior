@@ -18,15 +18,15 @@ export async function fetchUserSessions(user) {
 
   // Filter by current user and fetch related data
   query.equalTo("userId", user);
-  query.include("sessionId"); // include the Session_ object
-  query.include("sessionId.spotId"); // include the Spot for the session
+  query.include("surfSessionId"); // include the SurfSessions object
+  query.include("surfSessionId.spotId"); // include the Spot for the session
 
   try {
     const userSessionsData = await query.find();
 
-    // For each UserSessions row, take its sessionId and convert to plain object
+    // For each UserSessions row, take its surfSessionId and convert to plain object
     const sessions = userSessionsData
-      .map((userSession) => userSession.get("sessionId"))
+      .map((userSession) => userSession.get("surfSessionId"))
       .map(sessionToPlainObject);
 
     return sessions;
@@ -43,39 +43,51 @@ export async function fetchUserSessions(user) {
  * This is what happens when the user clicks "Join"
  *
  * @param {Parse.User} user      The logged-in user
- * @param {string} sessionId     The objectId of the Session_
+ * @param {string} surfSessionId     The objectId of the SurfSessions
  * @returns {Promise<Parse.Object>} The created or existing UserSessions object
  */
-export async function createUserSession(user, sessionId) {
+export async function createUserSession(user, surfSessionId) {
   if (!user) {
     throw new Error("User must be provided to create a user session");
   }
-  if (!sessionId) {
+  if (!surfSessionId) {
     throw new Error("Session ID must be provided");
   }
-
-  // Pointer to the Session_
-  const sessionPointer = new Parse.Object("Session_");
-  sessionPointer.id = sessionId;
+  console.log("Creating user session for user:", user.id, "session:", surfSessionId);
+  // Pointer to the SurfSessions
+  const sessionPointer = new Parse.Object("SurfSessions");
+  sessionPointer.id = surfSessionId;
 
   // Find the UserSessions row for this user and this session
   const query = new Parse.Query(UserSessions);
   query.equalTo("userId", user);
-  query.equalTo("sessionId", sessionPointer);
+  query.equalTo("surfSessionId", sessionPointer);
 
   const existing = await query.first();
 
   if (existing) {
     // Already joined, just return the existing record
-    return existing;
+    throw new Error("User session already exists");
   }
 
   // Create new UserSessions row if no existing session
   const userSession = new UserSessions();
   userSession.set("userId", user); // pointer to _User
-  userSession.set("sessionId", sessionPointer); // pointer to Session_
+  userSession.set("surfSessionId", sessionPointer); // pointer to SurfSessions
 
+
+
+  // REMOVE WHEN COMPLETELY MERGED TO surfSessionId
+  //
+  const sesh_pointer = new Parse.Object("Session_");
+  sesh_pointer.id = surfSessionId;
+  userSession.set("sessionId", sesh_pointer);
+
+
+
+  console.log("Saving new user session:", userSession);
   const result = await userSession.save();
+  console.log("Created user session:");
   return result;
 }
 
@@ -84,26 +96,27 @@ export async function createUserSession(user, sessionId) {
  * This is what happens when the user clicks "Unjoin"
  *
  * @param {Parse.User} user      The logged-in user
- * @param {string} sessionId     The objectId of the Session_
+ * @param {string} surfSessionId     The objectId of the SurfSessions
  * @returns {Promise<void>}
  */
 
-export async function deleteUserSession(user, sessionId) {
+export async function deleteUserSession(user, surfSessionId) {
   if (!user) {
     throw new Error("User must be provided to delete a user session");
   }
-  if (!sessionId) {
+  if (!surfSessionId) {
     throw new Error("Session ID must be provided to delete a user session");
   }
 
-  // Pointer to the Session_
-  const sessionPointer = new Parse.Object("Session_");
-  sessionPointer.id = sessionId;
+  // Pointer to the SurfSessions
+  const sessionPointer = new Parse.Object("SurfSessions");
+  sessionPointer.id = surfSessionId;
 
   // Find the UserSessions row for this user and this session
   const query = new Parse.Query(UserSessions);
   query.equalTo("userId", user);
-  query.equalTo("sessionId", sessionPointer);
+  query.equalTo("surfSessionId", sessionPointer);
+
 
   try {
     const userSession = await query.first();
@@ -121,12 +134,12 @@ export async function deleteUserSession(user, sessionId) {
   }
 }
 
-export async function joinSession(sessionId) {
+export async function joinSession(surfSessionId) {
   const user = Parse.User.current();
-  return createUserSession(user, sessionId);
+  return createUserSession(user, surfSessionId);
 }
 
-export async function unjoinSession(sessionId) {
+export async function unjoinSession(surfSessionId) {
   const user = Parse.User.current();
-  return deleteUserSession(user, sessionId);
+  return deleteUserSession(user, surfSessionId);
 }
