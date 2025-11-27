@@ -142,6 +142,7 @@ export default function SessionViewPage() {
           tempC={session.temperature}
           weather={session.weatherType}
           windDir={session.windDirection}
+          coastDirection={session.coastDirection}
           avatars={defaultAvatars}
           onJoin={onJoin}
           isJoined={isJoined}
