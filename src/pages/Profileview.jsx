@@ -104,7 +104,7 @@ export default function ProfileView({ onLogout }) {
       <div className="page-content">
         <ProfileCard
           firstName={user.firstName}
-          lastName={user.lastName}
+          typeofSport={user.typeofSport}
           avatar={user.avatar}
           age={user.age}
           skillLevel={user.skillLevel}
@@ -115,10 +115,11 @@ export default function ProfileView({ onLogout }) {
           <div className="stack">
             {upcomingSessions.length > 0 ? (
               upcomingSessions.map((s) => (
-                <Link 
-                  key={s.id} 
-                  to={`/session/${s.id}`} 
-                  className="session-link">
+                <Link
+                  key={s.id}
+                  to={`/session/${s.id}`}
+                  className="session-link"
+                >
                   <Sessionblock
                     key={s.id}
                     spot={s.spotName}
@@ -128,6 +129,7 @@ export default function ProfileView({ onLogout }) {
                     tempC={s.temperature}
                     weather={s.weatherType}
                     windDir={s.windDirection}
+                    coastDirection={s.coastDirection}
                     avatars={defaultAvatars}
                     onJoin={handleUnjoin(s.id)}
                     isJoined={true}
@@ -165,6 +167,7 @@ export default function ProfileView({ onLogout }) {
                     tempC={s.temperature}
                     weather={s.weatherType}
                     windDir={s.windDirection}
+                    coastDirection={s.coastDirection}
                     avatars={defaultAvatars}
                     showJoin={false} //no join needed as these are past sessions
                   />

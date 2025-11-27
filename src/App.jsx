@@ -77,10 +77,7 @@ export default function App() {
       <div className="app">
         <Routes>
           <Route path="/" element={<SessionFeedPage sessions={sessions} />} />
-          <Route
-            path="/session/:id"
-            element={<SessionViewPage joinedSessions={joinedSessions} />}
-          />
+          <Route path="/session/:id" element={<SessionViewPage />} />
           <Route path="/map" element={<MapView />} />
           <Route
             path="/profile"

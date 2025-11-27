@@ -69,7 +69,7 @@
 }
 
 /* Fixed comment bar above bottom nav */
-.comment-bar {
+.comment {
   position: fixed;
   margin: 0 auto;
   bottom: 64px; /* sit above the nav */
@@ -79,9 +79,11 @@
 
 .comment-inner {
   max-width: var(--content);
-  margin: 0 auto;
+  margin: 0;
   display: flex;
   gap: 8px;
+  align-items: center;
+  padding-right: 32px;
 }
 
 .comment-input {
@@ -102,7 +104,14 @@
   font-weight: 700;
 }
 
-/* Comments list (Session View) */
+/* Comments list (Session View)
+.chat-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 8px;
+  padding-bottom: 80px;
+} */
+
 .chat-list {
   display: grid;
   gap: 12px;
