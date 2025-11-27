@@ -259,33 +259,22 @@ export default function SpotViewPage() {
         </button>
       </div>
 
-      {activeTab === "sessions" ? (
-        <div className="sessions-container">
-          {upcomingSessions.map((s) => (
-            <Link key={s.id} to={`/session/${s.id}`} className="session-link">
-              <Sessionblock
-                key={s.id}
-                spot={s.spotName}
-                dateLabel={s.dateLabel}
-                timeLabel={s.timeLabel}
-                windKts={s.windPower}
-                tempC={s.temperature}
-                weather={s.weatherType}
-                windDir={s.windDirection}
-                onJoin={handleJoin(s.id)}
-                isJoined={joinedSessions.includes(s.id)}
-              />
-            </Link>
-          ))}
-        </div>
-      ) : (
-        <Chat
-          comments={comments}
-          currentUser={Parse.User.current()}
-          setComments={setComments}
-          session={null}
-          spot={spot}
-          proposedComments={proposedComments}
+{activeTab === 'sessions' ? (
+  <div className="sessions-container">
+    {upcomingSessions.map((s) => (
+      <Link key={s.id} to={`/session/${s.id}`} className="session-link">
+        <Sessionblock
+          key={s.id}
+          spot={s.spotName}
+          dateLabel={s.dateLabel}
+          timeLabel={s.timeLabel}
+          windKts={s.windPower}
+          tempC={s.temperature}
+          weather={s.weatherType}
+          windDir={s.windDirection}
+          coastDirection={s.coastDirection}
+          onJoin={handleJoin(s.id)}
+          isJoined={joinedSessions.includes(s.id)}
         />
       )}
     </div>
