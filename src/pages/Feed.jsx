@@ -1,38 +1,46 @@
 import "../App.css";
-import SessionBlock from "../components/Sessionblock";
+
+//import SessionBlock from "../components/Sessionblock";
 import { useState, useEffect } from "react";
+import Sessionblock from "../components/Sessionblock";
+
+
 import { Link } from "react-router-dom";
 import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
 import Parse from "../parse-init";
-<<<<<<< HEAD
+import loadSurfSessions from "../services/getParseFunctions";
 
 import {
   joinSession,
   unjoinSession,
 } from "../services/usersessionService";
 
-=======
+
 import { BsFilterSquare } from "react-icons/bs";
->>>>>>> ba54a90 (load sessions cloud)
 const defaultAvatars = [ava1, ava2, ava3];
+
+
+// function SessionFeedPage() {
+
 
 function SessionFeedPage() {
   const [surfSessions, setSurfSessions] = useState([]);
-
-
+  const user = Parse.User.current();
 // Load sessions from Parse Cloud Function
-    useEffect(() => {
-      async function fetchData() {
-        const futureSessions = await Parse.Cloud.run("loadSessions", { 
-          filters: {} 
-        });
-        console.log("Loaded sessions in Feed:", futureSessions);
-        setSurfSessions(futureSessions);
-      }
-      fetchData();
-    }, []);
+  useEffect(() => {
+    async function fetchData() {
+      const futureSessions = await Parse.Cloud.run("loadSessions", { 
+        user: user.id,
+        filters:{}
+      });
+      console.log("Loaded sessions in Feed:", futureSessions);
+      setSurfSessions(futureSessions);
+    }
+    fetchData();
+  }, []);
+
 
 // Toggle join/unjoin session
   const onJoin = (id) => async (e) => {
@@ -40,9 +48,7 @@ function SessionFeedPage() {
       e.preventDefault();
       e.stopPropagation();
     }
-
     console.log("Join button clicked", id);
-
     const currentlyJoined = surfSessions.some(s => s.id === id && s.isJoined);
     // UI Toggle 
     setSurfSessions(prev => 
@@ -63,23 +69,6 @@ function SessionFeedPage() {
     }
   };
 
-<<<<<<< HEAD
-=======
-  useEffect(() => {
-    async function fetchData() {
-      const futureSessions = await Parse.Cloud.run("loadSessions", { 
-        user: user.id,
-        filters:{}
-      });
-      console.log("Loaded sessions in Feed:", futureSessions);
-      setSurfSessions(futureSessions);
-    }
-    fetchData();
-  }, []);
-
->>>>>>> ba54a90 (load sessions cloud)
-
-
   // Render session feed
   return (
     <div className="page">
@@ -98,23 +87,15 @@ function SessionFeedPage() {
             to={`/session/${s.id}`}
             style={{ textDecoration: "none" }}
           >
-            <SessionBlock
+            <Sessionblock
               spot={s.spotName}
-              dateLabel={
-                s.sessionDateTime ? s.sessionDateTime.toLocaleDateString() : "-"
-              }
-              timeLabel={
-                s.sessionDateTime
-                  ? s.sessionDateTime.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
-                  : "-"
-              }
+              dateLabel={s.dateLabel}
+              timeLabel={s.timeLabel}
               windKts={s.windPower}
               tempC={s.temperature}
               weather={s.weatherType}
               windDir={s.windDirection}
+              coastDirection={s.coastDirection}
               avatars={defaultAvatars}
               onJoin={onJoin(s.id)}
               isJoined={s.isJoined}

@@ -6,30 +6,12 @@ import SessionFeedPage from "./pages/Feed";
 import SessionViewPage from "./pages/SessionView";
 import ProfileView from "./pages/Profileview";
 import SpotViewPage from "./pages/SpotView";
-import Navbar from "./components/Navigationbar";
+import Navbar from "./components/NavigationBar";
 import MapView from "./pages/MapView";
 import Auth from "./pages/LogOn";
-import { fetchUserSessions } from "./services/usersessionService";
-import { fetchAllSessions } from "./services/sessionService";
-
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [sessions, setSessions] = useState([]);
-  const [joinedSessions, setJoinedSessions] = useState([]);
-
-  useEffect(() => {
-    async function loadSessions() {
-      try {
-        const sessionData = await fetchAllSessions();
-        setSessions(sessionData);
-      } catch (error) {
-        console.error("Error fetching sessions:", error);
-      }
-    }
-
-    loadSessions();
-  }, []);
 
   useEffect(() => {
     const current = Parse.User.current();
@@ -38,25 +20,8 @@ export default function App() {
     }
   }, []);
 
-  useEffect(() => {
-    if (!user) return;
-    fetchUserSessions(user)
-      .then(setJoinedSessions)
-      .catch((err) => console.error("Error fetching user sessions:", err));
-  }, [user]);
-
-  const handleJoinSession = (sessionId) => {
-    setJoinedSessions((prev) => {
-      // If already joined, remove it
-      if (prev.includes(sessionId)) {
-        return prev.filter((id) => id !== sessionId);
-      }
-      // If not joined, add it
-      return [...prev, sessionId];
-    });
-  };
-
-  const handleLogout = async () => {
+  // log out-function - uses authService to keep logic centralized
+  const onLogout = async () => {
     try {
       await Parse.User.logOut();
       setUser(null);
@@ -77,22 +42,10 @@ export default function App() {
     <Router>
       <div className="app">
         <Routes>
-          <Route path="/" element={<SessionFeedPage sessions={sessions} />} />
-          <Route
-            path="/session/:id"
-            element={<SessionViewPage joinedSessions={joinedSessions} />}
-          />
+          <Route path="/" element={<SessionFeedPage />} />
+          <Route path="/session/:id" element={<SessionViewPage />} />
           <Route path="/map" element={<MapView />} />
-          <Route
-            path="/profile"
-            element={
-              <ProfileView
-                onLogout={handleLogout}
-                onJoinSession={handleJoinSession}
-                joinedSessions={joinedSessions}
-              />
-            }
-          />
+          <Route path="/profile" element={<ProfileView onLogout={onLogout} />} />
           <Route path="/spot/:spotName" element={<SpotViewPage />} />
         </Routes>
         <Navbar />

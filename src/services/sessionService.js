@@ -13,39 +13,43 @@ const Comment = Parse.Object.extend("comment");
 
 export default function sessionToPlainObject(parseObj) {
   const spotObj = parseObj.get("spotId");
-  const date = parseObj.get("sessionDateTime"); // this is already a JS Date
+  const date = parseObj.get("sessionDateTime"); // JS Date
 
   let dateLabel = "-";
   let timeLabel = "-";
 
   if (date) {
-    dateLabel = date.toLocaleDateString();
-    timeLabel = date.toLocaleTimeString([], {
-      hour: "2-digit",
+    timeLabel = date.toLocaleTimeString("en-GB", {
+      hour: "numeric",
       minute: "2-digit",
+    });
+
+    dateLabel = date.toLocaleDateString("en-GB", {
+      month: "short",
+      day: "numeric",
     });
   }
 
   return {
     // IDs
-    id: parseObj.id, // use this everywhere in the UI
+    id: parseObj.id,
 
-    // Session info from your backend
+    // Session info
     durationHours: parseObj.get("durationHours"),
     windPower: parseObj.get("windPower"),
     weatherType: parseObj.get("weatherType"),
     temperature: parseObj.get("temperature"),
     windDirection: parseObj.get("windDirection"),
     sessionDateTime: date,
+    dateLabel,
+    timeLabel,
 
-    // Spot info (string + ids)
+    // Spot info
     spotName: spotObj ? spotObj.get("spotName") : "Unknown spot",
     spotId: spotObj ? spotObj.id : null,
-    
+    coastDirection: spotObj ? spotObj.get("coastDirection") : null,
   };
 }
-
-
 
 /**
  * Fetch all sessions from the Parse backend

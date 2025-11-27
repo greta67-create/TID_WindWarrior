@@ -23,7 +23,7 @@ function UserToPlainObject(parseUser) {
   return {
     id: parseUser.id,
     firstName: parseUser.get("firstName"),
-    lastName: parseUser.get("lastName"),
+    typeofSport: parseUser.get("typeofSport"),
     avatar: avatarUrl,
     //avatar: parseUser.get("profilepicture") || 0, // add if then statement - if no profile picture, show something else
     age: parseUser.get("age"),
@@ -31,7 +31,7 @@ function UserToPlainObject(parseUser) {
   };
 }
 
-// Hvad betyder hele denne???
+// use this function to get the currently logged-in user's info
 export async function getCurrentUserInfo() {
   const current = Parse.User.current();
   if (!current) return null;

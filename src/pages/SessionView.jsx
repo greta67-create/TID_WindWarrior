@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Sessionblocklarge from "../components/SessionBlocklarge";
 import "../styles/Sessionview.css";
@@ -17,15 +17,22 @@ import {
   unjoinSession,
 } from "../services/usersessionService";
 import Chat from "../components/Chat";
+import getWindfinderlink from "../utils/getWindfinderlink";
 // import { getList } from "../../backend/getParseFunctions";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
-export default function SessionViewPage(currentUser) {
+export default function SessionViewPage() {
   const { id } = useParams();
   const [session, setSession] = useState(null);
   const [comments, setComments] = useState([]);
   const [isJoined, setIsJoined] = useState(false);
+  const proposedComments = [
+    { id: 100, text: "I have a car and can offer a ride!" },
+    { id: 101, text: "Can someone offer a ride?" },
+  ];
+  const currentUser = Parse.User.current();
+  console.log("SessionView currentUser:", currentUser);
 
   // Load this one session by id
   useEffect(() => {
@@ -110,44 +117,61 @@ export default function SessionViewPage(currentUser) {
     { id: 101, text: "Can someone offer a ride?" },
   ];
 
-  const [input, setInput] = useState("");
-
   // to avoid that session is null before data loads
   if (!session) {
     return <div className="page">Loading session…</div>;
   }
+  // const for weather link
+  // const weatherLink = getWindfinderlink(session.spotName);
 
   return (
     <div className="page">
-      {/* Title */}
-      <div className="page-header">
-        <div className="page-title">{session.spotName}</div>
-        <div className="subtle">
-          {session.sessionDateTime
-            ? session.sessionDateTime.toLocaleDateString()
-            : "-"}{" "}
-          |{" "}
-          {session.sessionDateTime
-            ? session.sessionDateTime.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-            : "-"}
+      <div>
+        {/* Title */}
+        <div className="page-header">
+          <div className="page-title">{session.spotName}</div>
+          <div className="subtle">
+            {session.dateLabel} | {session.timeLabel}
+          </div>
+        </div>
+
+        {/* Session card */}
+        <Sessionblocklarge
+          spot={session.spotName}
+          windKts={session.windPower}
+          tempC={session.temperature}
+          weather={session.weatherType}
+          windDir={session.windDirection}
+          avatars={defaultAvatars}
+          onJoin={onJoin}
+          isJoined={isJoined}
+        />
+
+        {/* Get more information section */}
+        <div className="info-section">
+          <div className="info-title">Get more information:</div>
+
+          <div className="info-buttons">
+            {/* Left button: to SpotView */}
+            <Link
+              to={`/spot/${session.spotName}`}
+              className="info-btn info-btn-primary"
+            >
+              About the spot
+            </Link>
+
+            {/* Right button: external link ( weather link) */}
+            <a
+              href={getWindfinderlink(session.spotName)}
+              target="_blank"
+              className="info-btn info-btn-secondary"
+            >
+              <span>About the weather</span>
+              <span className="external-icon">↗</span>
+            </a>
+          </div>
         </div>
       </div>
-
-      {/* Session card */}
-      <Sessionblocklarge
-        spot={session.spotName}
-        windKts={session.windPower}
-        tempC={session.temperature}
-        weather={session.weatherType}
-        windDir={session.windDirection}
-        avatars={defaultAvatars}
-        onJoin={onJoin}
-        isJoined={isJoined}
-      />
-
       {/* Subtitle */}
       <div className="section-subtitle">
         Communicate with others joining this session:
@@ -159,6 +183,7 @@ export default function SessionViewPage(currentUser) {
         setComments={setComments}
         session={session}
         spot={null}
+        proposedComments={proposedComments}
       />
     </div>
   );

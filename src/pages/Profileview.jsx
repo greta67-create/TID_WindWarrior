@@ -9,7 +9,6 @@ import ava3 from "../assets/avatar3.png";
 import { useState, useEffect } from "react";
 import {
   fetchUserSessions,
-  joinSession,
   unjoinSession,
 } from "../services/usersessionService";
 import { getCurrentUserInfo } from "../services/userservice";
@@ -18,12 +17,15 @@ import "../styles/BrowseSessions.css";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
-export default function ProfileView({ onJoinSession, onLogout }) {
+export default function ProfileView({ onLogout }) {
   const [user, setUser] = useState({});
+  const [joinedSessions, setJoinedSessions] = useState([]);
   const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [pastSessions, setPastSessions] = useState([]);
-  const [joinedSessions, setJoinedSessions] = useState([]);
 
+  // flow is fetchUserSessions → setJoinedSessions → effect runs → setUpcomingSessions + setPastSessions
+
+  // load user info and stores in user state
   useEffect(() => {
     async function loadUser() {
       const info = await getCurrentUserInfo();
@@ -31,19 +33,18 @@ export default function ProfileView({ onJoinSession, onLogout }) {
       console.log("User info from service:", info);
     }
     loadUser();
-    document.title = "Profile";
   }, []);
 
-  //load current, joined user sessions
+  // load current, joined user sessions
   useEffect(() => {
     const user = Parse.User.current();
     if (!user) return;
-
+    //load Usersessions for specific user from backend
     async function loadUserSessions() {
       try {
         const sessions = await fetchUserSessions(user);
         console.log("Loaded user sessions in ProfileView:", sessions);
-        setJoinedSessions(sessions);
+        setJoinedSessions(sessions); //stores in joinedSessions state
       } catch (err) {
         console.error("Error loading user sessions in ProfileView:", err);
       }
@@ -52,10 +53,10 @@ export default function ProfileView({ onJoinSession, onLogout }) {
     loadUserSessions();
   }, []);
 
+  //split joinedSessions into past and future sessions whenever joinedSessions changes
   useEffect(() => {
     console.log("Joined sessions:", joinedSessions);
     //split joinedSessions into past and future sessions
-    console.log("joinedSessions after state update:", joinedSessions);
     const now = new Date();
     console.log("Now is:", now);
     const upcoming = joinedSessions.filter(
@@ -71,12 +72,28 @@ export default function ProfileView({ onJoinSession, onLogout }) {
     console.log("Past user sessions:", past);
   }, [joinedSessions]);
 
-  const handleJoin = (id) => (e) => {
+  const handleUnjoin = (id) => async (e) => {
     if (e && e.preventDefault) {
       e.preventDefault();
       e.stopPropagation();
     }
-    if (onJoinSession) onJoinSession(id);
+    // In the profile view, all listed sessions are joined so clicking again unjoins them
+    try {
+      //call backend to unjoin
+      await unjoinSession(id);
+      console.log("Unjoined session from ProfileView:", id);
+
+      // Remove the session  so it disappears from Planned/Past lists
+      setJoinedSessions((prev) =>
+        prev.filter(
+          (s) =>
+            // s.objectId !== id && // for raw Parse-style objects
+            s.id !== id // in case fetchUserSessions maps id differently
+        )
+      );
+    } catch (err) {
+      console.error("Error unjoining session from ProfileView:", err);
+    }
   };
 
   return (
@@ -88,7 +105,7 @@ export default function ProfileView({ onJoinSession, onLogout }) {
       <div className="page-content">
         <ProfileCard
           firstName={user.firstName}
-          lastName={user.lastName}
+          typeofSport={user.typeofSport}
           avatar={user.avatar}
           age={user.age}
           skillLevel={user.skillLevel}
@@ -102,30 +119,20 @@ export default function ProfileView({ onJoinSession, onLogout }) {
                 <Link
                   key={s.id}
                   to={`/session/${s.id}`}
-                  style={{ textDecoration: "none" }}
+                  className="session-link"
                 >
                   <Sessionblock
                     key={s.id}
                     spot={s.spotName}
-                    dateLabel={
-                      s.sessionDateTime
-                        ? s.sessionDateTime.toLocaleDateString()
-                        : "-"
-                    }
-                    timeLabel={
-                      s.sessionDateTime
-                        ? s.sessionDateTime.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
-                        : "-"
-                    }
+                    dateLabel={s.dateLabel}
+                    timeLabel={s.timeLabel}
                     windKts={s.windPower}
                     tempC={s.temperature}
                     weather={s.weatherType}
                     windDir={s.windDirection}
+                    coastDirection={s.coastDirection}
                     avatars={defaultAvatars}
-                    onJoin={handleJoin(s.id)}
+                    onJoin={handleUnjoin(s.id)}
                     isJoined={true}
                   />
                 </Link>
@@ -146,35 +153,24 @@ export default function ProfileView({ onJoinSession, onLogout }) {
         <div className="section-subtitle--spaced">
           <h2 className="page-title">Past Sessions</h2>
           <div className="stack">
-            {upcomingSessions.length > 0 ? (
+            {pastSessions.length > 0 ? (
               pastSessions.map((s) => (
                 <Link
                   key={s.id}
                   to={`/session/${s.id}`}
-                  style={{ textDecoration: "none" }}
+                  className="session-link"
                 >
                   <Sessionblock
                     spot={s.spotName}
-                    dateLabel={
-                      s.sessionDateTime
-                        ? s.sessionDateTime.toLocaleDateString()
-                        : "-"
-                    }
-                    timeLabel={
-                      s.sessionDateTime
-                        ? s.sessionDateTime.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
-                        : "-"
-                    }
+                    dateLabel={s.dateLabel}
+                    timeLabel={s.timeLabel}
                     windKts={s.windPower}
                     tempC={s.temperature}
                     weather={s.weatherType}
                     windDir={s.windDirection}
+                    coastDirection={s.coastDirection}
                     avatars={defaultAvatars}
-                    onJoin={handleJoin(s.id)}
-                    isJoined={joinedSessions.includes(s.id)}
+                    showJoin={false} //no join needed as these are past sessions
                   />
                 </Link>
               ))
