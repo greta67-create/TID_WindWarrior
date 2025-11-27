@@ -270,6 +270,7 @@ export default function SpotViewPage() {
           tempC={s.temperature}
           weather={s.weatherType}
           windDir={s.windDirection}
+          coastDirection={s.coastDirection}
           onJoin={handleJoin(s.id)}
           isJoined={joinedSessions.includes(s.id)}
         />

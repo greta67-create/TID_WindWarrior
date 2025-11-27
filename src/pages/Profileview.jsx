@@ -128,6 +128,7 @@ export default function ProfileView({ onLogout }) {
                     tempC={s.temperature}
                     weather={s.weatherType}
                     windDir={s.windDirection}
+                    coastDirection={s.coastDirection}
                     avatars={defaultAvatars}
                     onJoin={handleUnjoin(s.id)}
                     isJoined={true}
@@ -165,6 +166,7 @@ export default function ProfileView({ onLogout }) {
                     tempC={s.temperature}
                     weather={s.weatherType}
                     windDir={s.windDirection}
+                    coastDirection={s.coastDirection}
                     avatars={defaultAvatars}
                     showJoin={false} //no join needed as these are past sessions
                   />

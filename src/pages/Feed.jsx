@@ -98,6 +98,7 @@ function SessionFeedPage({ sessions = [] }) {
               tempC={s.temperature}
               weather={s.weatherType}
               windDir={s.windDirection}
+              coastDirection={s.coastDirection}
               avatars={defaultAvatars}
               onJoin={handleJoin(s.id)}
               isJoined={joinedSessions.includes(s.id)}
