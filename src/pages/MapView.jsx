@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import Map from "react-map-gl/mapbox";
 import MapMarker from "../components/MapMarker";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "/src/styles/Map.css";
+import { fetchSpots } from "../services/spotService";
 
 function MapView() {
   const [viewState, setViewState] = useState({
@@ -10,39 +11,24 @@ function MapView() {
     latitude: 55.65,
     zoom: 10,
   });
+  const [spots, setSpots] = useState(null);
 
   const token = import.meta.env.VITE_MAPBOX_TOKEN;
 
-  const markers = [
-    {
-      spot_name: "Amager Strand",
-      wind_direction: "N",
-      wind_power: 26,
-      latitude: 55.66,
-      longitude: 12.64,
-    },
-    {
-      spot_name: "Dragør",
-      wind_direction: "NW",
-      wind_power: 19,
-      latitude: 55.58,
-      longitude: 12.66,
-    },
-    {
-      spot_name: "Sydvestpynten",
-      wind_direction: "NW",
-      wind_power: 9,
-      latitude: 55.56,
-      longitude: 12.56,
-    },
-    {
-      spot_name: "Sydhavn",
-      wind_direction: "NE",
-      wind_power: 17,
-      latitude: 55.63,
-      longitude: 12.51,
-    },
-  ];
+  
+
+  useEffect(() => {
+    const loadSpots = async () => {
+      try {
+        const spots = await fetchSpots();
+        setSpots(spots);
+      } catch (error) {
+        console.error("Error loading Spots:", error);
+        setSpots([]);
+      }
+    };
+    loadSpots();
+  }, []);
 
   return (
     <>
@@ -55,7 +41,8 @@ function MapView() {
         </div>
       </div>
 
-      <div className="page" style={{ padding: 0 }}>
+      <div className="page" style={{padding: 0}}>  {/* need to modify to remove padding */}
+        {spots && 
         <Map
           {...viewState}
           onMove={(evt) => setViewState(evt.viewState)}
@@ -63,17 +50,19 @@ function MapView() {
           mapStyle="mapbox://styles/mapbox/streets-v12"
           mapboxAccessToken={token}
         >
-          {markers.map((marker, index) => (
+          {spots.map((spot) => (
             <MapMarker
-              key={index}
-              spot_name={marker.spot_name}
-              wind_direction={marker.wind_direction}
-              wind_power={marker.wind_power}
-              latitude={marker.latitude}
-              longitude={marker.longitude}
+              key={spot.id}
+              spot_id={spot.id}
+              spot_name={spot.name}
+              wind_direction={spot.currentWindDirection}
+              wind_power={spot.currentWindKnts}
+              latitude={spot.latitude}
+              longitude={spot.longitude}
             />
           ))}
         </Map>
+        }
       </div>
     </>
   );
