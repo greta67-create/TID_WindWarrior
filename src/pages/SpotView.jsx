@@ -8,17 +8,14 @@ import Chat from "../components/Chat";
 import {
   fetchSpotByName,
   fetchCommentsToSpotId,
-  fetchUpcomingSessionsToSpotId,
 } from "../services/spotService";
 import {
   joinSession,
   unjoinSession,
-  fetchUserSessions,
 } from "../services/usersessionService";
 import Map from "react-map-gl/mapbox";
 import MapMarker from "../components/MapMarker";
 import "mapbox-gl/dist/mapbox-gl.css";
-import getWindfinderlink from "../utils/getWindfinderlink";
 
 export default function SpotViewPage() {
   const { spotName } = useParams();
@@ -26,22 +23,14 @@ export default function SpotViewPage() {
   const [spot, setSpot] = useState(null);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error] = useState(null);
   const [surfSessions, setSurfSessions] = useState([]);
-  const [user, setUser] = useState(Parse.User.current());
-  const [joinedSessions, setJoinedSessions] = useState([]);
-  const [upcomingSessions, setUpcomingSessions] = useState([]);
+  const user = Parse.User.current()
   const [viewState, setViewState] = useState({
     longitude: spot?.longitude || 12.568,
     latitude: spot?.latitude || 55.65,
     zoom: 13,
   });
   const [activeTab, setActiveTab] = useState("sessions");
-
-  const proposedComments = [
-    { id: 100, text: "I can recommend this spot, nice conditions!" },
-    { id: 101, text: "Pay attention with" },
-  ];
 
   //load spot information
   useEffect(() => {
@@ -52,11 +41,7 @@ export default function SpotViewPage() {
             console.log("Loaded comments:", loadedComments);
             setComments(loadedComments);
           });
-
-          // fetchUpcomingSessionsToSpotId(spot.id).then((loadedSessions) => {
-          //   console.log("Loaded sessions:", loadedSessions);
-          //   setSessions(loadedSessions);
-          // });
+          // load upcoming sessions for this spot
           const loadSessions = async () => {
             const futureSessions = await Parse.Cloud.run("loadSessions", { 
               user: user.id,
@@ -80,36 +65,6 @@ export default function SpotViewPage() {
     loadSpot();
   }, []);
 
-  //load current, joined user sessions
-  // useEffect(() => {
-  //   const user = Parse.User.current();
-  //   if (!user) return;
-  //   //load Usersessions for specific user from backend
-  //   async function loadUserSessions() {
-  //     try {
-  //       const sessions = await fetchUserSessions(user);
-  //       console.log("Loaded user sessions in SpotView:", sessions);
-  //       const ids = sessions.map((s) => s.id); // 👈 keep only ids
-  //       setJoinedSessions(ids);
-  //     } catch (err) {
-  //       console.error("Error loading user sessions in SpotView:", err);
-  //     }
-  //   }
-
-  //   loadUserSessions();
-  // }, []);
-
-  // keep only upcoming sessions for the feed
-  // useEffect(() => {
-  //   const now = new Date();
-
-  //   const upcoming = sessions
-  //     .filter((s) => s.sessionDateTime && s.sessionDateTime >= now)
-  //     .sort((a, b) => a.sessionDateTime - b.sessionDateTime); // earliest → latest
-
-  //   setUpcomingSessions(upcoming);
-  //   console.log("Upcoming sessions in spot view:", upcoming);
-  // }, [sessions]);
 
   // updates the map center once the spot data loads
   useEffect(() => {

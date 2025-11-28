@@ -2,6 +2,10 @@ import "../styles/Sessionblock.css";
 import JoinButton from "../components/JoinButton";
 import getWeatherIcon from "../utils/getWeatherIcon";
 
+import ava1 from "../assets/avatar1.png";
+import ava2 from "../assets/avatar2.png";
+import ava3 from "../assets/avatar3.png";
+
 export default function Sessionblock({
   //fallbacks
   spot = "Fallback Spot",
@@ -12,7 +16,7 @@ export default function Sessionblock({
   weather = "⛅️",
   windDir = "↗",
   coastDirection = null,
-  avatars = [],
+  avatars = [ava1, ava2, ava3],
   onJoin = () => {},
   isJoined = false,
   joinedText = "Joining",
