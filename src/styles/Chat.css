@@ -88,11 +88,13 @@
 
 .comment-input {
   flex: 1;
-  background: var(--back);
+  background: var(--light);
   border: 1px solid var(--light);
   border-radius: 12px;
   padding: 12px 14px;
   font-family: var(--font-sans);
+  background-color: var(--light);
+  box-shadow: 1px 6px 24px var(--shadow);
 }
 
 .send-btn {
@@ -102,6 +104,7 @@
   border-radius: 12px;
   padding: 14px 14px;
   font-weight: 700;
+  box-shadow: 1px 6px 24px var(--shadow);
 }
 
 /* Comments list (Session View)
@@ -117,8 +120,8 @@
   gap: 12px;
   margin-top: 8px;
   /* only this area scrolls */
-  max-height: calc(100vh - 260px);
-  overflow-y: auto;
+  /* max-height: calc(100vh - 260px);
+  overflow-y: auto; */
   padding-bottom: 16px;
 }
 
@@ -138,12 +141,11 @@
 }
 
 /* Proposed comments container */
-.prop-comment {
+.comment-bar {
   position: fixed;
-  bottom: 105px;
+  bottom: 40px;
   left: 0;
   right: 0;
-  display: flex;
   flex-wrap: nowrap;
   gap: 8px;
   overflow-x: auto;
@@ -154,8 +156,11 @@
   background: transparent;
 }
 
-.prop-comment::-webkit-scrollbar {
-  display: none;
+.prop-comment button {
+  margin: 3px;
+  font-size: 12px;
+  background-color: var(--light);
+  box-shadow: 1px 6px 24px var(--shadow);
 }
 
 /* Chip button */
