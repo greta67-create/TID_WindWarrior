@@ -160,6 +160,15 @@ export default function SessionViewPage() {
               About the spot
             </Link>
 
+            <a
+              href={getWindfinderlink(spot.name)}
+              target="_blank"
+              className="info-btn info-btn-secondary"
+            >
+              <span>Get more info about the weather</span>
+              <span className="external-icon">↗</span>
+            </a>
+
             {/* Right button: external link ( weather link) */}
             <a
               href={getWindfinderlink(session.spotName)}
