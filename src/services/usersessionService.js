@@ -36,8 +36,6 @@ export async function fetchUserSessions(user) {
   }
 }
 
-// missing: fetchallUsersessions
-
 /**
  * Create a UserSessions entry for a given user and session
  * This is what happens when the user clicks "Join"
@@ -53,7 +51,12 @@ export async function createUserSession(user, surfSessionId) {
   if (!surfSessionId) {
     throw new Error("Session ID must be provided");
   }
-  console.log("Creating user session for user:", user.id, "session:", surfSessionId);
+  console.log(
+    "Creating user session for user:",
+    user.id,
+    "session:",
+    surfSessionId
+  );
   // Pointer to the SurfSessions
   const sessionPointer = new Parse.Object("SurfSessions");
   sessionPointer.id = surfSessionId;
@@ -74,7 +77,6 @@ export async function createUserSession(user, surfSessionId) {
   const userSession = new UserSessions();
   userSession.set("userId", user); // pointer to _User
   userSession.set("surfSessionId", sessionPointer); // pointer to SurfSessions
-
 
   console.log("Saving new user session:", userSession);
   const result = await userSession.save();
@@ -107,7 +109,6 @@ export async function deleteUserSession(user, surfSessionId) {
   const query = new Parse.Query(UserSessions);
   query.equalTo("userId", user);
   query.equalTo("surfSessionId", sessionPointer);
-
 
   try {
     const userSession = await query.first();
