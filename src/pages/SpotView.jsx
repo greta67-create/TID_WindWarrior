@@ -9,10 +9,7 @@ import {
   fetchSpotByName,
   fetchCommentsToSpotId,
 } from "../services/spotService";
-import {
-  joinSession,
-  unjoinSession,
-} from "../services/usersessionService";
+import { joinSession, unjoinSession } from "../services/usersessionService";
 import Map from "react-map-gl/mapbox";
 import MapMarker from "../components/MapMarker";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -24,7 +21,7 @@ export default function SpotViewPage() {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [surfSessions, setSurfSessions] = useState([]);
-  const user = Parse.User.current()
+  const user = Parse.User.current();
   const [viewState, setViewState] = useState({
     longitude: spot?.longitude || 12.568,
     latitude: spot?.latitude || 55.65,
@@ -43,20 +40,18 @@ export default function SpotViewPage() {
           });
           // load upcoming sessions for this spot
           const loadSessions = async () => {
-            const futureSessions = await Parse.Cloud.run("loadSessions", { 
+            const futureSessions = await Parse.Cloud.run("loadSessions", {
               user: user.id,
-              filters:{ spotIds: [spot.id] }
-              });
-            console.log("Loaded sessions in Feed:", futureSessions);
+              filters: { spotIds: [spot.id] },
+            });
+            console.log("Loaded sessions in Spotfeed:", futureSessions);
             setSurfSessions(futureSessions);
           };
           loadSessions();
-          
 
           setSpot(spot);
           setLoading(false);
         });
-        
       } catch (error) {
         console.error("Error:", error);
         setComments([]);
@@ -64,7 +59,6 @@ export default function SpotViewPage() {
     };
     loadSpot();
   }, []);
-
 
   // updates the map center once the spot data loads
   useEffect(() => {
@@ -84,22 +78,22 @@ export default function SpotViewPage() {
       e.stopPropagation();
     }
     console.log("Join button clicked", id);
-    const currentlyJoined = surfSessions.some(s => s.id === id && s.isJoined);
-    // UI Toggle 
-    setSurfSessions(prev => 
-      prev.map(s => s.id === id ? { ...s, isJoined: !s.isJoined } : s)
+    const currentlyJoined = surfSessions.some((s) => s.id === id && s.isJoined);
+    // UI Toggle
+    setSurfSessions((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, isJoined: !s.isJoined } : s))
     );
     try {
       if (currentlyJoined) {
         await unjoinSession(id);
       } else {
         await joinSession(id);
-      }  
+      }
     } catch (error) {
       console.error("Error toggling user session in feed:", error);
       // UI Toggle back on error
-      setSurfSessions(prev => 
-        prev.map(s => s.id === id ? { ...s, isJoined: !s.isJoined } : s)
+      setSurfSessions((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, isJoined: !s.isJoined } : s))
       );
     }
   };
@@ -221,36 +215,36 @@ export default function SpotViewPage() {
         </button>
       </div>
 
-{activeTab === 'sessions' ? (
-  <div className="sessions-container">
-    {surfSessions.map((s) => (
-      <Link key={s.id} to={`/session/${s.id}`} className="session-link">
-        <Sessionblock
-          key={s.id}
-          spot={s.spotName}
-          dateLabel={s.dateLabel}
-          timeLabel={s.timeLabel}
-          windKts={s.windPower}
-          tempC={s.temperature}
-          weather={s.weatherType}
-          windDir={s.windDirection}
-          coastDirection={s.coastDirection}
-          onJoin={onJoin(s.id)}
-          isJoined={s.isJoined}
+      {activeTab === "sessions" ? (
+        <div className="sessions-container">
+          {surfSessions.map((s) => (
+            <Link key={s.id} to={`/session/${s.id}`} className="session-link">
+              <Sessionblock
+                key={s.id}
+                spot={s.spotName}
+                dateLabel={s.dateLabel}
+                timeLabel={s.timeLabel}
+                windKts={s.windPower}
+                tempC={s.temperature}
+                weather={s.weatherType}
+                windDir={s.windDirection}
+                coastDirection={s.coastDirection}
+                onJoin={onJoin(s.id)}
+                isJoined={s.isJoined}
+              />
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <Chat
+          comments={comments}
+          currentUser={Parse.User.current()}
+          setComments={setComments}
+          session={null}
+          spot={spot}
+          hideProposedComments={true}
         />
-      </Link>
-    ))}
-  </div>
-) : (
-  <Chat
-    comments={comments}
-    currentUser={Parse.User.current()}
-    setComments={setComments}
-    session={null}
-    spot={spot}
-    hideProposedComments={true}
-  />
-)}
+      )}
     </div>
   );
 }
