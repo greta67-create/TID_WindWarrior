@@ -4,33 +4,26 @@ import "../App.css";
 import { useState, useEffect } from "react";
 import Sessionblock from "../components/Sessionblock";
 
-
 import { Link } from "react-router-dom";
 import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
 import Parse from "../parse-init";
 import loadSurfSessions from "../services/getParseFunctions";
-import {
-  joinSession,
-  unjoinSession,
-} from "../services/usersessionService";
+import { joinSession, unjoinSession } from "../services/usersessionService";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
-
 // function SessionFeedPage() {
-
 
 function SessionFeedPage() {
   const [surfSessions, setSurfSessions] = useState([]);
 
-// Load sessions from Parse Cloud Function
+  // Load sessions from Parse Cloud Function
   useEffect(() => {
     async function fetchData() {
-      const futureSessions = await Parse.Cloud.run("loadSessions", { 
-      // const futureSessions = await loadSurfSessions(user, { 
-        filters:{}
+      const futureSessions = await Parse.Cloud.run("loadSessions", {
+        filters: { futureOnly: true },
       });
       console.log("Loaded sessions in Feed:", futureSessions);
       setSurfSessions(futureSessions);
@@ -38,30 +31,29 @@ function SessionFeedPage() {
     fetchData();
   }, []);
 
-
-// Toggle join/unjoin session
+  // Toggle join/unjoin session
   const onJoin = (id) => async (e) => {
     if (e && e.preventDefault) {
       e.preventDefault();
       e.stopPropagation();
     }
     console.log("Join button clicked", id);
-    const currentlyJoined = surfSessions.some(s => s.id === id && s.isJoined);
-    // UI Toggle 
-    setSurfSessions(prev => 
-      prev.map(s => s.id === id ? { ...s, isJoined: !s.isJoined } : s)
+    const currentlyJoined = surfSessions.some((s) => s.id === id && s.isJoined);
+    // UI Toggle
+    setSurfSessions((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, isJoined: !s.isJoined } : s))
     );
     try {
       if (currentlyJoined) {
         await unjoinSession(id);
       } else {
         await joinSession(id);
-      }  
+      }
     } catch (error) {
       console.error("Error toggling user session in feed:", error);
       // UI Toggle back on error
-      setSurfSessions(prev => 
-        prev.map(s => s.id === id ? { ...s, isJoined: !s.isJoined } : s)
+      setSurfSessions((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, isJoined: !s.isJoined } : s))
       );
     }
   };
