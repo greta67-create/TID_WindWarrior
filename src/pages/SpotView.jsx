@@ -216,7 +216,7 @@ export default function SpotViewPage() {
       </div>
 
       {activeTab === "sessions" ? (
-        <div className="sessions-container">
+        <div className="stack">
           {surfSessions.map((s) => (
             <Link key={s.id} to={`/session/${s.id}`} className="session-link">
               <Sessionblock

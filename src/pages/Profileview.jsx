@@ -14,6 +14,7 @@ import {
 import { getCurrentUserInfo } from "../services/userservice";
 import LogOutButton from "../components/LogOutButton";
 import "../styles/BrowseSessions.css";
+import TabNavigation from "../components/TabNavigation";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
@@ -22,6 +23,7 @@ export default function ProfileView({ onLogout }) {
   const [joinedSessions, setJoinedSessions] = useState([]);
   const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [pastSessions, setPastSessions] = useState([]);
+  const [activeTab, setActiveTab] = useState("planned");
 
   // flow is fetchUserSessions → setJoinedSessions → effect runs → setUpcomingSessions + setPastSessions
 
@@ -96,23 +98,50 @@ export default function ProfileView({ onLogout }) {
     }
   };
 
+  const handleSaveProfile = async (updatedData) => {
+    try {
+      const currentUser = Parse.User.current();
+      if (!currentUser) return;
+
+      // Update Parse backend
+      currentUser.set("firstName", updatedData.firstName);
+      currentUser.set("typeofSport", updatedData.typeofSport);
+      currentUser.set("age", parseInt(updatedData.age));
+      currentUser.set("skillLevel", updatedData.skillLevel);
+      if (updatedData.avatar) {
+        currentUser.set("avatar", updatedData.avatar);
+      }
+
+      await currentUser.save();
+
+      // Update local state to reflect changes immediately
+      setUser(updatedData);
+      console.log("Profile updated successfully");
+    } catch (err) {
+      console.error("Error saving profile:", err);
+    }
+  };
+
   return (
     <div className="page">
       <div className="page-header">
         <div className="page-title">Profile</div>
         <LogOutButton onLogout={onLogout} />
       </div>
-      <div className="page-content">
-        <ProfileCard
-          firstName={user.firstName}
-          typeofSport={user.typeofSport}
-          avatar={user.avatar}
-          age={user.age}
-          skillLevel={user.skillLevel}
-        />
 
-        <div className="section-subtitle--spaced">
-          <h2 className="page-title">Planned Sessions</h2>
+      <ProfileCard
+        firstName={user.firstName}
+        typeofSport={user.typeofSport}
+        avatar={user.avatar}
+        age={user.age}
+        skillLevel={user.skillLevel}
+        onSaveProfile={handleSaveProfile}
+      />
+
+      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+
+      {activeTab === "planned" && (
+        <>
           <div className="stack">
             {upcomingSessions.length > 0 ? (
               upcomingSessions.map((s) => (
@@ -138,20 +167,21 @@ export default function ProfileView({ onLogout }) {
                 </Link>
               ))
             ) : (
-              <div className="profile-text">
+              <div className="empty-profileview">
                 <p>No Planned Sessions</p>
                 <Link to="/">
                   <button className="browse-button">
-                    Click to see upcoming Sessions
+                    Click to see Upcoming Sessions
                   </button>
                 </Link>
               </div>
             )}
           </div>
-        </div>
+        </>
+      )}
 
-        <div className="section-subtitle--spaced">
-          <h2 className="page-title">Past Sessions</h2>
+      {activeTab === "past" && (
+        <>
           <div className="stack">
             {pastSessions.length > 0 ? (
               pastSessions.map((s) => (
@@ -170,18 +200,18 @@ export default function ProfileView({ onLogout }) {
                     windDir={s.windDirection}
                     coastDirection={s.coastDirection}
                     avatars={defaultAvatars}
-                    showJoin={false} //no join needed as these are past sessions
+                    showJoin={false}
                   />
                 </Link>
               ))
             ) : (
-              <div className="profile-text">
+              <div className="empty-profileview">
                 <p>Join a Session to Build Your History</p>
               </div>
             )}
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 }
