@@ -3,20 +3,20 @@
 
 /* Get more information section */
 .info-section {
-  margin-top: 15px;
+  margin-top: var(--spacing-md);
 }
 
 .info-title {
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: var(--font-base);
   font-weight: 400;
   color: var(--text);
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-sm);
 }
 
 .info-buttons {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-sm);
   flex-direction: row; /* Change to row to make buttons appear next to each other */
   width: 100%;
   flex-wrap: nowrap;
@@ -26,10 +26,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 5px 12px;
-  border-radius: 8px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--spacing-sm);
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: var(--font-sm);
   text-decoration: none;
   border: 1px solid var(--primary);
   box-shadow: 0 8px 20px var(--shadow);
@@ -50,8 +50,8 @@
 }
 
 .external-icon {
-  margin-left: 6px;
-  font-size: 12px;
+  margin-left: var(--spacing-xs);
+  font-size: var(--font-xs);
 }
 
 /* Author styling */

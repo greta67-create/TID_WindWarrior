@@ -12,7 +12,7 @@
 
 .map-marker {
     background-color: white;
-    padding: 5px;
+    padding: var(--spacing-xs);
     border-radius: 20px;
     text-align: center;
     box-shadow: 0 0 5px rgba(0,0,0,0.3);
@@ -26,5 +26,5 @@
     justify-content: center;
 }
 .map-marker-arrow {
-    padding: 0 8px;
+    padding: 0 var(--spacing-sm);
 }

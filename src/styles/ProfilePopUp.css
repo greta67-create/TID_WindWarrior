@@ -1,0 +1,118 @@
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap");
+@import "/src/App.css";
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(184, 193, 204, 0.3);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 88%;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+.edit-profile-card {
+  padding: var(--spacing-lg);
+  font-family: var(--font-sans);
+}
+
+.profile-image-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.profile-image-wrapper {
+  position: relative;
+  width: 130px;
+  height: 130px;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.edit-icon-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  border: 1.5px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+}
+
+.edit-icon-btn svg {
+  width: 16px;
+  height: 16px;
+  color: white;
+}
+
+.form-field {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-field label {
+  display: block;
+  font-size: var(--font-base);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: var(--spacing-xs);
+  text-align: left;
+}
+
+.form-field input {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: none;
+  border-radius: 16px;
+  background-color: #e8ecf0;
+  font-size: var(--font-base);
+  font-family: var(--font-sans);
+  color: var(--text);
+  box-sizing: border-box;
+  box-shadow: 0 4px 8px var(--shadow);
+}
+
+.form-field input:focus {
+  outline: none;
+  background-color: #dde2e8;
+}
+
+.save-button {
+  width: 30%;
+  padding: var(--spacing-md);
+  border: none;
+  border-radius: 25px;
+  background-color: var(--primary);
+  color: white;
+  font-size: var(--font-md);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: var(--spacing-md);
+  transition: all 0.2s;
+}

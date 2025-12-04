@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { GoHomeFill } from "react-icons/go";
-import { GrMapLocation } from "react-icons/gr";
+import { FaMapMarkedAlt } from "react-icons/fa";
 import { IoPersonSharp } from "react-icons/io5";
 import "../styles/Navigationbar.css";
 
@@ -24,7 +24,7 @@ export default function Navbar() {
             to="/map"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
-            <GrMapLocation />
+            <FaMapMarkedAlt />
           </NavLink>
         </li>
 

@@ -3,8 +3,8 @@
 
 .profile-card {
   background-color: var(--back);
-  border-radius: 1rem;
-  padding: 1.5rem;
+  border-radius: var(--spacing-md);
+  padding: var(--spacing-lg);
   text-align: center;
   box-shadow: 0 4px 10px var(--shadow);
 }
@@ -19,16 +19,16 @@
 .profile-name {
   color: var(--text);
   font-family: var(--font-sans);
-  margin-top: 1rem;
-  font-size: 1.4rem;
+  margin-top: var(--spacing-md);
+  font-size: var(--font-lg);
   font-weight: 700;
 }
 
 .profile-text {
   color: var(--text);
   font-family: var(--font-sans);
-  margin: 0.3rem;
-  font-size: 1rem;
+  margin: var(--spacing-xs);
+  font-size: var(--font-base);
   text-align: center;
 }
 
@@ -36,11 +36,11 @@
   background-color: var(--primary);
   color: var(--back);
   border: none;
-  border-radius: 1rem;
-  padding: 0.5rem 1.2rem;
-  margin-top: 0.5rem;
+  border-radius: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-top: var(--spacing-sm);
   cursor: pointer;
-  font-size: 1rem;
+  font-size: var(--font-base);
   font-weight: 500;
   transition: background-color 0.2s ease;
 }
