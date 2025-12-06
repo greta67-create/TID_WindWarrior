@@ -6,11 +6,29 @@
   --sub: #5b6b96;
   --light: #e4e9f2;
   --back: #ffffff;
-  --primary: #1d3a8a;
+  --primary: #23449c;
   --shadow: #19306e66;
+  --highlight: #c02f2f;
   --font-sans: "Ubuntu", system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
   --content: 560px;
+
+  /* Spacing scale */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Font size scale */
+  --font-xs: 12px;
+  --font-sm: 14px;
+  --font-base: 15px;
+  --font-md: 17px;
+  --font-lg: 20px;
+  --font-xl: 28px;
+  --font-icon: 24px;
+  --font-icon-lg: 30px;
 }
 
 /* Baseline - TBD */
@@ -55,7 +73,7 @@ body {
   width: 100%;
   max-width: var(--content);
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-md);
   padding-bottom: 140px;
   background: transparent;
 }
@@ -65,33 +83,56 @@ body {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-sm);
 }
 
 /* Title */
 .page-title {
   font-family: var(--font-sans);
-  font-size: 28px;
+  font-size: var(--font-xl);
   font-weight: 800;
   color: var(--text);
 }
 
 .section-subtitle {
-  margin-top: 16px;
-  margin-bottom: 12px;
-  font-weight: 400;
+  margin-top: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  font-weight: 600; /* stronger weight for presence */
+  font-size: var(--font-base); /* slightly larger than body text */
+  color: var(--text); /* keep main text color for emphasis */
+}
+
+.spot-description {
+  font-size: var(--font-sm); /* slightly smaller than subtitles */
+  font-weight: 300; /* lighter text */
+  line-height: 1.4;
+  margin-top: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  color: var(--sub); /* softer secondary color */
+  max-width: 32rem;
+}
+
+.empty-profileview {
+  text-align: center;
+  padding: var(--spacing-lg) 0;
+}
+
+.empty-profileview p {
+  color: var(--sub);
+  margin-bottom: var(--spacing-md);
 }
 
 .stack {
   display: flex;
   flex-direction: column;
   align-items: stretch; /* centers children horizontally */
-  gap: 16px;
+  gap: var(--spacing-sm);
 }
 
 .stack > a {
   display: block;
   width: 100%;
+  text-decoration: none; /* Remove underline from session card links */
 }
 
 .session-card {
@@ -105,8 +146,8 @@ body {
   bottom: 0;
   display: flex;
   justify-content: center;
-  gap: 24px;
-  padding: 10px 16px;
+  gap: var(--spacing-lg);
+  padding: 10px var(--spacing-md);
   background: var(--back);
   border-top: 1px solid var(--light);
   box-shadow: 0 -6px 24px var(--shadow);
@@ -118,16 +159,16 @@ body {
   margin: 0 auto;
   display: flex;
   justify-content: center;
-  gap: 24px;
+  gap: var(--spacing-lg);
 }
 
 .nav .nav-link {
   font-family: var(--font-sans);
   font-weight: 600;
-  font-size: 15px;
+  font-size: var(--font-base);
   color: var(--sub);
   text-decoration: none;
-  padding: 8px 12px;
+  padding: var(--spacing-sm) var(--spacing-sm);
   border-radius: 12px;
 }
 
@@ -137,22 +178,23 @@ body {
 }
 
 /* Fixed comment bar above bottom nav */
-.comment-bar {
+/* .comment-bar {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 64px; /* sit above the nav */
+  bottom: 64px; 
   padding: 8px 16px;
   background: transparent;
   z-index: 9;
-}
-.comment-inner {
+} */
+
+/* .comment-inner {
   max-width: var(--content);
   margin: 0 auto;
   display: flex;
   gap: 8px;
-}
-.comment-input {
+} */
+/* .comment-input {
   flex: 1;
   background: var(--back);
   border: 1px solid var(--light);
@@ -167,9 +209,9 @@ body {
   border-radius: 12px;
   padding: 0 14px;
   font-weight: 700;
-}
+} */
 
-/* Comments list (Session View) */
+/* Comments list (Session View)
 .chat-list {
   display: grid;
   gap: 12px;
@@ -177,27 +219,27 @@ body {
 }
 
 /* Single comment bubble */
-.chat-item {
+/* .chat-item {
   background: var(--back);
   border: 1px solid var(--light);
   border-radius: 16px;
   padding: 12px 14px;
   box-shadow: 0 6px 24px var(--shadow);
-}
+} */
 
-/* Author styling */
+/* Author styling
 .chat-item strong {
   font-weight: 700;
   color: var(--text);
 }
 
 /* Global link reset — make links inherit color */
-a {
+/* a {
   color: inherit;
   text-decoration: none;
-}
+} */
 
-a:hover {
+/* a:hover {
   text-decoration: underline;
   cursor: pointer;
-}
+} */

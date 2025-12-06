@@ -1,91 +1,57 @@
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap");
 @import "/src/App.css";
 
-/* Proposed Comment */
-
-/* Fixed comment bar above bottom nav */
-.comment-bar {
-  position: fixed;
-  /* left: 50%; */
-  bottom: 64px;
-  width: min(var(--content), calc(100vw - 32px));
-  padding: 8px 0;
-  background: transparent;
-  z-index: 11;
+/* Get more information section */
+.info-section {
+  margin-top: var(--spacing-md);
 }
 
-.prop-comment {
-  margin-bottom: 5px;
-  padding: 12px 14px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  align-items: center;
-}
-
-.chip {
-  border: 1px solid var(--sub);
-  background: transparent;
+.info-title {
+  font-family: var(--font-sans);
+  font-size: var(--font-base);
+  font-weight: 400;
   color: var(--text);
-  border-radius: 12px;
-  padding: 8px 14px;
-  box-shadow: 0 6px 24px var(--shadow);
-  font-family: var(--font-sans);
-  font-weight: 200;
-  font-style: italic;
-  cursor: pointer;
+  margin-bottom: var(--spacing-sm);
 }
 
-.comment-inner {
+.info-buttons {
   display: flex;
-  gap: 5px;
-  padding: 0 16px;
+  gap: var(--spacing-sm);
+  flex-direction: row; /* Change to row to make buttons appear next to each other */
+  width: 100%;
+  flex-wrap: nowrap;
 }
-.comment-input {
-  flex: 1;
-  background: var(--back);
-  border: 1px solid var(--light);
-  border-radius: 12px;
-  padding: 12px 14px;
+
+.info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--spacing-sm);
   font-family: var(--font-sans);
+  font-size: var(--font-sm);
+  text-decoration: none;
+  border: 1px solid var(--primary);
+  box-shadow: 0 8px 20px var(--shadow);
+  flex: 1;
+  text-align: center;
 }
-.send-btn {
+
+.info-btn-primary {
   background: var(--primary);
   color: var(--back);
-  border: none;
-  border-radius: 12px;
-  padding: 0 14px;
-  cursor: pointer;
-  font-size: 15px;
+  width: 100%; /* Adjust width to fit content */
 }
 
-/* Comments list (Session View) */
-.chat-list {
-  display: grid;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-/* Single comment bubble */
-.chat-item {
-  background: var(--back);
-  border: 1px solid var(--light);
-  border-radius: 15px;
-  padding: 8px 10px;
-  box-shadow: 0 6px 24px var(--shadow);
-}
-
-.chat-item time {
-  font-size: 12px;
+.info-btn-secondary {
+  /* background: var(--back); */
   color: var(--text);
-  margin-left: 8px;
-  opacity: 0.6;
+  width: 100%; /* Adjust width to fit content */
 }
 
-.chat-text {
-  color: var(--text);
-  margin-top: 6px;
-  font-size: 12px;
+.external-icon {
+  margin-left: var(--spacing-xs);
+  font-size: var(--font-xs);
 }
 
 /* Author styling */
