@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "../styles/ProfilePopUp.css";
 import defaultAvatar from "../assets/Default.png";
 import { FaPen } from "react-icons/fa6";
@@ -47,7 +47,7 @@ export default function EditProfileModal({ user, onClose, onSave }) {
       </div>
 
       <div className="form-field">
-        <label>Type of Surfer:</label>
+        <label>Water Sport:</label>
         <input
           value={formData.typeofSport}
           onChange={handleChange("typeofSport")}
