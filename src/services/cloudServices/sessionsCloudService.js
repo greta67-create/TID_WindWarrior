@@ -1,5 +1,5 @@
 // This file is just a replica of the Cloud Service function on Back4App for reference
-
+// It is therefore not importet anywhere in the app
 
 function sessionToPlainObject(parseObj) {
     const spotObj = parseObj.get("spotId");
