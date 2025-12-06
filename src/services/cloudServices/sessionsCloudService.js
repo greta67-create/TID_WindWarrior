@@ -1,6 +1,8 @@
 // This file is just a replica of the Cloud Service function on Back4App for reference
 // It is therefore not importet anywhere in the app
 
+// @team please update if you change the function on Back4App
+
 function sessionToPlainObject(parseObj) {
     const spotObj = parseObj.get("spotId");
     const date = parseObj.get("sessionDateTime"); 
