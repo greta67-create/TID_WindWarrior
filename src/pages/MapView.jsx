@@ -12,23 +12,30 @@ function MapView() {
     zoom: 10,
   });
   const [spots, setSpots] = useState(null);
-
+  const [loading, setLoading] = useState(true); //loading notification pattern
   const token = import.meta.env.VITE_MAPBOX_TOKEN;
 
   
 
   useEffect(() => {
     const loadSpots = async () => {
+      setLoading(true);
       try {
         const spots = await fetchSpots();
         setSpots(spots);
       } catch (error) {
         console.error("Error loading Spots:", error);
         setSpots([]);
+      } finally {
+        setLoading(false);
       }
     };
     loadSpots();
   }, []);
+
+  if (loading) {
+    return <div className="page">Loading spots...</div>;
+  }
 
   return (
     <>

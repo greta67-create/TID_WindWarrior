@@ -7,9 +7,9 @@ import { useParams, Link } from "react-router-dom";
 import Chat from "../components/Chat";
 import {
   fetchSpotByName,
-  fetchCommentsToSpotId,
 } from "../services/spotService";
-import { joinSession, unjoinSession } from "../services/usersessionService";
+import { fetchCommentsToSpotId } from "../services/commentService";
+import { toggleJoinInSessionList } from "../utils/toggleJoinInList";
 import Map from "react-map-gl/mapbox";
 import MapMarker from "../components/MapMarker";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -29,36 +29,36 @@ export default function SpotViewPage() {
   });
   const [activeTab, setActiveTab] = useState("sessions");
 
-  //load spot information
+  //load spot information and session information via cloud function
   useEffect(() => {
     const loadSpot = async () => {
+      setLoading(true); // start loading
       try {
-        fetchSpotByName(spotName).then((spot) => {
-          fetchCommentsToSpotId(spot.id).then((loadedComments) => {
-            console.log("Loaded comments:", loadedComments);
-            setComments(loadedComments);
-          });
-          // load upcoming sessions for this spot
-          const loadSessions = async () => {
-            const futureSessions = await Parse.Cloud.run("loadSessions", {
-              user: user.id,
-              filters: { spotIds: [spot.id] },
-            });
-            console.log("Loaded sessions in Spotfeed:", futureSessions);
-            setSurfSessions(futureSessions);
-          };
-          loadSessions();
-
-          setSpot(spot);
-          setLoading(false);
+        const spot = await fetchSpotByName(spotName);
+  
+        const loadedComments = await fetchCommentsToSpotId(spot.id);
+        console.log("Loaded comments:", loadedComments);
+        setComments(loadedComments);
+  
+        const futureSessions = await Parse.Cloud.run("loadSessions", {
+          filters: { spotIds: [spot.id] },
         });
+        console.log("Loaded sessions in Spotfeed:", futureSessions);
+        setSurfSessions(futureSessions);
+  
+        setSpot(spot);
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error fetching spot by name:", error);
+        setSpot(null);
         setComments([]);
+        setSurfSessions([]);
+      } finally {
+        setLoading(false); // stop loading notification
       }
     };
+  
     loadSpot();
-  }, []);
+  }, [spotName]);
 
   // updates the map center once the spot data loads
   useEffect(() => {
@@ -71,44 +71,18 @@ export default function SpotViewPage() {
     }
   }, [spot]);
 
-  //hande join/unjoin and add usersession to DB
+  //handle join/unjoin session in spotview
   const onJoin = (id) => async (e) => {
-    if (e && e.preventDefault) {
+    if (e?.preventDefault) {
       e.preventDefault();
       e.stopPropagation();
     }
-    console.log("Join button clicked", id);
-    const currentlyJoined = surfSessions.some((s) => s.id === id && s.isJoined);
-    // UI Toggle
-    setSurfSessions((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, isJoined: !s.isJoined } : s))
-    );
-    try {
-      if (currentlyJoined) {
-        await unjoinSession(id);
-      } else {
-        await joinSession(id);
-      }
-    } catch (error) {
-      console.error("Error toggling user session in feed:", error);
-      // UI Toggle back on error
-      setSurfSessions((prev) =>
-        prev.map((s) => (s.id === id ? { ...s, isJoined: !s.isJoined } : s))
-      );
-    }
+    await toggleJoinInSessionList(id, () => surfSessions, setSurfSessions);
   };
 
-  //Is the part below with error handling necessary or overengineered?
-  // Error handling
+
   if (loading) {
-    return (
-      <div className="page">
-        <div className="page-header">
-          <div className="page-title">{name || "Loading spot..."}</div>
-        </div>
-        <div className="section-subtitle">Loading data…</div>
-      </div>
-    );
+    return <div className="page">Loading spot...</div>;
   }
 
   return (

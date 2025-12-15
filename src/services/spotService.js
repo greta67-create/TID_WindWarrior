@@ -1,6 +1,6 @@
 import Parse from "parse";
 import { commentToPlainObject } from "./commentService";
-import sessionToPlainObject from "./sessionService";
+import sessionToPlainObject from "./sessionToPlainObject";
 
 /**
  * Service layer for Spot operations
@@ -62,85 +62,3 @@ export async function fetchSpotByName(spotName) {
   }
 }
 
-export async function fetchCommentsToSpotId(spotId) {
-  const Comment = Parse.Object.extend("comment");
-  const query = new Parse.Query(Comment);
-  const spotPointer = new Parse.Object("Spot");
-  spotPointer.id = spotId;
-  query.equalTo("spotId", spotPointer);
-  query.ascending("createdAt");
-  query.include("userId");
-
-  console.log("Fetching Comments for Spot ID:", spotId);
-
-  try {
-    const results = await query.find();
-    console.log("Fetched Comments:", results);
-    return results.map(commentToPlainObject);
-  } catch (error) {
-    console.error("Error fetching comments for Spot:", error);
-    throw error;
-  }
-}
-
-// move to sessionsService.js later?
-async function loadUpcomingUserSessions(user) {
-  try {
-    // Query the UserSessions table
-    const userSessionsQuery = new Parse.Query("UserSessions");
-    // Filter by current user
-    userSessionsQuery.equalTo("userId", user);
-    userSessionsQuery.include("surfSessionId");
-    // userSessionsQuery.filter('surfSessionId.sessionDateTime', '>=', new Date());
-
-    const userSessions = await userSessionsQuery.find();
-
-    const to_return = userSessions.map((commentObj) => ({
-      id: commentObj.id,
-      surfSessionId: commentObj.get("surfSessionId").id,
-    }));
-    console.log(to_return);
-    return to_return;
-  } catch (error) {
-    console.error("Error fetching user sessions:", error);
-  }
-}
-
-export async function fetchUpcomingSessionsToSpotId(spotId) {
-  const session = Parse.Object.extend("SurfSessions");
-  const query = new Parse.Query(session);
-  query.include("spotId.spotName");
-  query.equalTo("spotId", {
-    __type: "Pointer",
-    className: "Spot",
-    objectId: spotId,
-  });
-
-  console.log("Fetching Sessions for Spot ID:", spotId);
-
-  try {
-    const results = await query.find();
-    console.log("Fetched Sessions:", results);
-    const upcoming_sessions = results.map(sessionToPlainObject);
-
-    const upcoming_user_sessions = await loadUpcomingUserSessions(
-      Parse.User.current()
-    );
-    console.log("Fetched User Sessions:", upcoming_user_sessions);
-    //mtch upcoming sessions with user sessions to mark joined with isJoined = True
-    const upcoming_sessions_with_joined = upcoming_sessions.map((session) => {
-      const isJoined = upcoming_user_sessions.some(
-        (user_session) => user_session.surfSessionId === session.id
-      );
-      return {
-        ...session,
-        isJoined,
-      };
-    });
-
-    return upcoming_sessions_with_joined;
-  } catch (error) {
-    console.error("Error fetching Sessions for Spot:", error);
-    throw error;
-  }
-}

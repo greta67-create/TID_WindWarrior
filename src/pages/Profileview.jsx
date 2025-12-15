@@ -7,14 +7,12 @@ import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
 import { useState, useEffect } from "react";
-import {
-  fetchUserSessions,
-  unjoinSession,
-} from "../services/usersessionService";
+import { unjoinSession } from "../services/usersessionService";
 import { getCurrentUserInfo } from "../services/userservice";
 import LogOutButton from "../components/LogOutButton";
 import "../styles/BrowseSessions.css";
 import TabNavigation from "../components/TabNavigation";
+import { unjoinAndRemoveFromJoinedList } from "../utils/unjoinAndRemoveFromJoinedList";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
@@ -24,6 +22,7 @@ export default function ProfileView({ onLogout }) {
   const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [pastSessions, setPastSessions] = useState([]);
   const [activeTab, setActiveTab] = useState("planned");
+  const [loading, setLoading] = useState(true); //loading notification pattern
 
   // flow is fetchUserSessions → setJoinedSessions → effect runs → setUpcomingSessions + setPastSessions
 
@@ -37,23 +36,30 @@ export default function ProfileView({ onLogout }) {
     loadUser();
   }, []);
 
-  // load current, joined user sessions
+  //load usersessions for current user via cloud function
   useEffect(() => {
     const user = Parse.User.current();
     if (!user) return;
-    //load Usersessions for specific user from backend
+  
     async function loadUserSessions() {
+      setLoading(true);
       try {
-        const sessions = await fetchUserSessions(user);
-        console.log("Loaded user sessions in ProfileView:", sessions);
-        setJoinedSessions(sessions); //stores in joinedSessions state
+        const sessions = await Parse.Cloud.run("loadSessions", {
+          filters: { joinedOnly: true },
+        });
+        console.log("Loaded user sessions in ProfileView via cloud:", sessions);
+        setJoinedSessions(sessions);
       } catch (err) {
         console.error("Error loading user sessions in ProfileView:", err);
+        setJoinedSessions([]);
+      } finally {
+        setLoading(false);
       }
     }
-
+  
     loadUserSessions();
   }, []);
+
 
   //split joinedSessions into past and future sessions whenever joinedSessions changes
   useEffect(() => {
@@ -80,22 +86,7 @@ export default function ProfileView({ onLogout }) {
       e.stopPropagation();
     }
     // In the profile view, all listed sessions are joined so clicking again unjoins them
-    try {
-      //call backend to unjoin
-      await unjoinSession(id);
-      console.log("Unjoined session from ProfileView:", id);
-
-      // Remove the session  so it disappears from Planned/Past lists
-      setJoinedSessions((prev) =>
-        prev.filter(
-          (s) =>
-            // s.objectId !== id && // for raw Parse-style objects
-            s.id !== id // in case fetchUserSessions maps id differently
-        )
-      );
-    } catch (err) {
-      console.error("Error unjoining session from ProfileView:", err);
-    }
+    await unjoinAndRemoveFromJoinedList(id, setJoinedSessions);
   };
 
   const handleSaveProfile = async (updatedData) => {
@@ -121,6 +112,10 @@ export default function ProfileView({ onLogout }) {
       console.error("Error saving profile:", err);
     }
   };
+
+  if (loading) {
+    return <div className="page">Loading profile...</div>;
+  }
 
   return (
     <div className="page">

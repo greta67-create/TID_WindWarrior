@@ -20,6 +20,50 @@ export function commentToPlainObject(parseObj) {
     };
 }
 
+export async function fetchSessionComments(surfSessionId) {
+    if (!surfSessionId) {
+      throw new Error("Session ID missing");
+    }
+  
+    const query = new Parse.Query(Comment);
+    const sessionPointer = new Parse.Object("SurfSessions");
+    sessionPointer.id = surfSessionId;
+  
+    query.equalTo("surfSessionId", sessionPointer);
+    query.include("userId");
+    query.ascending("createdAt");
+  
+    try {
+      const results = await query.find();
+      return results.map(commentToPlainObject);
+    } catch (error) {
+      console.error("Error fetching session comments:", error);
+      throw error;
+    }
+  }
+
+
+  export async function fetchCommentsToSpotId(spotId) {
+    const Comment = Parse.Object.extend("comment");
+    const query = new Parse.Query(Comment);
+    const spotPointer = new Parse.Object("Spot");
+    spotPointer.id = spotId;
+    query.equalTo("spotId", spotPointer);
+    query.ascending("createdAt");
+    query.include("userId");
+  
+    console.log("Fetching Comments for Spot ID:", spotId);
+  
+    try {
+      const results = await query.find();
+      console.log("Fetched Comments:", results);
+      return results.map(commentToPlainObject);
+    } catch (error) {
+      console.error("Error fetching comments for Spot:", error);
+      throw error;
+    }
+  }
+
 export async function createComment(surfSessionId  = null, spotId = null, userId, message, mother_comment_id = null) {
     const comment = new Comment();
     comment.set("userId", userId);
