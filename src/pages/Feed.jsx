@@ -9,7 +9,6 @@ import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
 import Parse from "../parse-init";
-import loadSurfSessions from "../services/getParseFunctions";
 import { joinSession, unjoinSession } from "../services/usersessionService";
 
 const defaultAvatars = [ava1, ava2, ava3];

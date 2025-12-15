@@ -6,7 +6,7 @@ import Parse from "parse";
 
 // Define the User Parse class
 const User = Parse.Object.extend("_User");
-const currentUser = Parse.User.current();
+// const currentUser = Parse.User.current();
 
 /**
  * Convert a Parse TodoItem object to a plain JavaScript object

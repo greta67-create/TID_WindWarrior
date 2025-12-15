@@ -9,13 +9,13 @@
 .chat-title > div:first-child {
   display: flex;
   flex-direction: column;
-  gap: 4px; 
+  gap: 4px;
 }
 
 .chat-item strong {
   font-weight: 700;
   color: var(--text);
-  font-size: 14px; 
+  font-size: 14px;
 }
 
 .chat-item time {
@@ -188,9 +188,9 @@
   background: var(--back);
   border: 1px solid var(--light);
   border-radius: 20px;
-  padding: 8px 16px;
+  padding: 4px 8px;
   font-family: var(--font-sans);
-  font-size: 0.9rem;
+  font-size: 8px;
   color: var(--text);
   cursor: pointer;
   white-space: nowrap;
