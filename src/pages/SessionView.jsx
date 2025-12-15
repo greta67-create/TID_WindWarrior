@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import Parse from "../parse-init";
 import Sessionblocklarge from "../components/SessionBlocklarge";
 import "../styles/Sessionview.css";
 import "../App.css";
@@ -7,15 +8,8 @@ import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
 import "../styles/SessionView.css";
-import {
-  fetchSessionById,
-  fetchSessionComments,
-} from "../services/sessionService";
-import {
-  fetchUserSessions,
-  joinSession,
-  unjoinSession,
-} from "../services/usersessionService";
+import { fetchSessionComments } from "../services/commentService";
+import { toggleJoinSingle } from "../utils/toggleJoinSingle";
 import Chat from "../components/Chat";
 import getWindfinderlink from "../utils/getWindfinderlink";
 
@@ -30,68 +24,35 @@ export default function SessionViewPage() {
     { id: 100, text: "I have a car and can offer a ride!" },
     { id: 101, text: "Can someone offer a ride?" },
   ];
+  const [loading, setLoading] = useState(true); //loading notification pattern
   const currentUser = Parse.User.current();
   console.log("SessionView currentUser:", currentUser);
 
-  // Load this one session by id
+  // load this session by id via cloud function
   useEffect(() => {
     if (!id) return;
 
     async function loadSession() {
+      setLoading(true);
       try {
-        console.log("SessionView URL id:", id);
-        const data = await fetchSessionById(id);
-        setSession(data);
-      } catch (error) {
-        console.error("Error fetching session by id:", error);
-      }
-    }
-
+        const results = await Parse.Cloud.run("loadSessions", {
+          filters: { sessionIds: [id] },
+        });
+        // takes firstSession from results array
+        const firstsession = results?.[0] || null;
+        setSession(firstsession);
+        setIsJoined(firstsession?.isJoined ?? false);
+      } catch (err) {
+        console.error("Error fetching session by id:", err);
+      }finally {
+      setLoading(false);
+    }}
     loadSession();
   }, [id]);
 
-  // check if user has joined this session
-  useEffect(() => {
-    if (!session) return;
-
-    const user = Parse.User.current();
-    if (!user) return;
-
-    async function loadJoinState() {
-      try {
-        const userSessions = await fetchUserSessions(user);
-        const ids = userSessions.map((s) => s.id); // or s.sessionId depending on your service
-        setIsJoined(ids.includes(session.id));
-      } catch (err) {
-        console.error("Error loading joined state in SessionView:", err);
-      }
-    }
-
-    loadJoinState();
-  }, [session]);
-
-  // join/unjoin logic: call backend and update local state
   const onJoin = async () => {
-    if (!session) return; //dont do anything if data haven't loaded yet
-    const sessionId = session.id;
-    console.log("Join button clicked", id);
-    const currentlyJoined = isJoined;
-
-    // optimistic toggle (show UI change immediately)
-    setIsJoined(!currentlyJoined);
-
-    try {
-      if (currentlyJoined) {
-        await unjoinSession(sessionId);
-        console.log("Usersession deleted in DB", id);
-      } else {
-        await joinSession(sessionId);
-        console.log("Usersession saved in DB", id);
-      }
-    } catch (error) {
-      console.error("Error toggling join state:", error);
-      setIsJoined(currentlyJoined);
-    }
+    if (!session) return;
+    await toggleJoinSingle(session.id, isJoined, setIsJoined);
   };
 
   // Load comments for this session
@@ -116,12 +77,14 @@ export default function SessionViewPage() {
     { id: 101, text: "Can someone offer a ride?" },
   ];
 
-  // to avoid that session is null before data loads
-  if (!session) {
-    return <div className="page">Loading session…</div>;
-  }
   // const for weather link
   // const weatherLink = getWindfinderlink(session.spotName);
+
+
+  if (loading) {
+    return <div className="page">Loading sessions...</div>;
+  }
+
 
   return (
     <div className="page">

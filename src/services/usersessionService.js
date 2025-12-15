@@ -1,40 +1,10 @@
 import Parse from "../parse-init";
-import sessionToPlainObject from "./sessionService";
+import sessionToPlainObject from "./sessionToPlainObject";
 
 // Service layer for UserSession operations
 const UserSessions = Parse.Object.extend("UserSessions");
-/**
- * Fetch all sessions for a given user from the UserSessions join table
- * @param {Parse.User} user - The current logged-in user
- * @returns {Promise<Array>} Array of sessions as plain JS objects
- */
 
-export async function fetchUserSessions(user) {
-  if (!user) {
-    throw new Error("User must be provided to fetch user sessions");
-  }
-
-  const query = new Parse.Query(UserSessions);
-
-  // Filter by current user and fetch related data
-  query.equalTo("userId", user);
-  query.include("surfSessionId"); // include the SurfSessions object
-  query.include("surfSessionId.spotId"); // include the Spot for the session
-
-  try {
-    const userSessionsData = await query.find();
-
-    // For each UserSessions row, take its surfSessionId and convert to plain object
-    const sessions = userSessionsData
-      .map((userSession) => userSession.get("surfSessionId"))
-      .map(sessionToPlainObject);
-
-    return sessions;
-  } catch (error) {
-    console.error("Error fetching user sessions:", error);
-    throw error;
-  }
-}
+// fetchUserSessions is now handled by the cloud function loadSessions
 
 /**
  * Create a UserSessions entry for a given user and session
@@ -120,6 +90,7 @@ export async function deleteUserSession(user, surfSessionId) {
     }
     // delete user session if found
     await userSession.destroy();
+    console.log("Deleted user session:", userSession);
   } catch (error) {
     console.error("Error deleting user session:", error);
     throw error;
