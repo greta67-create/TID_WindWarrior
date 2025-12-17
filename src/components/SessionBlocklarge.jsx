@@ -19,15 +19,17 @@ export default function Sessionblocklarge({
   const shown = list.slice(0, 3);
   const more = 3; // calculate the number of additional avatars
 
+  //  adapted structure compared to normal Sessionblock (new structure and larger icons)
   return (
-    <div className="session-card-large">
+    <div className="session-card">
       <div className="session-card-title">Forecast for your session:</div>
       <div className="session-header">
         <div className="metrics">
           <div className="wind-container-large">
             <div className={`windDir-icon-large windDir-icon--${windDir}`}>↑</div>
             {coastDirection && (
-              <svg width="70" height="70" style={{ position: 'absolute', top: 0, left: 0 }}>
+              //curved segment (arc) whose shape depends on costDirection attribute
+              <svg className="coast-arc" width="70" height="70">
                 <path 
                   d={
                     coastDirection === 'N' ? 'M 21 11 A 28 28 0 0 1 49 11' :

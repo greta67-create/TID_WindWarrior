@@ -72,14 +72,6 @@ export default function SessionViewPage() {
     loadComments();
   }, [session]);
 
-  const proposedComment = [
-    { id: 100, text: "I have a car and can offer a ride!" },
-    { id: 101, text: "Can someone offer a ride?" },
-  ];
-
-  // const for weather link
-  // const weatherLink = getWindfinderlink(session.spotName);
-
 
   if (loading) {
     return <div className="page">Loading sessions...</div>;
@@ -130,7 +122,7 @@ export default function SessionViewPage() {
               className="info-btn info-btn-secondary"
             >
               <span>About the weather</span>
-              <span className="external-icon">↗</span>
+              <span className="external-icon">→</span>
             </a>
           </div>
         </div>

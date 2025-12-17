@@ -5,9 +5,7 @@ import '../styles/Chat.css';
 
 function ChatActions({ commentId, handleDeleteComment, handleEditComment }) {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
-
   const wrapperRef = useRef(null);
-
   const toggleTooltip = () => {
     setIsTooltipVisible(!isTooltipVisible);
   };

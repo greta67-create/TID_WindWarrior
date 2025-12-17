@@ -97,19 +97,15 @@ export async function createComment(surfSessionId  = null, spotId = null, userId
     }
 }
 
-export async function deleteComment(id) {
+export async function deleteComment(id, target) {
 // Create a new Todo parse object instance and set todo id
   const comment = new Comment();
   comment.set('objectId', id);
-// .destroy should be called to delete a parse object
+  comment.set('target', target);
   try {
     await comment.destroy();
-    alert('Success! To-do deleted!');
-    // Refresh to-dos list to remove this one
-	    return true;
+    return true;
     } catch (error) {
-	    // Error can be caused by lack of Internet connection
-	    alert(`Error! ${error.message}`);
-	    return false;
-    };
+    console.error("Error deleting comment:", error);
+    return false;};
 };    
