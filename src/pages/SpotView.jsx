@@ -169,7 +169,7 @@ export default function SpotViewPage() {
           rel="noopener noreferrer"
           className="windfinder-link"
         >
-          View live wind forecast on Windfinder →
+          Get more information about the weather →
         </a>
       )}
 

@@ -2,29 +2,25 @@ import "../styles/Sessionblock.css";
 import JoinButton from "../components/JoinButton";
 import getWeatherIcon from "../utils/getWeatherIcon";
 
-import ava1 from "../assets/avatar1.png";
-import ava2 from "../assets/avatar2.png";
-import ava3 from "../assets/avatar3.png";
-
 export default function Sessionblock({
-  //fallbacks
+  //fallback spot information to avoid weird layout when session onfpr can't be loaded
   spot = "Fallback Spot",
   dateLabel = "Apr 4th",
-  timeLabel = "12pm",
+  timeLabel = "12:00 pm",
   windKts = 21,
   tempC = 18,
   weather = "⛅️",
   windDir = "↗",
   coastDirection = null,
-  avatars = [ava1, ava2, ava3],
+  avatars = [],
   onJoin = () => {},
   isJoined = false,
   joinedText = "Joining",
   showJoin = true, //per default show join button (exeption: Profileview, past sessions)
 }) {
   // show at most 3 avatars
-  const list = Array.isArray(avatars) ? avatars : avatars ? [avatars] : [];
-  const shown = list.slice(0, 3);
+  const avatarList = Array.isArray(avatars) ? avatars : avatars ? [avatars] : [];
+  const shownAvatars = avatarList.slice(0, 3);
   const more = 3; // calculate the number of additional avatars
 
   return (
@@ -49,7 +45,8 @@ export default function Sessionblock({
             <div className={`windDir-icon windDir-icon--${windDir}`}>
               ↑
             </div>
-            <svg width="50" height="50" style={{ position: 'absolute', top: 0, left: 0 }}>
+            {/* curved segment (arc) whose shape depends on costDirection attribute */}
+            <svg className="coast-arc"width="50" height="50">
               <path 
                 d={
                   coastDirection === 'N' ? 'M 15 8 A 20 20 0 0 1 35 8' :
@@ -73,12 +70,13 @@ export default function Sessionblock({
           <div className="weather-type">{getWeatherIcon(weather)}</div>
           <div className="metric-text">{tempC}°C</div>
         </div>
-
-        {list.length > 0 && (
+        {/* show avatars if there are any */}
+        {avatarList.length > 0 && (
           <div className="avatar-stack">
-            {shown.map((src, i) => (
+            {shownAvatars.map((src, i) => (
               <img key={i} alt="" src={src} className="avatar" />
             ))}
+            {/* if there are more avatars, show the number of additional avatars */}
             {more > 0 && <div className="avatar-count">+{more}</div>}
           </div>
         )}

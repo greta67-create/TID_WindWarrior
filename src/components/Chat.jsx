@@ -8,55 +8,41 @@ export default function Chat({
   setComments,
   session,
   spot,
+  // hide proposed comments as default off, but turned on in Spotview
   hideProposedComments = false,
-  // optional: allow passing initial proposed comments from props
-  proposedComments: initialProposedComments = [
-    { id: 100, text: "I have a car and can offer a ride!" },
-    { id: 101, text: "Can someone offer a ride?" },
-  ],
+  proposedComments: initialProposedComments = [],
 }) {
   const [input, setInput] = useState("");
   const [proposedComments, setProposedComments] = useState(
     initialProposedComments
   );
 
+  // handle delete comment
   const handleDeleteComment = (commentId) => {
-    deleteComment(commentId)
-      .then(() => {
-        setComments(comments.filter((c) => c.id !== commentId));
-      })
-      .catch((error) => {
-        console.error("Error deleting comment:", error);
-      });
+    deleteComment(commentId, session?.id, spot?.id || null)
+    setComments((prev) => prev.filter((comment) => comment.id !== commentId));
   };
 
+  // handle edit comment, will be implemented in the future
   const handleEditComment = () => {
     alert("Edit comment feature coming soon!");
   };
 
+  // handle send comment
   const handleSendClick = () => {
-    if (input.trim() === "") return; // Prevent adding empty comments
+    if (input.trim() === "") return; // prevent adding empty comments
 
-    console.log("Creating comment:", input);
-
-    if (session) {
-      console.log("Creating comment for session:", session.id);
-    } else if (spot) {
-      console.log("Creating comment for spot:", spot.id);
-    }
-
+    if (session) { console.log("Creating comment for session:", session.id); } 
+    else if (spot) { console.log("Creating comment for spot:", spot.id); }
+    // create comment for session or spot
     createComment(session?.id, spot?.id, currentUser, input)
-      .then((savedComment) => {
-        setComments([...comments, savedComment]);
-      })
-      .catch((error) => {
-        console.error("Error creating comment:", error);
-      });
-
-    setInput(""); // Clear the input field
+    // add comment to comments array
+    setComments((prev) => [...prev, savedComment]);
+    setInput(""); // Clear the input field only on success
   };
 
-  const handlePropCommentClick = (text, id) => {
+  // handle proposed comment click
+  const handleProposedCommentClick = (text, id) => {
     setInput(text);
     setProposedComments((prev) => prev.filter((pc) => pc.id !== id));
   };
@@ -64,38 +50,39 @@ export default function Chat({
   return (
     <div className="chat">
       <div className="chat-list">
-        {comments.map((c) => (
-          <div key={c.id} className="chat-item">
+        {comments.map((comment) => (
+          <div key={comment.id} className="chat-item">
             <div className="chat-title">
               <div>
-                <strong>{c.name}</strong>
-                <time>{c.time || "Date Unknown"}</time>
+                <strong>{comment.name}</strong>
+                <time>{comment.time || "Date Unknown"}</time>
               </div>
-
-              {c.user_id === currentUser.id ? (
+              {/* only show edit and delete buttons if the comment is owned by the current user */}
+              {comment.user_id === currentUser.id ? (
                 <ChatActions
-                  commentId={c.id}
+                  commentId={comment.id}
                   handleDeleteComment={handleDeleteComment}
                   handleEditComment={handleEditComment}
                 />
               ) : null}
             </div>
-            <div className="chat-text">{c.text}</div>
+            <div className="chat-text">{comment.text}</div>
           </div>
         ))}
       </div>
 
+      {/* comment bar at bottom of page*/}
       <div className="comment-bar">
         {!hideProposedComments && (
           <div className="prop-comment">
-            {proposedComments.map((pc) => (
+            {proposedComments.map((proposed) => (
               <button
-                key={pc.id}
+                key={proposed.id}
                 type="button"
                 className="chip"
-                onClick={() => handlePropCommentClick(pc.text, pc.id)}
+                onClick={() => handleProposedCommentClick(proposed.text, proposed.id)}
               >
-                {pc.text}
+                {proposed.text}
               </button>
             ))}
           </div>

@@ -6,6 +6,7 @@
   gap: var(--spacing-sm);
 }
 
+/*for name and date on the left and three points for comment edit on the right */
 .chat-title > div:first-child {
   display: flex;
   flex-direction: column;
@@ -32,22 +33,22 @@
   border: none;
   cursor: pointer;
   font-size: 1.25rem;
-  color: #555;
+  color: var(--sub);
   padding: var(--spacing-xs);
   border-radius: 50%;
 }
 
 .chat-toggle-btn:hover {
-  background-color: #f0f0f0;
+  background-color: var(--back);
 }
 
 .chat-tooltip {
   position: absolute;
   top: 30px;
   right: 0;
-  background-color: white;
+  background-color: var(--back);
   border-radius: var(--spacing-sm);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 10px var(--shadow);
   padding: var(--spacing-sm);
   z-index: 10;
   display: flex;
@@ -60,7 +61,7 @@
   border: none;
   padding: 2px 2px;
   border-radius: 2px;
-  text-align: left;
+  text-align: center;
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
@@ -72,7 +73,7 @@
 }
 
 .chat-tooltip-btn.delete {
-  color: #e53e3e;
+  color: var(--highlight);
 }
 
 .chat-tooltip-btn.delete:hover {
@@ -85,24 +86,29 @@
   font-size: var(--font-xs);
 }
 
-/* Fixed comment bar above bottom nav */
+/* Fixed comment bar above bottom nav (content centered) */
 .comment-bar {
   position: fixed;
-  bottom: 64px; /* sit above the nav */
+  bottom: 64px; 
   left: 0;
   right: 0;
-  padding: 0px var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
   z-index: 9;
   background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  touch-action: pan-y;
 }
 
 .comment-inner {
+  width: 100%;
   max-width: var(--content);
-  margin: 0;
+  margin: 0 auto;
   display: flex;
   gap: var(--spacing-sm);
   align-items: center;
-  padding-right: var(--spacing-xl);
+  padding-right: 0;
 }
 
 .comment-input {
@@ -126,21 +132,10 @@
   box-shadow: 1px 6px 24px var(--shadow);
 }
 
-/* Comments list (Session View)
-.chat-list {
-  display: grid;
-  gap: 12px;
-  margin-top: 8px;
-  padding-bottom: 80px;
-} */
-
 .chat-list {
   display: grid;
   gap: var(--spacing-sm);
   margin-top: var(--spacing-sm);
-  /* only this area scrolls */
-  /* max-height: calc(100vh - 260px);
-  overflow-y: auto; */
   padding-bottom: var(--spacing-md);
 }
 
@@ -159,20 +154,17 @@
   color: var(--text);
 }
 
-/* Proposed comments container */
-.comment-bar {
-  position: fixed;
-  bottom: 40px;
-  left: 0;
-  right: 0;
+/* Proposed comments container (chips) */
+.prop-comment {
+  width: 100%;
+  max-width: var(--content);
+  margin: 0 auto var(--spacing-sm);
+  display: flex;
   flex-wrap: nowrap;
   gap: var(--spacing-sm);
   overflow-x: auto;
-  padding: var(--spacing-sm) var(--spacing-md);
   scrollbar-width: none;
   -ms-overflow-style: none;
-  z-index: 8;
-  background: transparent;
 }
 
 .prop-comment button {
