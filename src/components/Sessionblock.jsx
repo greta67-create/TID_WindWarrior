@@ -15,7 +15,7 @@ export default function Sessionblock({
   avatars = [],
   onJoin = () => {},
   isJoined = false,
-  joinedText = "Joining",
+  joinedText = "Joined",
   showJoin = true, //per default show join button (exeption: Profileview, past sessions)
 }) {
   // show at most 3 avatars

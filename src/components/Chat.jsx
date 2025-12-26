@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ChatActions from "./CommentChatActions";
+import CommentActions from "./CommentActions";
 import { createComment, deleteComment } from "../services/commentService";
 
 export default function Chat({
@@ -10,7 +10,7 @@ export default function Chat({
   spot,
   // hide proposed comments as default off, but turned on in Spotview
   hideProposedComments = false,
-  proposedComments: initialProposedComments = [],
+  initialProposedComments = [],
 }) {
   const [input, setInput] = useState("");
   const [proposedComments, setProposedComments] = useState(
@@ -34,6 +34,7 @@ export default function Chat({
 
     if (session) { console.log("Creating comment for session:", session.id); } 
     else if (spot) { console.log("Creating comment for spot:", spot.id); }
+
     // create comment for session or spot
     createComment(session?.id, spot?.id, currentUser, input)
     // add comment to comments array
@@ -44,6 +45,7 @@ export default function Chat({
   // handle proposed comment click
   const handleProposedCommentClick = (text, id) => {
     setInput(text);
+    // remove proposed comment from proposedComments array
     setProposedComments((prev) => prev.filter((pc) => pc.id !== id));
   };
 
@@ -59,7 +61,7 @@ export default function Chat({
               </div>
               {/* only show edit and delete buttons if the comment is owned by the current user */}
               {comment.user_id === currentUser.id ? (
-                <ChatActions
+                <CommentActions
                   commentId={comment.id}
                   handleDeleteComment={handleDeleteComment}
                   handleEditComment={handleEditComment}

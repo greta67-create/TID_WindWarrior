@@ -1,4 +1,3 @@
-import "../App.css";
 import Parse from "../parse-init";
 import ProfileCard from "../components/Profilecard";
 import Sessionblock from "../components/Sessionblock";
@@ -7,7 +6,6 @@ import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
 import { useState, useEffect } from "react";
-import { unjoinSession } from "../services/usersessionService";
 import { getCurrentUserInfo } from "../services/userservice";
 import LogOutButton from "../components/LogOutButton";
 import "../styles/BrowseSessions.css";
@@ -113,10 +111,12 @@ export default function ProfileView({ onLogout }) {
     }
   };
 
+  //loading notification pattern
   if (loading) {
     return <div className="page">Loading profile...</div>;
   }
 
+  // render profile view
   return (
     <div className="page">
       <div className="page-header">

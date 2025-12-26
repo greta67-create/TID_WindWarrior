@@ -1,12 +1,13 @@
-// utils/toggleJoinInList.js
 import { joinSession, unjoinSession } from "../services/usersessionService";
 
-export async function toggleJoinInSessionList(sessionId, getSessions, setSessions) {
-  const sessions = getSessions();
+/**
+ * Helper for SpotView and Feed to toggle join state for a session in a list of sessions
+ */
+export async function toggleJoinInSessionList(sessionId, sessions, setSurfSessions) {
   const currentlyJoined = sessions.some((s) => s.id === sessionId && s.isJoined);
 
-  // optimistic UI toggle
-  setSessions((prev) =>
+  // Optimistic UI update
+  setSurfSessions((prev) =>
     prev.map((s) => (s.id === sessionId ? { ...s, isJoined: !s.isJoined } : s))
   );
 
@@ -18,8 +19,8 @@ export async function toggleJoinInSessionList(sessionId, getSessions, setSession
     }
   } catch (error) {
     console.error("Error toggling user session:", error);
-    // revert on error
-    setSessions((prev) =>
+    // Revert optimistic update on error
+    setSurfSessions((prev) =>
       prev.map((s) => (s.id === sessionId ? { ...s, isJoined: !s.isJoined } : s))
     );
   }

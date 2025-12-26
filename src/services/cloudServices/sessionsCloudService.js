@@ -57,10 +57,9 @@ Parse.Cloud.define("loadSessions", async (request) => {
     if (filters.futureOnly) {
       query.greaterThanOrEqualTo("sessionDateTime", new Date());
     }
-    
-    if (filters.sessionIds?.length) {
-    const sessionPtrs = filters.sessionIds.map((id) => ({ __type: 'Pointer', className: 'SurfSessions', objectId: id }));
-    query.containedIn("objectId", filters.sessionIds); 
+
+    if (filters.sessionIds && filters.sessionIds.length > 0) {
+    query.containedIn("objectId", filters.sessionIds);
     }
     
     if (filters.spotIds && filters.spotIds.length > 0) {
@@ -77,12 +76,11 @@ Parse.Cloud.define("loadSessions", async (request) => {
 
     sessionResults = sessionResults.map((session) => sessionToPlainObject(session));
 
-    const userSessionsQuery = new Parse.Query("UserSessions");
-
-    // Filter by current user and fetch related data
-    userSessionsQuery.equalTo("userId", user);
-    userSessionsQuery.include("surfSessionId");
-    userSessionsQuery.include("surfSessionId.spotId");
+    // Query to get current user's joined sessions (for isJoined flag)
+    const currentUserSessionsQuery = new Parse.Query("UserSessions");
+    currentUserSessionsQuery.equalTo("userId", user);
+    currentUserSessionsQuery.include("surfSessionId");
+    currentUserSessionsQuery.include("surfSessionId.spotId");
     
     // Only query UserSessions for the session IDs we already retrieved
     if (sessionResults.length > 0) {
@@ -91,37 +89,76 @@ Parse.Cloud.define("loadSessions", async (request) => {
         className: 'SurfSessions',
         objectId: session.id
       }));
-      userSessionsQuery.containedIn("surfSessionId", sessionPointers);
+      currentUserSessionsQuery.containedIn("surfSessionId", sessionPointers);
     }
 
-    const userSessionsData = await userSessionsQuery.find();
+    const currentUserSessionsData = await currentUserSessionsQuery.find();
     
-    // For each UserSessions row, take its sessionId and convert to plain object
-    const userSessionIDs = userSessionsData.map((userSession) => {
-      return userSession.get("surfSessionId").id;
-    });
-    console.log("User sessions data:", userSessionIDs);
-    console.log("sessionResults:", sessionResults);
+    // Get IDs of sessions the current user has joined
+    const userSessionIDs = currentUserSessionsData.map((userSession) => {
+      const surfSession = userSession.get("surfSessionId");
+      return surfSession ? surfSession.id : null;
+    })
+      .filter(id => id !== null); 
+  
 
-    // add isJoined flag to sessions
-    sessionResults = sessionResults.map((session) => {
-      return {
-        ...session,
-        isJoined: userSessionIDs.includes(session.id),
-      };
-    });
-
-    // add isJoined flag to sessions
-    sessionResults = sessionResults.map((session) => {
-      return {
-        ...session,
-        isJoined: userSessionIDs.includes(session.id),
-      };
-    });
-    // filter only wants joined sessions  for Profileview
-    if (filters.joinedOnly) {
-      sessionResults = sessionResults.filter((session) => session.isJoined);
+    // Query to get ALL UserSessions for all sessions (to get joined users and count)
+    const allUserSessionsQuery = new Parse.Query("UserSessions");
+    allUserSessionsQuery.include("userId"); // Include user data
+    allUserSessionsQuery.include("surfSessionId");
+    
+    if (sessionResults.length > 0) {
+      const sessionPointers = sessionResults.map(session => ({
+        __type: 'Pointer',
+        className: 'SurfSessions',
+        objectId: session.id
+      }));
+      allUserSessionsQuery.containedIn("surfSessionId", sessionPointers);
     }
+
+    const allUserSessionsData = await allUserSessionsQuery.find();
+    
+    // Group UserSessions by sessionId and extract user info
+    const joinedUsersBySession = {};
+    allUserSessionsData.forEach((userSession) => {
+      const surfSession = userSession.get("surfSessionId");
+      const userObj = userSession.get("userId");
+    
+      // Skip if either is null
+      if (!surfSession || !userObj) return;
+    
+      const sessionId = surfSession.id;
+      
+      if (!joinedUsersBySession[sessionId]) {
+        joinedUsersBySession[sessionId] = [];
+      }
+      
+      // Extract user profile picture
+      const profilePicture = userObj.get("profilepicture");
+      const avatarUrl = profilePicture && typeof profilePicture.url === "function" 
+        ? profilePicture.url() 
+        : null;
+      
+      joinedUsersBySession[sessionId].push({
+        id: userObj.id,
+        avatar: avatarUrl,
+      });
+    });
+
+    // add isJoined flag, joinedCount, and joinedUsers to sessions
+    // Only return first 3 avatars for performance, but keep total count
+    sessionResults = sessionResults.map((session) => {
+      const allJoinedUsers = joinedUsersBySession[session.id] || [];
+      const totalCount = allJoinedUsers.length;
+      // Only return first 3 avatars
+      const firstThreeAvatars = allJoinedUsers.slice(0, 3);
+      return {
+        ...session,
+        isJoined: userSessionIDs.includes(session.id),
+        joinedCount: totalCount,
+        joinedUsers: firstThreeAvatars,
+      };
+    });
     
     return sessionResults;
   } catch (error) {

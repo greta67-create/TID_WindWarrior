@@ -12,11 +12,11 @@ export default function Sessionblocklarge({
   avatars = [],
   onJoin = () => {},
   isJoined = false,
-  joinedText = "Joining",
+  joinedText = "Joined",
 }) {
   // show at most 3 avatars
-  const list = Array.isArray(avatars) ? avatars : avatars ? [avatars] : [];
-  const shown = list.slice(0, 3);
+  const avatarList = Array.isArray(avatars) ? avatars : avatars ? [avatars] : [];
+  const shownAvatars = avatarList.slice(0, 3);
   const more = 3; // calculate the number of additional avatars
 
   //  adapted structure compared to normal Sessionblock (new structure and larger icons)
@@ -62,12 +62,13 @@ export default function Sessionblocklarge({
           onClick={onJoin}
           joinedText={joinedText}
         />
-
-        {list.length > 0 && (
+        {/* show avatars if there are any */}
+        {avatarList.length > 0 && (
           <div className="avatar-stack">
-            {shown.map((src, i) => (
-              <img key={i} alt="" src={src} className="avatar" />
+            {shownAvatars.map((avatar, index) => (
+              <img key={index} alt="" src={avatar} className="avatar" />
             ))}
+            {/* if there are more avatars, show the number of additional avatars */}
             {more > 0 && <div className="avatar-count">+{more}</div>}
           </div>
         )}

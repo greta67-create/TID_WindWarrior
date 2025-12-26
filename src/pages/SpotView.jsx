@@ -1,4 +1,3 @@
-import "../App.css";
 import "../styles/SpotView.css";
 import Sessionblock from "../components/Sessionblock";
 import Parse from "../parse-init";
@@ -77,7 +76,7 @@ export default function SpotViewPage() {
       e.preventDefault();
       e.stopPropagation();
     }
-    await toggleJoinInSessionList(id, () => surfSessions, setSurfSessions);
+    await toggleJoinInSessionList(id, surfSessions, setSurfSessions);
   };
 
 
@@ -85,6 +84,7 @@ export default function SpotViewPage() {
     return <div className="page">Loading spot...</div>;
   }
 
+  // render spot view
   return (
     <div className="page">
       <div
