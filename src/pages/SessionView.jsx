@@ -2,12 +2,10 @@ import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Parse from "../parse-init";
 import Sessionblocklarge from "../components/SessionBlocklarge";
-import "../styles/Sessionview.css";
-import "../App.css";
+import "../styles/SessionView.css";
 import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
-import "../styles/SessionView.css";
 import { fetchSessionComments } from "../services/commentService";
 import { toggleJoinSingle } from "../utils/toggleJoinSingle";
 import Chat from "../components/Chat";
@@ -15,20 +13,20 @@ import getWindfinderlink from "../utils/getWindfinderlink";
 
 const defaultAvatars = [ava1, ava2, ava3];
 
+const initialProposedComments = [
+  { id: 100, text: "I have a car and can offer a ride!" },
+  { id: 101, text: "Can someone offer a ride?" },
+];
+
 export default function SessionViewPage() {
-  const { id } = useParams();
+  const { id } = useParams(); // get session id from url
   const [session, setSession] = useState(null);
   const [comments, setComments] = useState([]);
   const [isJoined, setIsJoined] = useState(false);
-  const proposedComments = [
-    { id: 100, text: "I have a car and can offer a ride!" },
-    { id: 101, text: "Can someone offer a ride?" },
-  ];
-  const [loading, setLoading] = useState(true); //loading notification pattern
+  const [loading, setLoading] = useState(true);
   const currentUser = Parse.User.current();
-  console.log("SessionView currentUser:", currentUser);
 
-  // load this session by id via cloud function
+  // Load session by ID from cloud function
   useEffect(() => {
     if (!id) return;
 
@@ -38,18 +36,21 @@ export default function SessionViewPage() {
         const results = await Parse.Cloud.run("loadSessions", {
           filters: { sessionIds: [id] },
         });
-        // takes firstSession from results array
-        const firstsession = results?.[0] || null;
-        setSession(firstsession);
-        setIsJoined(firstsession?.isJoined ?? false);
+        const loadedSession = results?.[0] || null;
+        setSession(loadedSession);
+        setIsJoined(loadedSession?.isJoined ?? false);
       } catch (err) {
         console.error("Error fetching session by id:", err);
-      }finally {
-      setLoading(false);
-    }}
+        setSession(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
     loadSession();
   }, [id]);
 
+  //handle join/unjoin session 
   const onJoin = async () => {
     if (!session) return;
     await toggleJoinSingle(session.id, isJoined, setIsJoined);
@@ -57,26 +58,37 @@ export default function SessionViewPage() {
 
   // Load comments for this session
   useEffect(() => {
-    if (!session) return;
+    if (!session?.id) return;
 
     const loadComments = async () => {
       try {
-        const data = await fetchSessionComments(session.id);
-        console.log("Fetched session comments:", data);
-        setComments(data);
+        const loadedComments = await fetchSessionComments(session.id);
+        setComments(loadedComments);
       } catch (error) {
         console.error("Error fetching session comments:", error);
+        setComments([]);
       }
     };
-
+    
     loadComments();
-  }, [session]);
+  }, [session?.id]);
 
-
+  //loading notification pattern
   if (loading) {
-    return <div className="page">Loading sessions...</div>;
+    return <div className="page">Loading session...</div>;
   }
 
+  if (!session) {
+    return (
+      <div className="page">
+        <div className="page-header">
+          <div className="page-title">Session not found</div>
+        </div>
+        <p>The session you're looking for doesn't exist.</p>
+        <Link to="/">Back to Feed</Link>
+      </div>
+    );
+  }
 
   return (
     <div className="page">
@@ -105,7 +117,6 @@ export default function SessionViewPage() {
         {/* Get more information section */}
         <div className="info-section">
           <div className="info-title">Get more information:</div>
-
           <div className="info-buttons">
             {/* Left button: to SpotView */}
             <Link
@@ -138,7 +149,7 @@ export default function SessionViewPage() {
         setComments={setComments}
         session={session}
         spot={null}
-        proposedComments={proposedComments}
+        proposedComments={initialProposedComments}
       />
     </div>
   );

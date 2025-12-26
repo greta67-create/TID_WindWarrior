@@ -1,4 +1,3 @@
-import "../App.css";
 //import SessionBlock from "../components/Sessionblock";
 import { useState, useEffect } from "react";
 import Sessionblock from "../components/Sessionblock";
@@ -24,7 +23,11 @@ function SessionFeedPage() {
           filters: { futureOnly: true },
         });
         console.log("Loaded sessions in Feed:", results);
-        setSurfSessions(results);
+        // Sort by sessionDateTime: earliest first
+        const sorted = [...results].sort((a, b) => 
+          new Date(a.sessionDateTime) - new Date(b.sessionDateTime)
+        );
+        setSurfSessions(sorted);
       } catch (err) {
         console.error("Error loading sessions in Feed:", err);
         setSurfSessions([]); // fallback so UI renders
@@ -35,20 +38,20 @@ function SessionFeedPage() {
     loadSessions();
   }, []);
 
-  //handle join/unjoin session in feed
+  //join/unjoin session in feed (callback function)
   const onJoin = (id) => async (e) => {
     if (e?.preventDefault) {
       e.preventDefault();
       e.stopPropagation();
     }
-    await toggleJoinInSessionList(id, () => surfSessions, setSurfSessions);
+    await toggleJoinInSessionList(id, surfSessions, setSurfSessions);
   };
 
-
-
+  //loading notification pattern
   if (loading) {
     return <div className="page">Loading sessions...</div>;
   }
+
   // Render session feed
   return (
     <div className="page">
@@ -63,7 +66,7 @@ function SessionFeedPage() {
           <Link
             key={s.id}
             to={`/session/${s.id}`}
-            style={{ textDecoration: "none" }}
+            className="session-link"
           >
             <Sessionblock
               spot={s.spotName}

@@ -1,5 +1,3 @@
-@import "/src/App.css";
-
 /* Get more information section */
 .info-section {
   margin-top: var(--spacing-md);
@@ -16,8 +14,6 @@
 .info-buttons {
   display: flex;
   gap: var(--spacing-sm);
-  flex-direction: row; 
-  width: 100%;
   flex-wrap: nowrap;
 }
 
@@ -39,13 +35,10 @@
 .info-btn-primary {
   background: var(--primary);
   color: var(--back);
-  width: 100%; /* Adjust width to fit content */
 }
 
 .info-btn-secondary {
-  /* background: var(--back); */
   color: var(--text);
-  width: 100%; /* Adjust width to fit content */
 }
 
 .external-icon {

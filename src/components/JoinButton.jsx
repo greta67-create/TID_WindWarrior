@@ -4,7 +4,7 @@ import "../styles/JoinButton.css";
 export default function JoinButton({
   isJoined = false,
   onClick = () => {},
-  joinedText = "Joining",
+  joinedText = "Joined",
   children = null,
   className = "",
   ...rest
