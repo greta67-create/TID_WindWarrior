@@ -14,8 +14,8 @@ import getWindfinderlink from "../utils/getWindfinderlink";
 const defaultAvatars = [ava1, ava2, ava3];
 
 const initialProposedComments = [
-  { id: 100, text: "I have a car and can offer a ride!" },
-  { id: 101, text: "Can someone offer a ride?" },
+  { id: 100, message: "I have a car and can offer a ride!" },
+  { id: 101, message: "Can someone offer a ride?" },
 ];
 
 export default function SessionViewPage() {
@@ -149,7 +149,7 @@ export default function SessionViewPage() {
         setComments={setComments}
         session={session}
         spot={null}
-        proposedComments={initialProposedComments}
+        initialProposedComments={initialProposedComments}
       />
     </div>
   );

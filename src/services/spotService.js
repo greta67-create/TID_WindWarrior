@@ -1,6 +1,4 @@
 import Parse from "parse";
-import { commentToPlainObject } from "./commentService";
-import sessionToPlainObject from "./sessionToPlainObject";
 
 /**
  * Service layer for Spot operations
