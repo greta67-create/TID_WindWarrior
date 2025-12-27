@@ -160,16 +160,12 @@
   max-width: var(--content);
   margin: 0 auto var(--spacing-sm);
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: var(--spacing-sm);
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 }
 
 .prop-comment button {
-  margin: 3px;
-  font-size: var(--font-xs);
+  margin: 0;
   background-color: var(--light);
   box-shadow: 1px 6px 24px var(--shadow);
 }
@@ -178,14 +174,13 @@
 .chip {
   background: var(--back);
   border: 1px solid var(--light);
-  border-radius: 20px;
-  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 10px;
+  padding: 6px 12px;
   font-family: var(--font-sans);
-  font-size: var(--font-sm);
+  font-size: 11px;
   color: var(--text);
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 0;
 }
 
 .chip:hover {

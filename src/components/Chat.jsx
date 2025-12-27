@@ -17,10 +17,16 @@ export default function Chat({
     initialProposedComments
   );
 
-  // handle delete comment
-  const handleDeleteComment = (commentId) => {
-    deleteComment(commentId, session?.id, spot?.id || null)
-    setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+  // handle delete comment (waits for backend to delete comment)
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const success = await deleteComment(commentId);
+      if (success) {
+        setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
   };
 
   // handle edit comment, will be implemented in the future
@@ -28,23 +34,29 @@ export default function Chat({
     alert("Edit comment feature coming soon!");
   };
 
-  // handle send comment
-  const handleSendClick = () => {
-    if (input.trim() === "") return; // prevent adding empty comments
+  // handle send comment (waits for backend to save comment)
+  const handleSendClick = async () => {
+    const message = input.trim();
+    if (message === "") return; // prevent adding empty comments
 
     if (session) { console.log("Creating comment for session:", session.id); } 
     else if (spot) { console.log("Creating comment for spot:", spot.id); }
 
-    // create comment for session or spot
-    createComment(session?.id, spot?.id, currentUser, input)
-    // add comment to comments array
-    setComments((prev) => [...prev, savedComment]);
-    setInput(""); // Clear the input field only on success
+    try {
+      // create comment for session or spot and save to backend
+      const savedComment = await createComment(session?.id, spot?.id, currentUser, message);
+      // add comment to comments array
+      setComments((prev) => [...prev, savedComment]);
+      setInput(""); // Clear the input field only on success
+    } catch (error) {
+      console.error("Error creating comment:", error);
+      // Keep input so user can retry
+    }
   };
 
   // handle proposed comment click
-  const handleProposedCommentClick = (text, id) => {
-    setInput(text);
+  const handleProposedCommentClick = (proposedMessage, id) => {
+    setInput(proposedMessage);
     // remove proposed comment from proposedComments array
     setProposedComments((prev) => prev.filter((pc) => pc.id !== id));
   };
@@ -68,7 +80,7 @@ export default function Chat({
                 />
               ) : null}
             </div>
-            <div className="chat-text">{comment.text}</div>
+            <div className="chat-text">{comment.message}</div>
           </div>
         ))}
       </div>
@@ -82,9 +94,9 @@ export default function Chat({
                 key={proposed.id}
                 type="button"
                 className="chip"
-                onClick={() => handleProposedCommentClick(proposed.text, proposed.id)}
+                onClick={() => handleProposedCommentClick(proposed.message, proposed.id)}
               >
-                {proposed.text}
+                {proposed.message}
               </button>
             ))}
           </div>

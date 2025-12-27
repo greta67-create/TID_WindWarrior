@@ -7,7 +7,7 @@ import Chat from "../components/Chat";
 import {
   fetchSpotByName,
 } from "../services/spotService";
-import { fetchCommentsToSpotId } from "../services/commentService";
+import { fetchSpotComments } from "../services/commentService";
 import { toggleJoinInSessionList } from "../utils/toggleJoinInList";
 import Map from "react-map-gl/mapbox";
 import MapMarker from "../components/MapMarker";
@@ -35,7 +35,7 @@ export default function SpotViewPage() {
       try {
         const spot = await fetchSpotByName(spotName);
   
-        const loadedComments = await fetchCommentsToSpotId(spot.id);
+        const loadedComments = await fetchSpotComments(spot.id);
         console.log("Loaded comments:", loadedComments);
         setComments(loadedComments);
   
