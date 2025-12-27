@@ -59,6 +59,31 @@ export default function SpotViewPage() {
     loadSpot();
   }, [spotName]);
 
+  // Poll for new comments every 10 seconds (as LiveQuery costs money)
+  useEffect(() => {
+    if (!spot?.id) return;
+
+    const loadComments = async () => {
+      try {
+        const loadedComments = await fetchSpotComments(spot.id);
+        setComments(loadedComments);
+      } catch (error) {
+        console.error("Error fetching spot comments:", error);
+        // Don't clear comments on error, keep existing ones
+      }
+    };
+
+    // Poll for new comments every 10 seconds
+    const interval = setInterval(() => {
+      loadComments();
+    }, 10000);
+
+    // Cleanup interval on unmount or when spot changes
+    return () => {
+      clearInterval(interval);
+    };
+  }, [spot?.id]);
+
   // updates the map center once the spot data loads
   useEffect(() => {
     if (spot?.latitude && spot?.longitude) {

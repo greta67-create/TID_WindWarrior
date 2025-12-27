@@ -56,7 +56,7 @@ export default function SessionViewPage() {
     await toggleJoinSingle(session.id, isJoined, setIsJoined);
   };
 
-  // Load comments for this session
+  // Load comments for this session with polling (as LiveQuery costs money)
   useEffect(() => {
     if (!session?.id) return;
 
@@ -69,8 +69,19 @@ export default function SessionViewPage() {
         setComments([]);
       }
     };
-    
+
+    // Load comments immediately
     loadComments();
+
+    // Poll for new comments every 10 seconds
+    const interval = setInterval(() => {
+      loadComments();
+    }, 10000);
+
+    // Cleanup interval
+    return () => {
+      clearInterval(interval);
+    };
   }, [session?.id]);
 
   //loading notification pattern
