@@ -1,4 +1,3 @@
-import "../App.css";
 import "../styles/SpotView.css";
 import Sessionblock from "../components/Sessionblock";
 import Parse from "../parse-init";
@@ -8,7 +7,7 @@ import Chat from "../components/Chat";
 import {
   fetchSpotByName,
 } from "../services/spotService";
-import { fetchCommentsToSpotId } from "../services/commentService";
+import { fetchSpotComments } from "../services/commentService";
 import { toggleJoinInSessionList } from "../utils/toggleJoinInList";
 import Map from "react-map-gl/mapbox";
 import MapMarker from "../components/MapMarker";
@@ -36,7 +35,7 @@ export default function SpotViewPage() {
       try {
         const spot = await fetchSpotByName(spotName);
   
-        const loadedComments = await fetchCommentsToSpotId(spot.id);
+        const loadedComments = await fetchSpotComments(spot.id);
         console.log("Loaded comments:", loadedComments);
         setComments(loadedComments);
   
@@ -77,7 +76,7 @@ export default function SpotViewPage() {
       e.preventDefault();
       e.stopPropagation();
     }
-    await toggleJoinInSessionList(id, () => surfSessions, setSurfSessions);
+    await toggleJoinInSessionList(id, surfSessions, setSurfSessions);
   };
 
 
@@ -85,6 +84,7 @@ export default function SpotViewPage() {
     return <div className="page">Loading spot...</div>;
   }
 
+  // render spot view
   return (
     <div className="page">
       <div

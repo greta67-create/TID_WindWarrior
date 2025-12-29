@@ -108,10 +108,12 @@ export default function ProfileView({ onLogout }) {
     }
   };
 
+  //loading notification pattern
   if (loading) {
     return <div className="page">Loading profile...</div>;
   }
 
+  // render profile view
   return (
     <div className="page">
       <div className="page-header">

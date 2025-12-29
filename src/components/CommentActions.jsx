@@ -3,14 +3,18 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdEdit, MdDelete } from 'react-icons/md';
 import '../styles/Chat.css';
 
-function ChatActions({ commentId, handleDeleteComment, handleEditComment }) {
+function CommentActions({ commentId, handleDeleteComment, handleEditComment }) {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const wrapperRef = useRef(null);
+  // toggle tooltip visibility
   const toggleTooltip = () => {
-    setIsTooltipVisible(!isTooltipVisible);
+    setIsTooltipVisible(prev=> !prev);
   };
 
+  // handle click outside of tooltip to close it
   useEffect(() => {
+    if (!isTooltipVisible) return;
+
     function handleClickOutside(event) {
       if (
         wrapperRef.current &&
@@ -19,10 +23,11 @@ function ChatActions({ commentId, handleDeleteComment, handleEditComment }) {
         setIsTooltipVisible(false);
       }
     }
-    if (isTooltipVisible) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
 
+    //add event listener to document to handle click outside
+      document.addEventListener('mousedown', handleClickOutside);
+
+    // remove event listener when component unmounts
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -36,10 +41,10 @@ function ChatActions({ commentId, handleDeleteComment, handleEditComment }) {
 
       {isTooltipVisible && (
         <div className="chat-tooltip">
-          <button className="chat-tooltip-btn" onClick={() => handleEditComment()}>
+          <button className="chat-tooltip-btn" onClick={()=> handleEditComment}>
             <MdEdit />
           </button>
-          <button className="chat-tooltip-btn delete" onClick={() => handleDeleteComment(commentId)}>
+          <button className="chat-tooltip-btn delete" onClick={()=> handleDeleteComment(commentId)}>
             <MdDelete />
           </button>
         </div>
@@ -48,4 +53,4 @@ function ChatActions({ commentId, handleDeleteComment, handleEditComment }) {
   );
 }
 
-export default ChatActions;
+export default CommentActions;
