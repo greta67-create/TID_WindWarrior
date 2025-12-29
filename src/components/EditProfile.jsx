@@ -11,6 +11,7 @@ export default function EditProfileModal({ user, onClose, onSave }) {
     age: user.age || "",
     skillLevel: user.skillLevel || "",
     avatar: user.avatar || defaultAvatar,
+    file: null, // File object for new uploads
   });
 
   // useRef is used here to reference a DOM element without triggering a re-render
@@ -29,24 +30,16 @@ export default function EditProfileModal({ user, onClose, onSave }) {
   // Handles when the user chooses a new picture
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      // Checks if the file is a picture
-      if (file.type.startsWith("image/")) {
-        // Converts the picture to a URL for preview
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setFormData({ ...formData, avatar: reader.result });
-        };
-        reader.readAsDataURL(file);
-      } else {
-        alert("Please choose a picture");
-      }
+    if (file && file.type.startsWith("image/")) {
+      // checks if the file is a picture
+      const previewUrl = URL.createObjectURL(file); // this method creates a URL string for preview
+      setFormData({ ...formData, file, avatar: previewUrl }); // store File object and preview URL in formData
     }
   };
 
   // Handles saving the profile
   const handleSave = () => {
-    onSave(formData); // Sends updated profile data back to parent
+    onSave(formData); // Sends updated profile data back to parent (Profileview)
     onClose(); // Closes the profile popup
   };
 
@@ -55,8 +48,7 @@ export default function EditProfileModal({ user, onClose, onSave }) {
       <div className="profile-image-section">
         <div className="profile-image-wrapper">
           <img
-            src={formData.avatar}
-            alt="Profile"
+            src={formData.avatar} // Preview URL string for image so that user can see image before saving
             className="profile-image"
             onError={(e) => (e.target.src = defaultAvatar)}
           />
