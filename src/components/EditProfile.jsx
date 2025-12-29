@@ -13,39 +13,41 @@ export default function EditProfileModal({ user, onClose, onSave }) {
     avatar: user.avatar || defaultAvatar,
   });
 
-  // Reference til den skjulte file input
+  // useRef is used here to reference a DOM element without triggering a re-render
   const fileInputRef = useRef(null);
 
+  // Handles changing the value of a form field
   const handleChange = (field) => (e) => {
     setFormData({ ...formData, [field]: e.target.value });
   };
 
-  // Åbn fil-vælgeren når edit-knappen klikkes
+  // Opens the file picker when the pencil icon button is clicked
   const handleImageClick = () => {
     fileInputRef.current?.click();
   };
 
-  // Håndter når bruger vælger et nyt billede
+  // Handles when the user chooses a new picture
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Tjek at det er et billede
+      // Checks if the file is a picture
       if (file.type.startsWith("image/")) {
-        // Konverter billedet til en URL for preview
+        // Converts the picture to a URL for preview
         const reader = new FileReader();
         reader.onloadend = () => {
           setFormData({ ...formData, avatar: reader.result });
         };
         reader.readAsDataURL(file);
       } else {
-        alert("Vælg venligst et billede");
+        alert("Please choose a picture");
       }
     }
   };
 
+  // Handles saving the profile
   const handleSave = () => {
-    onSave(formData); // Send data back to parent
-    onClose(); // Close Pop Up
+    onSave(formData); // Sends updated profile data back to parent
+    onClose(); // Closes the profile popup
   };
 
   return (
@@ -65,7 +67,7 @@ export default function EditProfileModal({ user, onClose, onSave }) {
           >
             <FaPen />
           </button>
-          {/* Skjult file input */}
+          {/* Hidden file input */}
           <input
             ref={fileInputRef}
             type="file"

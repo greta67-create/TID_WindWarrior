@@ -1,26 +1,26 @@
 import "../App.css";
-import Parse from "../parse-init";
+import Parse from "../parse-init"; //initializes Parse for API calls
 import ProfileCard from "../components/Profilecard";
 import Sessionblock from "../components/Sessionblock";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"; //enables navigation with client-side routing
 import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
-import { useState, useEffect } from "react";
-import { getCurrentUserInfo } from "../services/userService";
+import { useState, useEffect } from "react"; // enables you to manage state and side effects in functional components
+import { getCurrentUserInfo } from "../services/userService"; // fetches current user info from Parse backend
 import LogOutButton from "../components/LogOutButton";
 import "../styles/BrowseSessions.css";
 import TabNavigation from "../components/TabNavigation";
-import { unjoinAndRemoveFromJoinedList } from "../utils/unjoinAndRemoveFromJoinedList";
+import { unjoinAndRemoveFromJoinedList } from "../utils/unjoinAndRemoveFromJoinedList"; //Helper function to unjoin a session and remove it from joinedSessions list
 
 const defaultAvatars = [ava1, ava2, ava3];
 
 export default function ProfileView({ onLogout }) {
   const [user, setUser] = useState({});
-  const [joinedSessions, setJoinedSessions] = useState([]);
-  const [upcomingSessions, setUpcomingSessions] = useState([]);
-  const [pastSessions, setPastSessions] = useState([]);
-  const [activeTab, setActiveTab] = useState("planned");
+  const [joinedSessions, setJoinedSessions] = useState([]); // list of sessions the current user has joined
+  const [upcomingSessions, setUpcomingSessions] = useState([]); // list of sessions the current user has joined in the future
+  const [pastSessions, setPastSessions] = useState([]); // list of sessions the current user has joined in the past
+  const [activeTab, setActiveTab] = useState("planned"); // current active tab in the profile view
   const [loading, setLoading] = useState(true); //loading notification pattern
 
   // flow is fetchUserSessions → setJoinedSessions → effect runs → setUpcomingSessions + setPastSessions
@@ -63,13 +63,12 @@ export default function ProfileView({ onLogout }) {
   //split joinedSessions into past and future sessions whenever joinedSessions changes
   useEffect(() => {
     console.log("Joined sessions:", joinedSessions);
-    //split joinedSessions into past and future sessions
     const now = new Date();
     console.log("Now is:", now);
+
     const upcoming = joinedSessions.filter(
       (s) => s.sessionDateTime !== null && s.sessionDateTime >= now // sessiondatetime needs to be defined (not null) and now or later than now
     );
-
     const past = joinedSessions.filter(
       (s) => s.sessionDateTime !== null && s.sessionDateTime < now
     );
@@ -79,23 +78,18 @@ export default function ProfileView({ onLogout }) {
     console.log("Past user sessions:", past);
   }, [joinedSessions]);
 
-  //handler for unjoin button click in profile view, removes default button events and triggers.
-  // Passes ID of session to unjoinAndRemoveFromJoinedList function
+  // Passes a session ID to unjoinAndRemoveFromJoinedList function to remove it from joinedSessions list
   const handleUnjoin = (id) => async (e) => {
-    if (e !== null && e.preventDefault) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    // In the profile view, all listed sessions are joined so clicking again unjoins them
     await unjoinAndRemoveFromJoinedList(id, setJoinedSessions);
   };
 
+  // Handles saving the profile
   const handleSaveProfile = async (updatedData) => {
     try {
       const currentUser = Parse.User.current();
       if (!currentUser) return;
 
-      // Update Parse backend
+      // Saves updated data to Parse backend
       currentUser.set("firstName", updatedData.firstName);
       currentUser.set("typeofSport", updatedData.typeofSport);
       currentUser.set("age", parseInt(updatedData.age));
@@ -106,7 +100,7 @@ export default function ProfileView({ onLogout }) {
 
       await currentUser.save();
 
-      // Update local state to reflect changes immediately
+      // Update local state to reflect changes in the profile card
       setUser(updatedData);
       console.log("Profile updated successfully");
     } catch (err) {
@@ -136,7 +130,7 @@ export default function ProfileView({ onLogout }) {
 
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {activeTab === "planned" && (
+      {activeTab !== null && activeTab === "planned" && (
         <>
           <div className="stack">
             {upcomingSessions.length > 0 ? (
@@ -176,7 +170,7 @@ export default function ProfileView({ onLogout }) {
         </>
       )}
 
-      {activeTab === "past" && (
+      {activeTab !== null && activeTab === "past" && (
         <>
           <div className="stack">
             {pastSessions.length > 0 ? (
