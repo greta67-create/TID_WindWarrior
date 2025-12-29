@@ -7,7 +7,7 @@ import ava1 from "../assets/avatar1.png";
 import ava2 from "../assets/avatar2.png";
 import ava3 from "../assets/avatar3.png";
 import { useState, useEffect } from "react"; // enables you to manage state and side effects in functional components
-import { getCurrentUserInfo } from "../services/userService"; // fetches current user info from Parse backend
+import { getCurrentUserInfo, updateUserProfile } from "../services/userservice"; // fetches current user info from Parse backend
 import LogOutButton from "../components/LogOutButton";
 import "../styles/BrowseSessions.css";
 import TabNavigation from "../components/TabNavigation";
@@ -29,7 +29,7 @@ export default function ProfileView({ onLogout }) {
   useEffect(() => {
     async function loadUser() {
       const info = await getCurrentUserInfo();
-      setUser(info);
+      setUser(info || {}); // Use empty object if null to prevent crashes
       console.log("User info from service:", info);
     }
     loadUser();
@@ -86,23 +86,14 @@ export default function ProfileView({ onLogout }) {
   // Handles saving the profile
   const handleSaveProfile = async (updatedData) => {
     try {
-      const currentUser = Parse.User.current();
-      if (!currentUser) return;
+      // Update profile in backend via service
+      const updatedUser = await updateUserProfile(updatedData);
 
-      // Saves updated data to Parse backend
-      currentUser.set("firstName", updatedData.firstName);
-      currentUser.set("typeofSport", updatedData.typeofSport);
-      currentUser.set("age", parseInt(updatedData.age));
-      currentUser.set("skillLevel", updatedData.skillLevel);
-      if (updatedData.avatar) {
-        currentUser.set("avatar", updatedData.avatar);
+      // Update local state with new data from backend
+      if (updatedUser) {
+        setUser(updatedUser);
+        console.log("Profile updated successfully");
       }
-
-      await currentUser.save();
-
-      // Update local state to reflect changes in the profile card
-      setUser(updatedData);
-      console.log("Profile updated successfully");
     } catch (err) {
       console.error("Error saving profile:", err);
     }

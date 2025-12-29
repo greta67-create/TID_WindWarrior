@@ -1,19 +1,11 @@
 import Parse from "parse";
+import { UserToPlainObject } from "./userservice";
 
 // log in-function
 export async function logInB4A(username, password) {
   try {
     const user = await Parse.User.logIn(username, password);
-
-    return {
-      id: user.id,
-      firstName: user.get("firstName") || "",
-      lastName: user.get("lastName") || "",
-      username: user.get("username") || "",
-      avatar: user.get("avatar") || "/assets/defaultAvatar.png", // fallback
-      age: user.get("age") ?? null,
-      skillLevel: user.get("skillLevel") || "",
-    };
+    return UserToPlainObject(user);
   } catch (error) {
     console.error("Error logging in:", error);
     throw error;

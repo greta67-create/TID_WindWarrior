@@ -11,25 +11,24 @@
 // helper function sesstionToPlainObject
 function sessionToPlainObject(parseObj) {
   const spotObj = parseObj.get("spotId");
-  const date = parseObj.get("sessionDateTime"); 
+  const date = parseObj.get("sessionDateTime");
 
   let dateLabel = "-";
   let timeLabel = "-";
 
-
   if (date) {
-  dateLabel = date.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-  });
-  timeLabel = date.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
+    dateLabel = date.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+    });
+    timeLabel = date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
 
   return {
-    id: parseObj.id, 
+    id: parseObj.id,
     durationHours: parseObj.get("durationHours"),
     windPower: parseObj.get("windPower"),
     weatherType: parseObj.get("weatherType"),
@@ -41,7 +40,7 @@ function sessionToPlainObject(parseObj) {
     spotName: spotObj ? spotObj.get("spotName") : "Unknown spot",
     spotId: spotObj ? spotObj.id : null,
     coastDirection: spotObj ? spotObj.get("coastDirection") : null,
-    isJoined: false, 
+    isJoined: false,
   };
 }
 
@@ -50,7 +49,7 @@ Parse.Cloud.define("loadSessions", async (request) => {
   try {
     const user = request.user;
     const filters = request.params.filters || {};
-    
+
     if (!user) {
       throw new Error("User must be authenticated");
     }
@@ -58,7 +57,7 @@ Parse.Cloud.define("loadSessions", async (request) => {
     const Session = Parse.Object.extend("SurfSessions");
     const query = new Parse.Query(Session);
     query.include("spotId");
-    
+
     // Apply filters to query
     // for Feedview
     if (filters.futureOnly) {
@@ -67,87 +66,88 @@ Parse.Cloud.define("loadSessions", async (request) => {
 
     //for Sessionview
     if (filters.sessionIds && filters.sessionIds.length > 0) {
-    query.containedIn("objectId", filters.sessionIds);
+      query.containedIn("objectId", filters.sessionIds);
     }
 
     //for Spotview
     if (filters.spotIds && filters.spotIds.length > 0) {
-      const spotPointers = filters.spotIds.map(spotId => ({
-        __type: 'Pointer',
-        className: 'Spot',
-        objectId: spotId
+      const spotPointers = filters.spotIds.map((spotId) => ({
+        __type: "Pointer",
+        className: "Spot",
+        objectId: spotId,
       }));
       query.containedIn("spotId", spotPointers);
     }
-    
+
     let sessionResults = await query.find();
     console.log("sessionResults:", sessionResults);
 
-    sessionResults = sessionResults.map((session) => sessionToPlainObject(session));
+    sessionResults = sessionResults.map((session) =>
+      sessionToPlainObject(session)
+    );
 
     // Query to get current user's joined sessions (for isJoined flag)
     const currentUserSessionsQuery = new Parse.Query("UserSessions");
     currentUserSessionsQuery.equalTo("userId", user);
     currentUserSessionsQuery.include("surfSessionId");
     currentUserSessionsQuery.include("surfSessionId.spotId");
-    
+
     // Only query UserSessions for the session IDs we already retrieved
     if (sessionResults.length > 0) {
-      const sessionPointers = sessionResults.map(session => ({
-        __type: 'Pointer',
-        className: 'SurfSessions',
-        objectId: session.id
+      const sessionPointers = sessionResults.map((session) => ({
+        __type: "Pointer",
+        className: "SurfSessions",
+        objectId: session.id,
       }));
       currentUserSessionsQuery.containedIn("surfSessionId", sessionPointers);
     }
 
     const currentUserSessionsData = await currentUserSessionsQuery.find();
-    
+
     // Get IDs of sessions the current user has joined
-    const userSessionIDs = currentUserSessionsData.map((userSession) => {
-      const surfSession = userSession.get("surfSessionId");
-      return surfSession ? surfSession.id : null;
-    })
-      .filter(id => id !== null); 
-  
+    const userSessionIDs = currentUserSessionsData
+      .map((userSession) => {
+        const surfSession = userSession.get("surfSessionId");
+        return surfSession ? surfSession.id : null;
+      })
+      .filter((id) => id !== null);
 
     // Query to get ALL UserSessions for all sessions (to get joined users and count)
     const allUserSessionsQuery = new Parse.Query("UserSessions");
     allUserSessionsQuery.include("userId"); // Include user data
     allUserSessionsQuery.include("surfSessionId");
-    
+
     if (sessionResults.length > 0) {
-      const sessionPointers = sessionResults.map(session => ({
-        __type: 'Pointer',
-        className: 'SurfSessions',
-        objectId: session.id
+      const sessionPointers = sessionResults.map((session) => ({
+        __type: "Pointer",
+        className: "SurfSessions",
+        objectId: session.id,
       }));
       allUserSessionsQuery.containedIn("surfSessionId", sessionPointers);
     }
 
     const allUserSessionsData = await allUserSessionsQuery.find();
-    
+
     // Group UserSessions by sessionId and extract user info
     const joinedUsersBySession = {};
     allUserSessionsData.forEach((userSession) => {
       const surfSession = userSession.get("surfSessionId");
       const userObj = userSession.get("userId");
-    
+
       // Skip if either is null
       if (!surfSession || !userObj) return;
-    
+
       const sessionId = surfSession.id;
-      
+
       if (!joinedUsersBySession[sessionId]) {
         joinedUsersBySession[sessionId] = [];
       }
-      
-      // Extract user profile picture
-      const profilePicture = userObj.get("profilepicture");
-      const avatarUrl = profilePicture && typeof profilePicture.url === "function" 
-        ? profilePicture.url() 
-        : null;
-      
+
+      // Extract user avatar URL from profilepicture Parse File
+      const file = userObj.get("profilepicture");
+      const avatarUrl =
+        file && typeof file.url === "function" ? file.url() : null;
+
       joinedUsersBySession[sessionId].push({
         id: userObj.id,
         avatar: avatarUrl,
@@ -168,7 +168,7 @@ Parse.Cloud.define("loadSessions", async (request) => {
         joinedUsers: firstThreeAvatars,
       };
     });
-    
+
     return sessionResults;
   } catch (error) {
     console.error("Error fetching user sessions:", error);
