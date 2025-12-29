@@ -1,3 +1,6 @@
+# All these files are ignored by git
+# * means that all these types of files are ignored
+
 # Logs
 logs
 *.log

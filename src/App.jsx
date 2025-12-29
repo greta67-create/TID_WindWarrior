@@ -20,7 +20,8 @@ export default function App() {
     }
   }, []);
 
-  // log out-function - uses authService to keep logic centralized
+  // log out-function (lambda) - uses authService to keep logic centralized
+  // Here we could have made errors more visible to the user
   const onLogout = async () => {
     try {
       await Parse.User.logOut();
@@ -40,12 +41,20 @@ export default function App() {
 
   return (
     <Router>
+      {" "}
+      {/* 1. Wrap everything in Router  - enables routing in the app*/}
       <div className="app">
         <Routes>
+          {" "}
+          {/* 2. Container for all routes */}
+          {/* 3. Each Route maps a URL to a component */}
           <Route path="/" element={<SessionFeedPage />} />
           <Route path="/session/:id" element={<SessionViewPage />} />
           <Route path="/map" element={<MapView />} />
-          <Route path="/profile" element={<ProfileView onLogout={onLogout} />} />
+          <Route
+            path="/profile"
+            element={<ProfileView onLogout={onLogout} />}
+          />
           <Route path="/spot/:spotName" element={<SpotViewPage />} />
         </Routes>
         <Navbar />

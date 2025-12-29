@@ -1,4 +1,3 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
 import { GoHomeFill } from "react-icons/go";
 import { FaMapMarkedAlt } from "react-icons/fa";
