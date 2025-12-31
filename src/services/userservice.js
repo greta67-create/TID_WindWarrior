@@ -4,6 +4,8 @@ import Parse from "parse";
  * User service file to handle user-related operations
  */
 
+// We don't need to define a User class here because Parse.User is already defined - the _User table is a reserved built-in table in Parse
+
 /**
  * Convert a Parse User object to a plain JavaScript object
  * @param {Parse.Object} parseUser - The Parse object to convert
@@ -16,6 +18,7 @@ export function UserToPlainObject(parseUser) {
   const file = parseUser.get("profilepicture");
   const avatarUrl = file && typeof file.url === "function" ? file.url() : null;
 
+  // Return plain object with user data
   return {
     id: parseUser.id,
     firstName: parseUser.get("firstName") || "",
