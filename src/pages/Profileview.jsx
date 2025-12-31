@@ -67,10 +67,10 @@ export default function ProfileView({ onLogout }) {
     console.log("Now is:", now);
 
     const upcoming = joinedSessions.filter(
-      (s) => s.sessionDateTime !== null && s.sessionDateTime >= now // sessiondatetime needs to be defined (not null) and now or later than now
+      (s) => s.sessionDateTime && s.sessionDateTime >= now // sessiondatetime needs to be defined (not null) and now or later than now
     );
     const past = joinedSessions.filter(
-      (s) => s.sessionDateTime !== null && s.sessionDateTime < now
+      (s) => s.sessionDateTime && s.sessionDateTime < now
     );
     setUpcomingSessions(upcoming);
     setPastSessions(past);
@@ -112,7 +112,7 @@ export default function ProfileView({ onLogout }) {
         <LogOutButton onLogout={onLogout} />
       </div>
 
-      <ProfileCard
+      <ProfileCard //passes props to Profilecard.jsx
         firstName={user.firstName}
         typeofSport={user.typeofSport}
         avatar={user.avatar}
@@ -123,32 +123,36 @@ export default function ProfileView({ onLogout }) {
 
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {activeTab !== null && activeTab === "planned" && (
+      {activeTab === "planned" && ( //conditional rendering of planned sessions - if true, render the following JSX
         <>
           <div className="stack">
-            {upcomingSessions.length > 0 ? (
-              upcomingSessions.map((s) => (
-                <Link
-                  key={s.id}
-                  to={`/session/${s.id}`}
-                  className="session-link"
-                >
-                  <Sessionblock
-                    key={s.id}
-                    spot={s.spotName}
-                    dateLabel={s.dateLabel}
-                    timeLabel={s.timeLabel}
-                    windKts={s.windPower}
-                    tempC={s.temperature}
-                    weather={s.weatherType}
-                    windDir={s.windDirection}
-                    coastDirection={s.coastDirection}
-                    avatars={defaultAvatars}
-                    onJoin={handleUnjoin(s.id)}
-                    isJoined={true}
-                  />
-                </Link>
-              ))
+            {upcomingSessions.length > 0 ? ( //conditional rendering of upcoming sessions - if true, render the following JSX
+              upcomingSessions.map(
+                (
+                  s //map through upcomingSessions array
+                ) => (
+                  <Link //links to session view page are created here
+                    key={s.id} //key is used to uniquely identify the session in the array
+                    to={`/session/${s.id}`} //links to session view page are created here
+                    className="session-link"
+                  >
+                    <Sessionblock //renders a Sessionblock component for each session
+                      key={s.id} //key is used to uniquely identify the session in the array
+                      spot={s.spotName}
+                      dateLabel={s.dateLabel}
+                      timeLabel={s.timeLabel}
+                      windKts={s.windPower}
+                      tempC={s.temperature}
+                      weather={s.weatherType}
+                      windDir={s.windDirection}
+                      coastDirection={s.coastDirection}
+                      avatars={defaultAvatars}
+                      onJoin={handleUnjoin(s.id)} //onJoin is set to the handleUnjoin function for each session
+                      isJoined={true} //isJoined is set to true for all sessions in the upcomingSessions array
+                    />
+                  </Link>
+                )
+              )
             ) : (
               <div className="empty-profileview">
                 <p>No Planned Sessions</p>
@@ -163,7 +167,7 @@ export default function ProfileView({ onLogout }) {
         </>
       )}
 
-      {activeTab !== null && activeTab === "past" && (
+      {activeTab === "past" && ( //conditional rendering of past sessions - if true, render the following JSX
         <>
           <div className="stack">
             {pastSessions.length > 0 ? (

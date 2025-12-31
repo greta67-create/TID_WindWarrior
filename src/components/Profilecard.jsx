@@ -5,6 +5,7 @@ import Modal from "./FadedProfile";
 import EditProfileModal from "./EditProfile";
 
 export default function ProfileCard({
+  //props are passed from Profileview.jsx
   firstName = "",
   typeofSport = "",
   age,

@@ -19,7 +19,8 @@ export default function EditProfileModal({ user, onClose, onSave }) {
 
   // Handles changing the value of a form field
   const handleChange = (field) => (e) => {
-    setFormData({ ...formData, [field]: e.target.value });
+    //e is the event object that is passed to the function and field is the name of the input field
+    setFormData({ ...formData, [field]: e.target.value }); //updates the formData object with the new value of the input field
   };
 
   // Opens the file picker when the pencil icon button is clicked
@@ -72,7 +73,7 @@ export default function EditProfileModal({ user, onClose, onSave }) {
 
       <div className="form-field">
         <label>Name:</label>
-        <input
+        <input //controlled component - the value of the input is controlled by the state of the formData object
           value={formData.firstName}
           onChange={handleChange("firstName")}
         />
