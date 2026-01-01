@@ -20,8 +20,7 @@ export default function App() {
     }
   }, []);
 
-  // log out-function (lambda) - uses authService to keep logic centralized
-  // Here we could have made errors more visible to the user
+  // log out-function
   const onLogout = async () => {
     try {
       await Parse.User.logOut();
@@ -57,7 +56,7 @@ export default function App() {
           />
           <Route path="/spot/:spotName" element={<SpotViewPage />} />
         </Routes>
-        <Navbar />
+        <Navbar /> {/* Appears on all pages because it is outside Routes*/}
       </div>
     </Router>
   );

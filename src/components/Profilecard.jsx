@@ -29,7 +29,7 @@ export default function ProfileCard({
       </button>
       {isPopUpOpen && (
         <Modal onClose={() => setIsPopUpOpen(false)}>
-          <EditProfileModal
+          <EditProfileModal //Renders the EditProfileModal component (which becomes "children" of the Modal component)
             user={{ firstName, typeofSport, age, skillLevel, avatar }}
             onClose={() => setIsPopUpOpen(false)}
             onSave={onSaveProfile} //Passes the onSaveProfile function to EditProfileModal
