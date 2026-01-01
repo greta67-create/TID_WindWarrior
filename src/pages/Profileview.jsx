@@ -99,7 +99,7 @@ export default function ProfileView({ onLogout }) {
     }
   };
 
-  //loading notification pattern
+  //loading notification pattern to improve user experience
   if (loading) {
     return <div className="page">Loading profile...</div>;
   }
