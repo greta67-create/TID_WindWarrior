@@ -125,7 +125,8 @@ export default function ProfileView({ onLogout }) {
                       weather={s.weatherType}
                       windDir={s.windDirection}
                       coastDirection={s.coastDirection}
-                      avatars={defaultAvatars}
+                      joinedUsers={s.joinedUsers || []}
+                      joinedCount={s.joinedCount || 0}
                       onJoin={handleUnjoin(s.id)} //onJoin is set to the handleUnjoin function for each session
                       isJoined={true} //isJoined is set to true for all sessions in the upcomingSessions array
                     />
@@ -164,7 +165,8 @@ export default function ProfileView({ onLogout }) {
                     weather={s.weatherType}
                     windDir={s.windDirection}
                     coastDirection={s.coastDirection}
-                    avatars={defaultAvatars}
+                    joinedUsers={s.joinedUsers || []}
+                    joinedCount={s.joinedCount || 0}
                     showJoin={false}
                   />
                 </Link>
