@@ -138,18 +138,25 @@ export async function deleteComment(id) {
     throw new Error("Comment ID must be provided to delete a comment");
   }
 
-  // create a new object reference to the comment to delete
-  const comment = new Comment();
-  comment.id = id;
-  
   try {
-    // check ownership of the comment
+    // Get the current user
+    const currentUser = Parse.User.current();
+    if (!currentUser) {
+      throw new Error("User must be logged in to delete comments");
+    }
+
+    // Fetch the comment to check ownership
+    const query = new Parse.Query(Comment);
     const commentToDelete = await query.get(id);
-    if (commentToDelete.get("userId").id !== currentUser.id) {
+    
+    // Check ownership - compare user IDs
+    const commentUserId = commentToDelete.get("userId");
+    if (!commentUserId || commentUserId.id !== currentUser.id) {
       console.error("deleteComment: not authorized to delete comment");
       return false;
     }
 
+    // Delete the comment
     await commentToDelete.destroy();
     return true;
   } catch (error) {
