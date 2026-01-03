@@ -111,7 +111,6 @@ export default function ProfileView({ onLogout }) {
         <div className="page-title">Profile</div>
         <LogOutButton onLogout={onLogout} />
       </div>
-
       <ProfileCard //passes props to Profilecard.jsx
         firstName={user.firstName}
         typeofSport={user.typeofSport}
@@ -120,9 +119,8 @@ export default function ProfileView({ onLogout }) {
         skillLevel={user.skillLevel}
         onSaveProfile={handleSaveProfile}
       />
-
-      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
-
+      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />{" "}
+      {/* function passed down to TabNavigation.jsx */}
       {activeTab === "planned" && ( //conditional rendering of planned sessions - if true, render the following JSX
         <>
           <div className="stack">
@@ -166,7 +164,6 @@ export default function ProfileView({ onLogout }) {
           </div>
         </>
       )}
-
       {activeTab === "past" && ( //conditional rendering of past sessions - if true, render the following JSX
         <>
           <div className="stack">

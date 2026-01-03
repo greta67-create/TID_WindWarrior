@@ -14,13 +14,13 @@ export default function EditProfileModal({ user, onClose, onSave }) {
     file: null, // File object for new uploads
   });
 
-  // useRef is used here to reference a DOM element without triggering a re-render
+  // useRef is used here to reference a DOM file input element without triggering a re-render
   const fileInputRef = useRef(null);
 
   // Handles changing the value of a form field
   const handleChange = (field) => (e) => {
     //e is the event object that is passed to the function and field is the name of the input field
-    setFormData({ ...formData, [field]: e.target.value }); //updates the formData object with the new value of the input field
+    setFormData({ ...formData, [field]: e.target.value }); //updates the formData object with the new value of the input field and target is the input field that is being changed
   };
 
   // Opens the file picker when the pencil icon button is clicked
@@ -62,11 +62,11 @@ export default function EditProfileModal({ user, onClose, onSave }) {
           </button>
           {/* Hidden file input */}
           <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
+            ref={fileInputRef} // ref is used to reference the file input element
+            type="file" // type of input is file
+            accept="image/*" // only allows images to be uploaded
             onChange={handleImageChange}
-            style={{ display: "none" }}
+            style={{ display: "none" }} // hides the file input element from the user
           />
         </div>
       </div>
