@@ -8,7 +8,7 @@ import { getCurrentUserInfo, updateUserProfile } from "../services/userservice";
 import LogOutButton from "../components/LogOutButton";
 import "../styles/BrowseSessions.css";
 import TabNavigation from "../components/TabNavigation";
-import { unjoinAndRemoveFromJoinedList } from "../utils/unjoinAndRemoveFromJoinedList";
+import { unjoinAndRemoveFromJoinedList } from "../utils/unjoinAndRemoveFromJoinedList"; //Helper function to unjoin a session and remove it from joinedSessions list
 
 export default function ProfileView({ onLogout }) {
   const [user, setUser] = useState({});
@@ -18,7 +18,7 @@ export default function ProfileView({ onLogout }) {
   const [activeTab, setActiveTab] = useState("planned");
   const [loading, setLoading] = useState(true);
 
-  // Load user info
+  // Load user info and set user state (stores user information in the user state)
   useEffect(() => {
     async function loadUser() {
       const info = await getCurrentUserInfo();
@@ -27,10 +27,10 @@ export default function ProfileView({ onLogout }) {
     loadUser();
   }, []);
 
-  // Load user sessions via cloud function
+  // Load user sessions for current user via cloud function
   useEffect(() => {
     const currentUser = Parse.User.current();
-    if (!currentUser) return;
+    if (!currentUser) return; // If no user is logged in, exit early (return)
 
     async function loadUserSessions() {
       setLoading(true);
@@ -102,37 +102,33 @@ export default function ProfileView({ onLogout }) {
       />
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />{" "}
       {/* function passed down to TabNavigation.jsx */}
-      {activeTab === "planned" && ( //conditional rendering of planned sessions - if true, render the following JSX
+      {activeTab === "planned" && (
         <>
           <div className="stack">
-            {upcomingSessions.length > 0 ? ( //conditional rendering of upcoming sessions - if true, render the following JSX
-              upcomingSessions.map(
-                (
-                  s //map through upcomingSessions array
-                ) => (
-                  <Link //links to session view page are created here
-                    key={s.id} //key is used to uniquely identify the session in the array
-                    to={`/session/${s.id}`} //links to session view page are created here
-                    className="session-link"
-                  >
-                    <Sessionblock //renders a Sessionblock component for each session
-                      key={s.id} //key is used to uniquely identify the session in the array
-                      spot={s.spotName}
-                      dateLabel={s.dateLabel}
-                      timeLabel={s.timeLabel}
-                      windKts={s.windPower}
-                      tempC={s.temperature}
-                      weather={s.weatherType}
-                      windDir={s.windDirection}
-                      coastDirection={s.coastDirection}
-                      joinedUsers={s.joinedUsers || []}
-                      joinedCount={s.joinedCount || 0}
-                      onJoin={handleUnjoin(s.id)} //onJoin is set to the handleUnjoin function for each session
-                      isJoined={true} //isJoined is set to true for all sessions in the upcomingSessions array
-                    />
-                  </Link>
-                )
-              )
+            {upcomingSessions.length > 0 ? (
+              upcomingSessions.map((s) => (
+                <Link
+                  key={s.id} //key is used to uniquely identify the session in the array
+                  to={`/session/${s.id}`} //links to session view page are created here
+                  className="session-link"
+                >
+                  <Sessionblock
+                    key={s.id}
+                    spot={s.spotName}
+                    dateLabel={s.dateLabel}
+                    timeLabel={s.timeLabel}
+                    windKts={s.windPower}
+                    tempC={s.temperature}
+                    weather={s.weatherType}
+                    windDir={s.windDirection}
+                    coastDirection={s.coastDirection}
+                    joinedUsers={s.joinedUsers || []}
+                    joinedCount={s.joinedCount || 0}
+                    onJoin={handleUnjoin(s.id)}
+                    isJoined={true} //isJoined is set to true for all sessions in the upcomingSessions array
+                  />
+                </Link>
+              ))
             ) : (
               <div className="empty-profileview">
                 <p>No Planned Sessions</p>
@@ -146,7 +142,7 @@ export default function ProfileView({ onLogout }) {
           </div>
         </>
       )}
-      {activeTab === "past" && ( //conditional rendering of past sessions - if true, render the following JSX
+      {activeTab === "past" && (
         <>
           <div className="stack">
             {pastSessions.length > 0 ? (
