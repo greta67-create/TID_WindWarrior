@@ -53,9 +53,10 @@ function sessionToPlainObject(parseObj) {
  *
  * @param {Object} request.params.filters - Filter options:
  *   - futureOnly: boolean - Only return future sessions
+ *   - sessionId: string - Return a single session by ID
  *   - sessionIds: string[] - Return specific sessions by ID
  *   - spotIds: string[] - Return sessions for specific spots
- *   - joinedOnly: boolean - Only return sessions the user has joined
+ *   - joinedByCurrentUser: boolean - Only return sessions the user has joined
  * @returns {Promise<Array>} Array of session objects with join information
  */
 Parse.Cloud.define("loadSessions", async (request) => {
@@ -72,9 +73,9 @@ Parse.Cloud.define("loadSessions", async (request) => {
     const query = new Parse.Query(Session);
     query.include("spotId"); // Include spot data to avoid extra queries
 
-    // If joinedOnly is true (in Profileview), get joined session IDs first to filter main query
+    // If joinedByCurrentUser, get joined session IDs first to filter main query
     let joinedSessionIds = null;
-    if (filters.joinedOnly) {
+    if (filters.joinedByCurrentUser) {
       const userSessionsQuery = new Parse.Query("UserSessions");
       userSessionsQuery.equalTo("userId", user);
       userSessionsQuery.include("surfSessionId");
@@ -91,7 +92,6 @@ Parse.Cloud.define("loadSessions", async (request) => {
         return []; // User hasn't joined any sessions
       }
 
-      // Filter to only joined sessions
       query.containedIn("objectId", joinedSessionIds);
     }
 
@@ -100,6 +100,12 @@ Parse.Cloud.define("loadSessions", async (request) => {
       query.greaterThanOrEqualTo("sessionDateTime", new Date());
     }
 
+    // Single session filter
+    if (filters.sessionId) {
+      query.equalTo("objectId", filters.sessionId);
+    }
+
+    // Multiple sessions filter
     if (filters.sessionIds && filters.sessionIds.length > 0) {
       query.containedIn("objectId", filters.sessionIds);
     }
@@ -116,9 +122,9 @@ Parse.Cloud.define("loadSessions", async (request) => {
     const sessionParseObjects = await query.find();
 
     // Convert to plain objects and filter out any null results
-    sessions = sessionParseObjects
+    let sessions = sessionParseObjects
       .map((session) => sessionToPlainObject(session))
-      .filter((session) => session !== null); // Remove null results from failed conversions
+      .filter((session) => session !== null);
 
     if (sessions.length === 0) {
       return [];
@@ -127,7 +133,7 @@ Parse.Cloud.define("loadSessions", async (request) => {
     // 2: Get current user's joined session IDs (for isJoined flag)
     let userSessionIDs = [];
 
-    if (filters.joinedOnly) {
+    if (filters.joinedByCurrentUser) {
       // Reuse the joined session IDs already fetched
       userSessionIDs = joinedSessionIds;
     } else {
@@ -145,7 +151,6 @@ Parse.Cloud.define("loadSessions", async (request) => {
 
       const currentUserSessionsData = await currentUserSessionsQuery.find();
 
-      // Extract session IDs that the current user has joined
       userSessionIDs = currentUserSessionsData
         .map((userSession) => {
           const surfSession = userSession.get("surfSessionId");

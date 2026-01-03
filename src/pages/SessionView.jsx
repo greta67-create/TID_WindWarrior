@@ -3,15 +3,10 @@ import { useState, useEffect } from "react";
 import Parse from "../parse-init";
 import Sessionblocklarge from "../components/SessionBlocklarge";
 import "../styles/SessionView.css";
-import ava1 from "../assets/avatar1.png";
-import ava2 from "../assets/avatar2.png";
-import ava3 from "../assets/avatar3.png";
 import { fetchSessionComments } from "../services/commentService";
 import { toggleJoinSingle } from "../utils/toggleJoinSingle";
 import Chat from "../components/Chat";
 import getWindfinderlink from "../utils/getWindfinderlink";
-
-const defaultAvatars = [ava1, ava2, ava3];
 
 const initialProposedComments = [
   { id: 100, message: "I have a car and can offer a ride!" },
@@ -19,10 +14,9 @@ const initialProposedComments = [
 ];
 
 export default function SessionViewPage() {
-  const { id } = useParams(); // get session id from url
+  const { id } = useParams();
   const [session, setSession] = useState(null);
   const [comments, setComments] = useState([]);
-  const [isJoined, setIsJoined] = useState(false);
   const [loading, setLoading] = useState(true);
   const currentUser = Parse.User.current();
 
@@ -38,7 +32,6 @@ export default function SessionViewPage() {
         });
         const loadedSession = results?.[0] || null;
         setSession(loadedSession);
-        setIsJoined(loadedSession?.isJoined ?? false);
       } catch (err) {
         console.error("Error fetching session by id:", err);
         setSession(null);
@@ -46,17 +39,17 @@ export default function SessionViewPage() {
         setLoading(false);
       }
     }
-    
+
     loadSession();
   }, [id]);
 
-  //handle join/unjoin session 
+  // Join/unjoin session (uses enhanced toggle with avatar support)
   const onJoin = async () => {
     if (!session) return;
-    await toggleJoinSingle(session.id, isJoined, setIsJoined);
+    await toggleJoinSingle(session, setSession);
   };
 
-  // Load comments for this session with polling (as LiveQuery costs money)
+  // Load comments with polling
   useEffect(() => {
     if (!session?.id) return;
 
@@ -70,7 +63,6 @@ export default function SessionViewPage() {
       }
     };
 
-    // Load comments immediately
     loadComments();
 
     // Poll for new comments every 10 seconds
@@ -78,13 +70,11 @@ export default function SessionViewPage() {
       loadComments();
     }, 10000);
 
-    // Cleanup interval
     return () => {
       clearInterval(interval);
     };
   }, [session?.id]);
 
-  //loading notification pattern
   if (loading) {
     return <div className="page">Loading session...</div>;
   }
@@ -120,24 +110,22 @@ export default function SessionViewPage() {
           weather={session.weatherType}
           windDir={session.windDirection}
           coastDirection={session.coastDirection}
-          avatars={defaultAvatars}
+          joinedUsers={session.joinedUsers || []}
+          joinedCount={session.joinedCount || 0}
           onJoin={onJoin}
-          isJoined={isJoined}
+          isJoined={session.isJoined}
         />
 
         {/* Get more information section */}
         <div className="info-section">
           <div className="info-title">Get more information:</div>
           <div className="info-buttons">
-            {/* Left button: to SpotView */}
             <Link
               to={`/spot/${session.spotName}`}
               className="info-btn info-btn-primary"
             >
               About the spot
             </Link>
-
-            {/* Right button: external link ( weather link) */}
             <a
               href={getWindfinderlink(session.spotName)}
               target="_blank"
@@ -149,7 +137,7 @@ export default function SessionViewPage() {
           </div>
         </div>
       </div>
-      {/* Subtitle */}
+
       <div className="section-subtitle">
         Communicate with others joining this session:
       </div>

@@ -59,12 +59,11 @@
 }
 /* Metrics */
 .metrics {
-  flex: 1;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-width: 0;
-  margin-right: var(--spacing-sm);
+  gap: var(--spacing-sm);
 }
 
 .metric-text {
@@ -216,7 +215,31 @@
   margin-left: -20px;
 }
 
-/* to not have underlined text in Links*/
+/* No users fallback */
+.no-users {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  box-shadow: 0 2px 8px var(--shadow);
+  gap: 2px;
+}
+
+.no-users svg {
+  font-size: 18px;
+}
+
+.no-users span {
+  font: var(--font-sans);
+  font-size: var(--font-sm);
+  font-weight: 700;
+}
+
+/* No underlined text in Links */
 .session-link {
   text-decoration: none;
   color: inherit;
@@ -224,5 +247,3 @@
 .session-link:visited {
   color: inherit;
 }
-
-

@@ -1,9 +1,10 @@
 import "../styles/Sessionblock.css";
 import JoinButton from "../components/JoinButton";
 import getWeatherIcon from "../utils/getWeatherIcon";
+import { IoPeopleOutline } from "react-icons/io5";
 
 export default function Sessionblock({
-  //fallback spot information to avoid weird layout when session onfpr can't be loaded
+  // Fallback spot information to avoid weird layout when session info can't be loaded
   spot = "Fallback Spot",
   dateLabel = "Apr 4th",
   timeLabel = "12:00 pm",
@@ -12,16 +13,27 @@ export default function Sessionblock({
   weather = "⛅️",
   windDir = "↗",
   coastDirection = null,
-  avatars = [],
+  avatars = [], // Legacy prop for backwards compatibility
+  joinedUsers = [], // Array of user objects with avatar property
+  joinedCount = 0, // Total number of joined users
   onJoin = () => {},
   isJoined = false,
   joinedText = "Joined",
-  showJoin = true, //per default show join button (exeption: Profileview, past sessions)
+  showJoin = true, // Per default show join button (exception: Profileview, past sessions)
 }) {
-  // show at most 3 avatars
-  const avatarList = Array.isArray(avatars) ? avatars : avatars ? [avatars] : [];
-  const shownAvatars = avatarList.slice(0, 3);
-  const more = 3; // calculate the number of additional avatars
+  // Use joinedUsers if available, otherwise fall back to avatars prop
+  const userAvatars =
+    joinedUsers && joinedUsers.length > 0
+      ? joinedUsers.map((u) => u.avatar).filter(Boolean)
+      : avatars || [];
+
+  // Show at most 3 avatars
+  const list = Array.isArray(userAvatars)
+    ? userAvatars
+    : userAvatars
+    ? [userAvatars]
+    : [];
+  const shown = list.slice(0, 3);
 
   return (
     <div className="session-card">
@@ -42,26 +54,32 @@ export default function Sessionblock({
       <div className="session-footer">
         <div className="metrics">
           <div className="wind-container">
-            <div className={`windDir-icon windDir-icon--${windDir}`}>
-              ↑
-            </div>
-            {/* curved segment (arc) whose shape depends on costDirection attribute */}
-            <svg className="coast-arc"width="50" height="50">
-              <path 
+            <div className={`windDir-icon windDir-icon--${windDir}`}>↑</div>
+            {/* Curved segment (arc) whose shape depends on coastDirection */}
+            <svg className="coast-arc" width="50" height="50">
+              <path
                 d={
-                  coastDirection === 'N' ? 'M 15 8 A 20 20 0 0 1 35 8' :
-                  coastDirection === 'NE' ? 'M 35 8 A 20 20 0 0 1 42 15' :
-                  coastDirection === 'E' ? 'M 42 15 A 20 20 0 0 1 42 35' :
-                  coastDirection === 'SE' ? 'M 42 35 A 20 20 0 0 1 35 42' :
-                  coastDirection === 'S' ? 'M 35 42 A 20 20 0 0 1 15 42' :
-                  coastDirection === 'SW' ? 'M 15 42 A 20 20 0 0 1 8 35' :
-                  coastDirection === 'W' ? 'M 8 35 A 20 20 0 0 1 8 15' :
-                  coastDirection === 'NW' ? 'M 8 15 A 20 20 0 0 1 15 8' :
-                  ''
+                  coastDirection === "N"
+                    ? "M 15 8 A 20 20 0 0 1 35 8"
+                    : coastDirection === "NE"
+                    ? "M 35 8 A 20 20 0 0 1 42 15"
+                    : coastDirection === "E"
+                    ? "M 42 15 A 20 20 0 0 1 42 35"
+                    : coastDirection === "SE"
+                    ? "M 42 35 A 20 20 0 0 1 35 42"
+                    : coastDirection === "S"
+                    ? "M 35 42 A 20 20 0 0 1 15 42"
+                    : coastDirection === "SW"
+                    ? "M 15 42 A 20 20 0 0 1 8 35"
+                    : coastDirection === "W"
+                    ? "M 8 35 A 20 20 0 0 1 8 15"
+                    : coastDirection === "NW"
+                    ? "M 8 15 A 20 20 0 0 1 15 8"
+                    : ""
                 }
-                stroke="green" 
-                strokeWidth="3" 
-                fill="none" 
+                stroke="green"
+                strokeWidth="3"
+                fill="none"
                 strokeLinecap="round"
               />
             </svg>
@@ -70,14 +88,21 @@ export default function Sessionblock({
           <div className="weather-type">{getWeatherIcon(weather)}</div>
           <div className="metric-text">{tempC}°C</div>
         </div>
-        {/* show avatars if there are any */}
-        {avatarList.length > 0 && (
+
+        {joinedCount > 0 ? (
           <div className="avatar-stack">
-            {shownAvatars.map((src, i) => (
+            {shown.map((src, i) => (
               <img key={i} alt="" src={src} className="avatar" />
             ))}
-            {/* if there are more avatars, show the number of additional avatars */}
-            {more > 0 && <div className="avatar-count">+{more}</div>}
+            {/* Show +N for users without avatars or beyond first 3 */}
+            {(joinedCount > shown.length) && (
+              <div className="avatar-count">+{joinedCount - shown.length}</div>
+            )}
+          </div>
+        ) : (
+          <div className="no-users">
+            <IoPeopleOutline />
+            <span>0</span>
           </div>
         )}
       </div>
