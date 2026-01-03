@@ -6,6 +6,7 @@ import '../styles/Chat.css';
 function CommentActions({ commentId, handleDeleteComment, handleEditComment }) {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const wrapperRef = useRef(null);
+
   // toggle tooltip visibility
   const toggleTooltip = () => {
     setIsTooltipVisible(prev=> !prev);
@@ -15,17 +16,14 @@ function CommentActions({ commentId, handleDeleteComment, handleEditComment }) {
   useEffect(() => {
     if (!isTooltipVisible) return;
 
-    function handleClickOutside(event) {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target)
-      ) {
+    const handleClickOutside = (event) => {
+      if (!wrapperRef.current?.contains(event.target)) {
         setIsTooltipVisible(false);
       }
-    }
+    };
 
     //add event listener to document to handle click outside
-      document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
 
     // remove event listener when component unmounts
     return () => {
@@ -41,7 +39,7 @@ function CommentActions({ commentId, handleDeleteComment, handleEditComment }) {
 
       {isTooltipVisible && (
         <div className="chat-tooltip">
-          <button className="chat-tooltip-btn" onClick={()=> handleEditComment}>
+          <button className="chat-tooltip-btn" onClick={()=> handleEditComment()}>
             <MdEdit />
           </button>
           <button className="chat-tooltip-btn delete" onClick={()=> handleDeleteComment(commentId)}>
