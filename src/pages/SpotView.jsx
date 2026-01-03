@@ -235,7 +235,7 @@ export default function SpotViewPage() {
           setComments={setComments}
           session={null}
           spot={spot}
-          hideProposedComments={true}
+          showProposedComments={false}
         />
       )}
     </div>

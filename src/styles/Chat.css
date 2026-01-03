@@ -80,7 +80,7 @@
   background-color: var(--back);
 }
 
-.chat-text {
+.chat-message {
   color: var(--text);
   margin-top: var(--spacing-xs);
   font-size: var(--font-xs);

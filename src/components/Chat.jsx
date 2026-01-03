@@ -8,8 +8,8 @@ export default function Chat({
   setComments,
   session,
   spot,
-  // hide proposed comments as default off, but turned on in Spotview
-  hideProposedComments = false,
+  // show proposed comments by default, but hide them in Spotview
+  showProposedComments = true,
   initialProposedComments = [],
 }) {
   const [input, setInput] = useState("");
@@ -95,9 +95,9 @@ export default function Chat({
         ))}
       </div>
 
-      {/* comment bar at bottom of page*/}
+      {/* comment bar at bottom of page with proposed comments if showProposedComments is true*/}
       <div className="comment-bar">
-        {!hideProposedComments && (
+        {showProposedComments && (
           <div className="prop-comment">
             {proposedComments.map((proposed) => (
               <button
