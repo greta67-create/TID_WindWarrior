@@ -50,7 +50,7 @@ function sessionToPlainObject(parseObj) {
 /**
  * Cloud function to load sessions with filters and user join information
  * Returns sessions with isJoined flag, joinedCount, and joinedUsers (avatars)
- * 
+ *
  * @param {Object} request.params.filters - Filter options:
  *   - futureOnly: boolean - Only return future sessions
  *   - sessionIds: string[] - Return specific sessions by ID
@@ -72,14 +72,14 @@ Parse.Cloud.define("loadSessions", async (request) => {
     const query = new Parse.Query(Session);
     query.include("spotId"); // Include spot data to avoid extra queries
 
-    // If joinedOnly is true (in Profileview), get joined session IDs first to filter main query 
+    // If joinedOnly is true (in Profileview), get joined session IDs first to filter main query
     let joinedSessionIds = null;
     if (filters.joinedOnly) {
       const userSessionsQuery = new Parse.Query("UserSessions");
       userSessionsQuery.equalTo("userId", user);
       userSessionsQuery.include("surfSessionId");
       const userSessionsData = await userSessionsQuery.find();
-      
+
       joinedSessionIds = userSessionsData
         .map((userSession) => {
           const surfSession = userSession.get("surfSessionId");
@@ -90,7 +90,7 @@ Parse.Cloud.define("loadSessions", async (request) => {
       if (joinedSessionIds.length === 0) {
         return []; // User hasn't joined any sessions
       }
-      
+
       // Filter to only joined sessions
       query.containedIn("objectId", joinedSessionIds);
     }
@@ -126,7 +126,7 @@ Parse.Cloud.define("loadSessions", async (request) => {
 
     // 2: Get current user's joined session IDs (for isJoined flag)
     let userSessionIDs = [];
-    
+
     if (filters.joinedOnly) {
       // Reuse the joined session IDs already fetched
       userSessionIDs = joinedSessionIds;
@@ -183,12 +183,10 @@ Parse.Cloud.define("loadSessions", async (request) => {
         joinedUsersBySession[sessionId] = [];
       }
 
-      // Extract user avatar URL safely
-      const profilePicture = userObj.get("profilepicture");
+      // Extract user avatar URL from profilepicture Parse File
+      const file = userObj.get("profilepicture");
       const avatarUrl =
-        profilePicture && typeof profilePicture.url === "function"
-          ? profilePicture.url()
-          : null;
+        file && typeof file.url === "function" ? file.url() : null;
 
       joinedUsersBySession[sessionId].push({
         id: userObj.id,
