@@ -4,9 +4,7 @@ import Parse from "../parse-init";
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Chat from "../components/Chat";
-import {
-  fetchSpotByName,
-} from "../services/spotService";
+import { fetchSpotByName } from "../services/spotService";
 import { fetchSpotComments } from "../services/commentService";
 import { toggleJoinInSessionList } from "../utils/toggleJoinInList";
 import Map from "react-map-gl/mapbox";
@@ -20,7 +18,6 @@ export default function SpotViewPage() {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [surfSessions, setSurfSessions] = useState([]);
-  const user = Parse.User.current();
   const [viewState, setViewState] = useState({
     longitude: spot?.longitude || 12.568,
     latitude: spot?.latitude || 55.65,
@@ -28,23 +25,23 @@ export default function SpotViewPage() {
   });
   const [activeTab, setActiveTab] = useState("sessions");
 
-  //load spot information and session information via cloud function
+  // Load spot information and sessions via cloud function
   useEffect(() => {
     const loadSpot = async () => {
-      setLoading(true); // start loading
+      setLoading(true);
       try {
         const spot = await fetchSpotByName(spotName);
-  
+
         const loadedComments = await fetchSpotComments(spot.id);
         console.log("Loaded comments:", loadedComments);
         setComments(loadedComments);
-  
+
         const futureSessions = await Parse.Cloud.run("loadSessions", {
           filters: { spotIds: [spot.id] },
         });
         console.log("Loaded sessions in Spotfeed:", futureSessions);
         setSurfSessions(futureSessions);
-  
+
         setSpot(spot);
       } catch (error) {
         console.error("Error fetching spot by name:", error);
@@ -52,14 +49,36 @@ export default function SpotViewPage() {
         setComments([]);
         setSurfSessions([]);
       } finally {
-        setLoading(false); // stop loading notification
+        setLoading(false);
       }
     };
-  
+
     loadSpot();
   }, [spotName]);
 
-  // updates the map center once the spot data loads
+  // Poll for new comments every 10 seconds
+  useEffect(() => {
+    if (!spot?.id) return;
+
+    const loadComments = async () => {
+      try {
+        const loadedComments = await fetchSpotComments(spot.id);
+        setComments(loadedComments);
+      } catch (error) {
+        console.error("Error fetching spot comments:", error);
+      }
+    };
+
+    const interval = setInterval(() => {
+      loadComments();
+    }, 10000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [spot?.id]);
+
+  // Update map center once spot data loads
   useEffect(() => {
     if (spot?.latitude && spot?.longitude) {
       setViewState({
@@ -70,7 +89,7 @@ export default function SpotViewPage() {
     }
   }, [spot]);
 
-  //handle join/unjoin session in spotview
+  // Join/unjoin session (uses enhanced toggle with avatar support)
   const onJoin = (id) => async (e) => {
     if (e?.preventDefault) {
       e.preventDefault();
@@ -79,12 +98,10 @@ export default function SpotViewPage() {
     await toggleJoinInSessionList(id, surfSessions, setSurfSessions);
   };
 
-
   if (loading) {
     return <div className="page">Loading spot...</div>;
   }
 
-  // render spot view
   return (
     <div className="page">
       <div
@@ -203,6 +220,8 @@ export default function SpotViewPage() {
                 weather={s.weatherType}
                 windDir={s.windDirection}
                 coastDirection={s.coastDirection}
+                joinedUsers={s.joinedUsers || []}
+                joinedCount={s.joinedCount || 0}
                 onJoin={onJoin(s.id)}
                 isJoined={s.isJoined}
               />
@@ -216,7 +235,7 @@ export default function SpotViewPage() {
           setComments={setComments}
           session={null}
           spot={spot}
-          hideProposedComments={true}
+          showProposedComments={false}
         />
       )}
     </div>

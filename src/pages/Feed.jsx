@@ -1,20 +1,15 @@
-//import SessionBlock from "../components/Sessionblock";
+import "../App.css";
 import { useState, useEffect } from "react";
 import Sessionblock from "../components/Sessionblock";
 import { Link } from "react-router-dom";
-import ava1 from "../assets/avatar1.png";
-import ava2 from "../assets/avatar2.png";
-import ava3 from "../assets/avatar3.png";
 import Parse from "../parse-init";
 import { toggleJoinInSessionList } from "../utils/toggleJoinInList";
-const defaultAvatars = [ava1, ava2, ava3];
 
-// function SessionFeedPage() 
 function SessionFeedPage() {
   const [surfSessions, setSurfSessions] = useState([]);
-  const [loading, setLoading] = useState(true); //loading notification pattern
+  const [loading, setLoading] = useState(true);
 
-  //load future sessions from cloud function
+  // Load future sessions from cloud function
   useEffect(() => {
     async function loadSessions() {
       setLoading(true);
@@ -24,13 +19,13 @@ function SessionFeedPage() {
         });
         console.log("Loaded sessions in Feed:", results);
         // Sort by sessionDateTime: earliest first
-        const sorted = [...results].sort((a, b) => 
-          new Date(a.sessionDateTime) - new Date(b.sessionDateTime)
+        const sorted = [...results].sort(
+          (a, b) => new Date(a.sessionDateTime) - new Date(b.sessionDateTime)
         );
         setSurfSessions(sorted);
       } catch (err) {
         console.error("Error loading sessions in Feed:", err);
-        setSurfSessions([]); // fallback so UI renders
+        setSurfSessions([]);
       } finally {
         setLoading(false);
       }
@@ -38,7 +33,7 @@ function SessionFeedPage() {
     loadSessions();
   }, []);
 
-  //join/unjoin session in feed (callback function)
+  // Join/unjoin session (uses enhanced toggle with avatar support)
   const onJoin = (id) => async (e) => {
     if (e?.preventDefault) {
       e.preventDefault();
@@ -47,12 +42,10 @@ function SessionFeedPage() {
     await toggleJoinInSessionList(id, surfSessions, setSurfSessions);
   };
 
-  //loading notification pattern
   if (loading) {
     return <div className="page">Loading sessions...</div>;
   }
 
-  // Render session feed
   return (
     <div className="page">
       <div className="page-header">
@@ -63,11 +56,7 @@ function SessionFeedPage() {
       </div>
       <div className="stack">
         {surfSessions.map((s) => (
-          <Link
-            key={s.id}
-            to={`/session/${s.id}`}
-            className="session-link"
-          >
+          <Link key={s.id} to={`/session/${s.id}`} className="session-link">
             <Sessionblock
               spot={s.spotName}
               dateLabel={s.dateLabel}
@@ -77,7 +66,8 @@ function SessionFeedPage() {
               weather={s.weatherType}
               windDir={s.windDirection}
               coastDirection={s.coastDirection}
-              avatars={defaultAvatars}
+              joinedUsers={s.joinedUsers || []}
+              joinedCount={s.joinedCount || 0}
               onJoin={onJoin(s.id)}
               isJoined={s.isJoined}
             />

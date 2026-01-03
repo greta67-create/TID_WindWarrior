@@ -8,8 +8,8 @@ export default function Chat({
   setComments,
   session,
   spot,
-  // hide proposed comments as default off, but turned on in Spotview
-  hideProposedComments = false,
+  // show proposed comments by default, but hide them in Spotview
+  showProposedComments = true,
   initialProposedComments = [],
 }) {
   const [input, setInput] = useState("");
@@ -37,7 +37,17 @@ export default function Chat({
   // handle send comment (waits for backend to save comment)
   const handleSendClick = async () => {
     const message = input.trim();
+
+    // input checks
     if (message === "") return; // prevent adding empty comments
+    if (message.length < 3) {
+      alert("Comment must be at least 3 characters");
+      return;
+    }
+    if (message.length > 1000) {
+      alert("Comment must be less than 1000 characters");
+      return;
+    }
 
     if (session) { console.log("Creating comment for session:", session.id); } 
     else if (spot) { console.log("Creating comment for spot:", spot.id); }
@@ -85,9 +95,9 @@ export default function Chat({
         ))}
       </div>
 
-      {/* comment bar at bottom of page*/}
+      {/* comment bar at bottom of page with proposed comments if showProposedComments is true*/}
       <div className="comment-bar">
-        {!hideProposedComments && (
+        {showProposedComments && (
           <div className="prop-comment">
             {proposedComments.map((proposed) => (
               <button
