@@ -37,7 +37,17 @@ export default function Chat({
   // handle send comment (waits for backend to save comment)
   const handleSendClick = async () => {
     const message = input.trim();
+
+    // input checks
     if (message === "") return; // prevent adding empty comments
+    if (message.length < 3) {
+      alert("Comment must be at least 3 characters");
+      return;
+    }
+    if (message.length > 1000) {
+      alert("Comment must be less than 1000 characters");
+      return;
+    }
 
     if (session) { console.log("Creating comment for session:", session.id); } 
     else if (spot) { console.log("Creating comment for spot:", spot.id); }
