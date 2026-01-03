@@ -92,8 +92,7 @@ export default function ProfileView({ onLogout }) {
         <div className="page-title">Profile</div>
         <LogOutButton onLogout={onLogout} />
       </div>
-
-      <ProfileCard
+      <ProfileCard //passes props to Profilecard.jsx
         firstName={user.firstName}
         typeofSport={user.typeofSport}
         avatar={user.avatar}
@@ -101,69 +100,82 @@ export default function ProfileView({ onLogout }) {
         skillLevel={user.skillLevel}
         onSaveProfile={handleSaveProfile}
       />
-
-      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
-
-      {activeTab === "planned" && (
-        <div className="stack">
-          {upcomingSessions.length > 0 ? (
-            upcomingSessions.map((s) => (
-              <Link key={s.id} to={`/session/${s.id}`} className="session-link">
-                <Sessionblock
-                  spot={s.spotName}
-                  dateLabel={s.dateLabel}
-                  timeLabel={s.timeLabel}
-                  windKts={s.windPower}
-                  tempC={s.temperature}
-                  weather={s.weatherType}
-                  windDir={s.windDirection}
-                  coastDirection={s.coastDirection}
-                  joinedUsers={s.joinedUsers || []}
-                  joinedCount={s.joinedCount || 0}
-                  onJoin={handleUnjoin(s.id)}
-                  isJoined={true}
-                />
-              </Link>
-            ))
-          ) : (
-            <div className="empty-profileview">
-              <p>No Planned Sessions</p>
-              <Link to="/">
-                <button className="browse-button">
-                  Click to see Upcoming Sessions
-                </button>
-              </Link>
-            </div>
-          )}
-        </div>
+      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />{" "}
+      {/* function passed down to TabNavigation.jsx */}
+      {activeTab === "planned" && ( //conditional rendering of planned sessions - if true, render the following JSX
+        <>
+          <div className="stack">
+            {upcomingSessions.length > 0 ? ( //conditional rendering of upcoming sessions - if true, render the following JSX
+              upcomingSessions.map(
+                (
+                  s //map through upcomingSessions array
+                ) => (
+                  <Link //links to session view page are created here
+                    key={s.id} //key is used to uniquely identify the session in the array
+                    to={`/session/${s.id}`} //links to session view page are created here
+                    className="session-link"
+                  >
+                    <Sessionblock //renders a Sessionblock component for each session
+                      key={s.id} //key is used to uniquely identify the session in the array
+                      spot={s.spotName}
+                      dateLabel={s.dateLabel}
+                      timeLabel={s.timeLabel}
+                      windKts={s.windPower}
+                      tempC={s.temperature}
+                      weather={s.weatherType}
+                      windDir={s.windDirection}
+                      coastDirection={s.coastDirection}
+                      avatars={defaultAvatars}
+                      onJoin={handleUnjoin(s.id)} //onJoin is set to the handleUnjoin function for each session
+                      isJoined={true} //isJoined is set to true for all sessions in the upcomingSessions array
+                    />
+                  </Link>
+                )
+              )
+            ) : (
+              <div className="empty-profileview">
+                <p>No Planned Sessions</p>
+                <Link to="/">
+                  <button className="browse-button">
+                    Click to see Upcoming Sessions
+                  </button>
+                </Link>
+              </div>
+            )}
+          </div>
+        </>
       )}
-
-      {activeTab === "past" && (
-        <div className="stack">
-          {pastSessions.length > 0 ? (
-            pastSessions.map((s) => (
-              <Link key={s.id} to={`/session/${s.id}`} className="session-link">
-                <Sessionblock
-                  spot={s.spotName}
-                  dateLabel={s.dateLabel}
-                  timeLabel={s.timeLabel}
-                  windKts={s.windPower}
-                  tempC={s.temperature}
-                  weather={s.weatherType}
-                  windDir={s.windDirection}
-                  coastDirection={s.coastDirection}
-                  joinedUsers={s.joinedUsers || []}
-                  joinedCount={s.joinedCount || 0}
-                  showJoin={false}
-                />
-              </Link>
-            ))
-          ) : (
-            <div className="empty-profileview">
-              <p>Join a Session to Build Your History</p>
-            </div>
-          )}
-        </div>
+      {activeTab === "past" && ( //conditional rendering of past sessions - if true, render the following JSX
+        <>
+          <div className="stack">
+            {pastSessions.length > 0 ? (
+              pastSessions.map((s) => (
+                <Link
+                  key={s.id}
+                  to={`/session/${s.id}`}
+                  className="session-link"
+                >
+                  <Sessionblock
+                    spot={s.spotName}
+                    dateLabel={s.dateLabel}
+                    timeLabel={s.timeLabel}
+                    windKts={s.windPower}
+                    tempC={s.temperature}
+                    weather={s.weatherType}
+                    windDir={s.windDirection}
+                    coastDirection={s.coastDirection}
+                    avatars={defaultAvatars}
+                    showJoin={false}
+                  />
+                </Link>
+              ))
+            ) : (
+              <div className="empty-profileview">
+                <p>Join a Session to Build Your History</p>
+              </div>
+            )}
+          </div>
+        </>
       )}
     </div>
   );
