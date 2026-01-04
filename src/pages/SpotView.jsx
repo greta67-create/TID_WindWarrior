@@ -4,7 +4,9 @@ import Parse from "../parse-init";
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Chat from "../components/Chat";
-import { fetchSpotByName } from "../services/spotService";
+import {
+  fetchSpotByName,
+} from "../services/spotService";
 import { fetchSpotComments } from "../services/commentService";
 import { toggleJoinInSessionList } from "../utils/toggleJoinInList";
 import Map from "react-map-gl/mapbox";
@@ -18,6 +20,7 @@ export default function SpotViewPage() {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [surfSessions, setSurfSessions] = useState([]);
+  const user = Parse.User.current();
   const [viewState, setViewState] = useState({
     longitude: spot?.longitude || 12.568,
     latitude: spot?.latitude || 55.65,
@@ -25,23 +28,23 @@ export default function SpotViewPage() {
   });
   const [activeTab, setActiveTab] = useState("sessions");
 
-  // Load spot information and sessions via cloud function
+  //load spot information and session information via cloud function
   useEffect(() => {
     const loadSpot = async () => {
-      setLoading(true);
+      setLoading(true); // start loading
       try {
         const spot = await fetchSpotByName(spotName);
-
+  
         const loadedComments = await fetchSpotComments(spot.id);
         console.log("Loaded comments:", loadedComments);
         setComments(loadedComments);
-
+  
         const futureSessions = await Parse.Cloud.run("loadSessions", {
           filters: { spotIds: [spot.id] },
         });
         console.log("Loaded sessions in Spotfeed:", futureSessions);
         setSurfSessions(futureSessions);
-
+  
         setSpot(spot);
       } catch (error) {
         console.error("Error fetching spot by name:", error);
@@ -49,14 +52,14 @@ export default function SpotViewPage() {
         setComments([]);
         setSurfSessions([]);
       } finally {
-        setLoading(false);
+        setLoading(false); // stop loading notification
       }
     };
-
+  
     loadSpot();
   }, [spotName]);
 
-  // Poll for new comments every 10 seconds
+  // Poll for new comments every 10 seconds (as LiveQuery costs money)
   useEffect(() => {
     if (!spot?.id) return;
 
@@ -66,19 +69,22 @@ export default function SpotViewPage() {
         setComments(loadedComments);
       } catch (error) {
         console.error("Error fetching spot comments:", error);
+        // Don't clear comments on error, keep existing ones
       }
     };
 
+    // Poll for new comments every 10 seconds
     const interval = setInterval(() => {
       loadComments();
     }, 10000);
 
+    // Cleanup interval on unmount or when spot changes
     return () => {
       clearInterval(interval);
     };
   }, [spot?.id]);
 
-  // Update map center once spot data loads
+  // updates the map center once the spot data loads
   useEffect(() => {
     if (spot?.latitude && spot?.longitude) {
       setViewState({
@@ -89,7 +95,7 @@ export default function SpotViewPage() {
     }
   }, [spot]);
 
-  // Join/unjoin session (uses enhanced toggle with avatar support)
+  //handle join/unjoin session in spotview
   const onJoin = (id) => async (e) => {
     if (e?.preventDefault) {
       e.preventDefault();
@@ -98,10 +104,12 @@ export default function SpotViewPage() {
     await toggleJoinInSessionList(id, surfSessions, setSurfSessions);
   };
 
+
   if (loading) {
     return <div className="page">Loading spot...</div>;
   }
 
+  // render spot view
   return (
     <div className="page">
       <div
@@ -220,8 +228,6 @@ export default function SpotViewPage() {
                 weather={s.weatherType}
                 windDir={s.windDirection}
                 coastDirection={s.coastDirection}
-                joinedUsers={s.joinedUsers || []}
-                joinedCount={s.joinedCount || 0}
                 onJoin={onJoin(s.id)}
                 isJoined={s.isJoined}
               />

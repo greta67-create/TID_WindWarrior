@@ -1,10 +1,10 @@
 import { unjoinSession } from "../services/usersessionService";
 
 /**
- * Helper for ProfileView to unjoin a session and remove it
- * from the joinedSessions list so it disappears from
+ * Helper for ProfileView to unjoin a session and remove it from the joinedSessions list so it disappears from
  * both planned and past sections.
  */
+
 export async function unjoinAndRemoveFromJoinedList(sessionId, setJoinedSessions) {
   setJoinedSessions((prev) => prev.filter((s) => s.id !== sessionId));
 
