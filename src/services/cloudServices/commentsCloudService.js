@@ -5,6 +5,24 @@
     const message = request.object.get("message");
     const user = request.user;
     
+    if (!user) {
+      throw new Parse.Error("User must be authenticated to create comments");
+    }
+    
+    // set ACL on new comments
+    if (!request.object.existed()) {
+      const acl = new Parse.ACL();
+      acl.setPublicReadAccess(true);     
+      acl.setWriteAccess(user, true);    
+      request.object.setACL(acl);
+    } else {
+      // For delete/edit comment (update), verify user has write access
+      const existingACL = request.object.getACL();
+      if (!existingACL || !existingACL.getWriteAccess(user)) {
+        throw new Parse.Error(403, "Not authorized to modify this comment");
+      }
+    }
+    
     // ensure unmeaningful comments are not shared
     if (!message || message.trim().length < 3) {
       throw new Parse.Error("Comment must be at least 3 characters");
@@ -14,10 +32,10 @@
       throw new Parse.Error("Comment must be less than 1000 characters");
     }
     
-    // Rate limiting check per user from last hour
+    // check per user from last hour on how many comments they have made
     const Comment = Parse.Object.extend("comment");
     const query = new Parse.Query(Comment);
-    query.equalTo("userId", user); // Filter by current user
+    query.equalTo("userId", user); 
     query.greaterThan("createdAt", new Date(Date.now() - 3600000)); // last hour (3600000 miliseconds)
     
     const recentCommentCount = await query.count();
@@ -25,5 +43,5 @@
     if (recentCommentCount >= 10) {
       throw new Parse.Error("Rate limit exceeded. Please try again later.");
     }
-  console.log("Comment validation passed");
+    console.log("Comment validation passed");
   });
