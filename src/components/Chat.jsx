@@ -90,7 +90,7 @@ export default function Chat({
                 />
               ) : null}
             </div>
-            <div className="chat-text">{comment.message}</div>
+            <div className="chat-message">{comment.message}</div>
           </div>
         ))}
       </div>

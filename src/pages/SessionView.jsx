@@ -55,7 +55,7 @@ export default function SessionViewPage() {
 
     const loadComments = async () => {
       try {
-        const loadedComments = await fetchSessionComments(session.id);
+        const loadedComments = await fetchSessionComiments(session.id);
         setComments(loadedComments);
       } catch (error) {
         console.error("Error fetching session comments:", error);

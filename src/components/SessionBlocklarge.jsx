@@ -2,6 +2,7 @@ import "../styles/Sessionblock.css";
 import JoinButton from "../components/JoinButton";
 import getWeatherIcon from "../utils/getWeatherIcon";
 import { IoPeopleOutline } from "react-icons/io5";
+import { getCoastArcPath } from "../utils/getCoastArcPath";
 
 export default function Sessionblocklarge({
   // Fallbacks
@@ -24,12 +25,7 @@ export default function Sessionblocklarge({
       : avatars || [];
 
   // Show at most 3 avatars
-  const list = Array.isArray(userAvatars)
-    ? userAvatars
-    : userAvatars
-    ? [userAvatars]
-    : [];
-  const shown = list.slice(0, 3);
+  const shownAvatars = userAvatars.slice(0, 3);
 
   // Adapted structure compared to normal Sessionblock (new structure and larger icons)
   return (
@@ -41,32 +37,8 @@ export default function Sessionblocklarge({
             <div className={`windDir-icon-large windDir-icon--${windDir}`}>↑</div>
             {coastDirection && (
               // Curved segment (arc) whose shape depends on coastDirection
-              <svg className="coast-arc" width="70" height="70">
-                <path
-                  d={
-                    coastDirection === "N"
-                      ? "M 21 11 A 28 28 0 0 1 49 11"
-                      : coastDirection === "NE"
-                      ? "M 49 11 A 28 28 0 0 1 59 21"
-                      : coastDirection === "E"
-                      ? "M 59 21 A 28 28 0 0 1 59 49"
-                      : coastDirection === "SE"
-                      ? "M 59 49 A 28 28 0 0 1 49 59"
-                      : coastDirection === "S"
-                      ? "M 49 59 A 28 28 0 0 1 21 59"
-                      : coastDirection === "SW"
-                      ? "M 21 59 A 28 28 0 0 1 11 49"
-                      : coastDirection === "W"
-                      ? "M 11 49 A 28 28 0 0 1 11 21"
-                      : coastDirection === "NW"
-                      ? "M 11 21 A 28 28 0 0 1 21 11"
-                      : ""
-                  }
-                  stroke="green"
-                  strokeWidth="4"
-                  fill="none"
-                  strokeLinecap="round"
-                />
+              <svg className="coast-arc">
+                <path d={getCoastArcPath(coastDirection, "large")} />
               </svg>
             )}
           </div>
@@ -85,12 +57,12 @@ export default function Sessionblocklarge({
 
         {joinedCount > 0 ? (
           <div className="avatar-stack">
-            {shown.map((src, i) => (
-              <img key={i} alt="" src={src} className="avatar" />
+            {shownAvatars.map((src, index) => (
+              <img key={index} alt="" src={src} className="avatar" />
             ))}
             {/* Show +N for users without avatars or beyond first 3 */}
-            {(joinedCount > shown.length) && (
-              <div className="avatar-count">+{joinedCount - shown.length}</div>
+            {(joinedCount > shownAvatars.length) && (
+              <div className="avatar-count">+{joinedCount - shownAvatars.length}</div>
             )}
           </div>
         ) : (
