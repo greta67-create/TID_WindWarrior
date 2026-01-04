@@ -10,18 +10,17 @@ export default function Sessionblocklarge({
   weather = "⛅️",
   windDir = "↗",
   coastDirection = null,
-  avatars = [], // Legacy prop for backwards compatibility
   joinedUsers = [], // Array of user objects with avatar property
   joinedCount = 0, // Total number of joined users
   onJoin = () => {},
   isJoined = false,
   joinedText = "Joined",
 }) {
-  // Use joinedUsers if available, otherwise fall back to avatars prop
+  // Extract avatar URLs from joinedUsers
   const userAvatars =
     joinedUsers && joinedUsers.length > 0
       ? joinedUsers.map((u) => u.avatar).filter(Boolean)
-      : avatars || [];
+      : [];
 
   // Show at most 3 avatars
   const list = Array.isArray(userAvatars)

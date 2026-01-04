@@ -13,19 +13,18 @@ export default function Sessionblock({
   weather = "⛅️",
   windDir = "↗",
   coastDirection = null,
-  avatars = [], // Legacy prop for backwards compatibility
-  joinedUsers = [], // Array of user objects with avatar property
+  joinedUsers = [],
   joinedCount = 0, // Total number of joined users
   onJoin = () => {},
   isJoined = false,
   joinedText = "Joined",
   showJoin = true, // Per default show join button (exception: Profileview, past sessions)
 }) {
-  // Use joinedUsers if available, otherwise fall back to avatars prop
+  // Extract avatar URLs from joinedUsers
   const userAvatars =
     joinedUsers && joinedUsers.length > 0
       ? joinedUsers.map((u) => u.avatar).filter(Boolean)
-      : avatars || [];
+      : [];
 
   // Show at most 3 avatars
   const list = Array.isArray(userAvatars)
