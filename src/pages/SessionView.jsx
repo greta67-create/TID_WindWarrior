@@ -2,11 +2,11 @@ import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Parse from "../parse-init";
 import Sessionblocklarge from "../components/SessionBlocklarge";
-import "../styles/SessionView.css";
+import Chat from "../components/Chat";
 import { fetchSessionComments } from "../services/commentService";
 import { toggleJoinSingle } from "../utils/toggleJoinSingle";
-import Chat from "../components/Chat";
 import getWindfinderlink from "../utils/getWindfinderlink";
+import "../styles/SessionView.css";
 
 const initialProposedComments = [
   { id: 100, message: "I have a car and can offer a ride!" },
@@ -53,6 +53,7 @@ export default function SessionViewPage() {
   useEffect(() => {
     if (!session?.id) return;
 
+    // load comments for this session with polling 
     const loadComments = async () => {
       try {
         const loadedComments = await fetchSessionComments(session.id);
@@ -63,6 +64,7 @@ export default function SessionViewPage() {
       }
     };
 
+    // load comments immediately
     loadComments();
 
     // Poll for new comments every 10 seconds

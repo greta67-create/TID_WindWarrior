@@ -6,6 +6,20 @@ import Parse from "parse";
 // Define comment Parse class
 const Comment = Parse.Object.extend("comment");
 
+//Create a session pointer for queries and saving
+function createSessionPointer(surfSessionId) {
+  const pointer = new Parse.Object("SurfSessions");
+  pointer.id = surfSessionId;
+  return pointer;
+}
+
+//Create a spot pointer for queries and saving
+function createSpotPointer(spotId) {
+  const pointer = new Parse.Object("Spot");
+  pointer.id = spotId;
+  return pointer;
+}
+
 /**
  * Convert a Parse comment object to a plain JavaScript object  
  * @param {Parse.Object} parseObj - The Parse object to convert
@@ -42,8 +56,7 @@ export async function fetchSessionComments(surfSessionId) {
     }
   
     const query = new Parse.Query(Comment);
-    const sessionPointer = new Parse.Object("SurfSessions"); // for filtering comments by session
-    sessionPointer.id = surfSessionId;
+    const sessionPointer = createSessionPointer(surfSessionId);
   
     query.equalTo("surfSessionId", sessionPointer); // filter comments by session
     query.include("userId");
@@ -70,8 +83,7 @@ export async function fetchSpotComments(spotId) {
     }
 
     const query = new Parse.Query(Comment);
-    const spotPointer = new Parse.Object("Spot"); // for filtering comments by spot
-    spotPointer.id = spotId;
+    const spotPointer = createSpotPointer(spotId);
 
     query.equalTo("spotId", spotPointer); // filter comments by spot
     query.ascending("createdAt");
@@ -101,19 +113,11 @@ export async function createComment(surfSessionId  = null, spotId = null, userId
 
     // set the session or spot pointer 
     if (surfSessionId) {
-        const sessionPointer = {
-            __type: 'Pointer',
-            className: 'SurfSessions',
-            objectId: surfSessionId
-        };
+        const sessionPointer = createSessionPointer(surfSessionId);
         comment.set("surfSessionId", sessionPointer);
     }
     if (spotId) {
-        const spotPointer = {
-            __type: 'Pointer',
-            className: 'Spot',
-            objectId: spotId
-        };
+        const spotPointer = createSpotPointer(spotId);
         comment.set("spotId", spotPointer);
     }
     if (mother_comment_id) {
@@ -149,7 +153,7 @@ export async function deleteComment(id) {
     const query = new Parse.Query(Comment);
     const commentToDelete = await query.get(id);
     
-    // Check ownership - compare user IDs
+    // Check ownership - compare user IDs (client-side validation)
     const commentUserId = commentToDelete.get("userId");
     if (!commentUserId || commentUserId.id !== currentUser.id) {
       console.error("deleteComment: not authorized to delete comment");

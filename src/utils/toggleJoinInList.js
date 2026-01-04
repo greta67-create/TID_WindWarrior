@@ -8,7 +8,7 @@ import { addCurrentUserToSession, removeCurrentUserFromSession } from "./updateS
 export async function toggleJoinInSessionList(sessionId, sessions, setSessions) {
   const currentlyJoined = sessions.some((s) => s.id === sessionId && s.isJoined);
 
-  // Optimistic UI update with avatar changes
+  // UI update with avatar changes
   setSessions((prev) =>
     prev.map((s) => {
       if (s.id !== sessionId) return s;
@@ -26,7 +26,7 @@ export async function toggleJoinInSessionList(sessionId, sessions, setSessions) 
     }
   } catch (error) {
     console.error("Error toggling user session:", error);
-    // Revert on error
+    
     setSessions((prev) =>
       prev.map((s) => {
         if (s.id !== sessionId) return s;
