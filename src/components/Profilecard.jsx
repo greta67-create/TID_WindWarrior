@@ -4,12 +4,14 @@ import "../styles/Profilecard.css";
 import Modal from "./FadedProfile";
 import EditProfileModal from "./EditProfile";
 
+// ProfileCard component that displays user profile information
+
+// Props passed from Profileview.jsx
 export default function ProfileCard({
-  //props are passed from Profileview.jsx
-  firstName = "",
-  typeofSport = "",
+  firstName,
+  typeofSport,
   age,
-  skillLevel = "",
+  skillLevel,
   avatar = defaultAvatar,
   onSaveProfile = () => {},
 }) {

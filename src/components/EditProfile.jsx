@@ -4,23 +4,21 @@ import defaultAvatar from "../assets/Default.png";
 import { FaPen } from "react-icons/fa6";
 
 export default function EditProfileModal({ user, onClose, onSave }) {
-  // Edit Profile Form
   const [formData, setFormData] = useState({
     firstName: user.firstName || "",
     typeofSport: user.typeofSport || "",
     age: user.age || "",
     skillLevel: user.skillLevel || "",
     avatar: user.avatar || defaultAvatar,
-    file: null, // File object for new uploads
+    file: null,
   });
 
-  // useRef is used here to reference a DOM file input element without triggering a re-render
+  // useRef is used to reference the hidden file input element
   const fileInputRef = useRef(null);
 
   // Handles changing the value of a form field
   const handleChange = (field) => (e) => {
-    //e is the event object that is passed to the function and field is the name of the input field
-    setFormData({ ...formData, [field]: e.target.value }); //updates the formData object with the new value of the input field and target is the input field that is being changed
+    setFormData({ ...formData, [field]: e.target.value });
   };
 
   // Opens the file picker when the pencil icon button is clicked
@@ -32,16 +30,15 @@ export default function EditProfileModal({ user, onClose, onSave }) {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
-      // checks if the file is a picture
-      const previewUrl = URL.createObjectURL(file); // this method creates a URL string for preview
+      const previewUrl = URL.createObjectURL(file); // this method creates a URL string for preview because we can't directly use the File object as image src
       setFormData({ ...formData, file, avatar: previewUrl }); // store File object and preview URL in formData
     }
   };
 
   // Handles saving the profile
   const handleSave = () => {
-    onSave(formData); // Sends updated profile data back to parent (Profileview)
-    onClose(); // Closes the profile popup
+    onSave(formData);
+    onClose();
   };
 
   return (
@@ -63,10 +60,10 @@ export default function EditProfileModal({ user, onClose, onSave }) {
           {/* Hidden file input */}
           <input
             ref={fileInputRef} // ref is used to reference the file input element
-            type="file" // type of input is file
-            accept="image/*" // only allows images to be uploaded
+            type="file"
+            accept="image/*"
             onChange={handleImageChange}
-            style={{ display: "none" }} // hides the file input element from the user
+            style={{ display: "none" }}
           />
         </div>
       </div>

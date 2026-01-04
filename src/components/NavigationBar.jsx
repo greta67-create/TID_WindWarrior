@@ -4,6 +4,7 @@ import { FaMapMarkedAlt } from "react-icons/fa";
 import { IoPersonSharp } from "react-icons/io5";
 import "../styles/Navigationbar.css";
 
+// Navbar component for navigation between Home, Map, and Profile pages
 export default function Navbar() {
   return (
     <nav className="navbar">

@@ -2,7 +2,7 @@ import "../styles/ProfilePopUp.css";
 
 export default function Modal({ children, onClose }) {
   // Close modal when clicking outside content
-  //children is a special prop that is passed to the component and can be used to render what is inside the modal
+  // children is a special prop that is passed to the component and can be used to render what is inside the modal
   const handleBackgroundClick = () => {
     onClose();
   };
