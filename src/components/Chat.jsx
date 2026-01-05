@@ -60,7 +60,13 @@ export default function Chat({
       setInput(""); // Clear the input field only on success
     } catch (error) {
       console.error("Error creating comment:", error);
-      // Keep input so user can retry
+      
+      // if error message from Parse server from input validation, display it to the user 
+      if (error.message) {  
+        alert(error.message);
+      } else {
+        alert("Failed to save comment. Please try again.");
+      }
     }
   };
 
