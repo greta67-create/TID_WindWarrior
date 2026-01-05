@@ -14,8 +14,7 @@ export default function Chat({
 }) {
   const [input, setInput] = useState("");
   const [proposedComments, setProposedComments] = useState(
-    initialProposedComments
-  );
+    initialProposedComments);
 
   // handle delete comment (waits for backend to delete comment)
   const handleDeleteComment = async (commentId) => {
@@ -23,9 +22,19 @@ export default function Chat({
       const success = await deleteComment(commentId);
       if (success) {
         setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+      } else {
+        // User is not authorized to delete this comment
+        alert("You are not authorized to delete this comment.");
       }
     } catch (error) {
       console.error("Error deleting comment:", error);
+      
+      // if error message from Parse server, display it to the user 
+      if (error.message) {  
+        alert(error.message);
+      } else {
+        alert("Failed to delete comment. Please try again.");
+      }
     }
   };
 
@@ -124,12 +133,6 @@ export default function Chat({
             placeholder="Add Comment"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                handleSendClick();
-              }
-            }}
           />
           <button className="send-btn" onClick={handleSendClick}>
             Send
