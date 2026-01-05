@@ -30,8 +30,7 @@ export default function SessionViewPage() {
         const results = await Parse.Cloud.run("loadSessions", {
           filters: { sessionIds: [id] },
         });
-        const loadedSession = results?.[0] || null;
-        setSession(loadedSession);
+        setSession(results[0]);
       } catch (err) {
         console.error("Error fetching session by id:", err);
         setSession(null);
