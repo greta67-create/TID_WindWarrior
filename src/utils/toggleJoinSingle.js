@@ -10,13 +10,14 @@ export async function toggleJoinSingle(session, setSession) {
 
   const currentlyJoined = session.isJoined;
 
-  // Optimistic UI update with avatar changes
+  // UI update with avatar changes
   setSession((prev) =>
     currentlyJoined
       ? { ...removeCurrentUserFromSession(prev), isJoined: false }
       : { ...addCurrentUserToSession(prev), isJoined: true }
   );
 
+  // if currently joined, unjoin session, otherwise join session
   try {
     if (currentlyJoined) {
       await unjoinSession(session.id);
@@ -25,7 +26,7 @@ export async function toggleJoinSingle(session, setSession) {
     }
   } catch (error) {
     console.error("Error toggling join state:", error);
-    // Revert on error
+    // revert on error (optimistic UI update)
     setSession((prev) =>
       currentlyJoined
         ? { ...addCurrentUserToSession(prev), isJoined: true }
