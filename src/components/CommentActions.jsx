@@ -17,6 +17,8 @@ function CommentActions({ commentId, handleDeleteComment, handleEditComment }) {
     if (!isTooltipVisible) return;
 
     const handleClickOutside = (event) => {
+      console.log("handleClickOutside", event.target);
+      console.log("wrapperRef.current", wrapperRef.current);
       if (!wrapperRef.current?.contains(event.target)) {
         setIsTooltipVisible(false);
       }

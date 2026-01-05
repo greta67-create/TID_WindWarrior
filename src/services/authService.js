@@ -1,4 +1,4 @@
-import Parse from "parse";
+import Parse from "../parse-init";
 import { UserToPlainObject } from "./userservice";
 
 // log in-function

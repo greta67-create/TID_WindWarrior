@@ -81,8 +81,15 @@ export default function ProfileView({ onLogout }) {
         setUser(updatedUser);
         console.log("Profile updated successfully");
       }
-    } catch (err) {
-      console.error("Error saving profile:", err);
+    } catch (error) {
+      console.error("Error saving profile:", error);
+
+      // If error message from Parse server, display it to the user
+      if (error.message) {
+        alert(error.message);
+      } else {
+        alert("Failed to update profile. Please try again.");
+      }
     }
   };
 

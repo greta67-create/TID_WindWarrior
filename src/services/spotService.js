@@ -1,4 +1,4 @@
-import Parse from "parse";
+import Parse from "../parse-init";
 
 /**
  * Service layer for Spot operations

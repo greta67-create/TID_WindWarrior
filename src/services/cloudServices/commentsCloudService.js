@@ -11,15 +11,15 @@
     
     // set ACL on new comments
     if (!request.object.existed()) {
-      const acl = new Parse.ACL();
-      acl.setPublicReadAccess(true);     
-      acl.setWriteAccess(user, true);    
-      request.object.setACL(acl);
+      const newacl = new Parse.ACL();
+      newacl.setPublicReadAccess(true);     
+      newacl.setWriteAccess(user, true);    
+      request.object.setACL(newacl);
     } else {
-      // For delete/edit comment (update), verify user has write access
+      // For future feauture: edit comment, verify user has write access
       const existingACL = request.object.getACL();
       if (!existingACL || !existingACL.getWriteAccess(user)) {
-        throw new Parse.Error(403, "Not authorized to modify this comment");
+        throw new Parse.Error("Not authorized to modify this comment");
       }
     }
     
