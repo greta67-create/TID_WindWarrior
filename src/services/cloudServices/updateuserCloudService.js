@@ -7,12 +7,8 @@ Parse.Cloud.beforeSave(Parse.User, async (request) => {
   const user = request.object;
   const currentUser = request.user;
 
-  // Only allow users to update their own profile (unless using master key)
-  if (
-    user.existed() &&
-    (!currentUser || currentUser.id !== user.id) &&
-    !request.master
-  ) {
+  // Only allow users to update their own profile
+  if (user.existed() && (!currentUser || currentUser.id !== user.id)) {
     throw new Parse.Error(
       Parse.Error.OPERATION_FORBIDDEN,
       "Not authorized to modify this user"
