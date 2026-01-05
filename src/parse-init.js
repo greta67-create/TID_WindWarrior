@@ -1,4 +1,4 @@
-// import Parse from "parse";
+// Here we initialize Parse with environment variables for security
 import Parse from "parse";
 
 const PARSE_APP_ID = import.meta.env.VITE_PARSE_APP_ID;

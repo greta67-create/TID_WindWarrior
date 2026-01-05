@@ -1,29 +1,42 @@
 # WindWarrior
 
-### 🗺️ Running the Map Page Locally
+A React-based web application for wind sports enthusiasts to discover spots, join sessions, and connect with other riders. Please follow the setup guide to run the app.
 
-To run the map feature on your local machine, you will need to install the required Mapbox dependencies and add your secret API key.
+## Setup
 
-1. Install Dependencies
-
-After pulling the branch, you must install the new Mapbox packages. From the root of the project, run:
-
+### 1. Install Dependencies
+In the terminal run the following command
+```bash
 npm install
+```
+
+### 2. Environment Variables
+**Note:** The `.env` file is gitignored and will not be committed to the repository.
+Therefore you have to create a `.env` file in the root directory with the following variables:
+
+```env
+VITE_MAPBOX_TOKEN=your_mapbox_access_token_here
+VITE_PARSE_APP_ID=your_parse_app_id_here
+VITE_PARSE_JS_KEY=your_parse_javascript_key_here
+VITE_PARSE_SERVER_URL=your_parse_server_url_here
+```
+You can find the variables in the report.
+
+### 3. Starting the App 
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Use the following placeholder credentials to log in:
+
+- **Username:** `evan.sup`
+- **Password:** `hej`
+
+*Note: Replace with actual Parse/Back4App user credentials from your backend.*
 
 
-2. Set Up Environment File
 
-You will need to add a .env file to the root of the project to securely store your Mapbox API key.
-
-Create a new file named .env in the root folder of TID_WeekendWarrior.
-
-Add your Mapbox Access Token to this file. 
-
-VITE_MAPBOX_TOKEN="YOUR_MAPBOX_SECRET_KEY_GOES_HERE"
-
-
-Note: The .env file is included in .gitignore and will not be tracked by Git. This is intentional to protect our secret API keys.
-
-⚠️ Important: Usage Limit
-
-The Mapbox API has a free tier of 50,000 map loads per month. Please be mindful of this and avoid excessive refreshing while developing, otherwise, we may get charged.
+The application will be available at `http://localhost:5173` 

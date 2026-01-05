@@ -1,50 +1,43 @@
 import "../styles/Sessionblock.css";
 import JoinButton from "../components/JoinButton";
 import getWeatherIcon from "../utils/getWeatherIcon";
+import { IoPeopleOutline } from "react-icons/io5";
+import { getCoastArcPath } from "../utils/getCoastArcPath";
 
 export default function Sessionblocklarge({
-  //fallbacks
+  // Fallbacks
   windKts = 21,
   tempC = 18,
   weather = "⛅️",
   windDir = "↗",
   coastDirection = null,
-  avatars = [],
+  joinedUsers = [], // Array of user objects with avatar property
+  joinedCount = 0, // Total number of joined users
   onJoin = () => {},
   isJoined = false,
-  joinedText = "Joining",
+  joinedText = "Joined",
 }) {
-  // show at most 3 avatars
-  const list = Array.isArray(avatars) ? avatars : avatars ? [avatars] : [];
-  const shown = list.slice(0, 3);
-  const more = 3; // calculate the number of additional avatars
+  // Extract avatar URLs from joinedUsers
+  const userAvatars =
+    joinedUsers && joinedUsers.length > 0
+      ? joinedUsers.map((u) => u.avatar).filter(Boolean)
+      : [];
 
+  // Show at most 3 avatars
+  const shownAvatars = userAvatars.slice(0, 3);
+
+  // Adapted structure compared to normal Sessionblock (new structure and larger icons)
   return (
-    <div className="session-card-large">
+    <div className="session-card">
       <div className="session-card-title">Forecast for your session:</div>
       <div className="session-header">
         <div className="metrics">
           <div className="wind-container-large">
             <div className={`windDir-icon-large windDir-icon--${windDir}`}>↑</div>
             {coastDirection && (
-              <svg width="70" height="70" style={{ position: 'absolute', top: 0, left: 0 }}>
-                <path 
-                  d={
-                    coastDirection === 'N' ? 'M 21 11 A 28 28 0 0 1 49 11' :
-                    coastDirection === 'NE' ? 'M 49 11 A 28 28 0 0 1 59 21' :
-                    coastDirection === 'E' ? 'M 59 21 A 28 28 0 0 1 59 49' :
-                    coastDirection === 'SE' ? 'M 59 49 A 28 28 0 0 1 49 59' :
-                    coastDirection === 'S' ? 'M 49 59 A 28 28 0 0 1 21 59' :
-                    coastDirection === 'SW' ? 'M 21 59 A 28 28 0 0 1 11 49' :
-                    coastDirection === 'W' ? 'M 11 49 A 28 28 0 0 1 11 21' :
-                    coastDirection === 'NW' ? 'M 11 21 A 28 28 0 0 1 21 11' :
-                    ''
-                  }
-                  stroke="green" 
-                  strokeWidth="4" 
-                  fill="none" 
-                  strokeLinecap="round"
-                />
+              // Curved segment (arc) whose shape depends on coastDirection
+              <svg className="coast-arc">
+                <path d={getCoastArcPath(coastDirection, "large")} />
               </svg>
             )}
           </div>
@@ -61,12 +54,20 @@ export default function Sessionblocklarge({
           joinedText={joinedText}
         />
 
-        {list.length > 0 && (
+        {joinedCount > 0 ? (
           <div className="avatar-stack">
-            {shown.map((src, i) => (
-              <img key={i} alt="" src={src} className="avatar" />
+            {shownAvatars.map((src, index) => (
+              <img key={index} alt="" src={src} className="avatar" />
             ))}
-            {more > 0 && <div className="avatar-count">+{more}</div>}
+            {/* Show +N for users without avatars or beyond first 3 */}
+            {(joinedCount > shownAvatars.length) && (
+              <div className="avatar-count">+{joinedCount - shownAvatars.length}</div>
+            )}
+          </div>
+        ) : (
+          <div className="no-users">
+            <IoPeopleOutline />
+            <span>0</span>
           </div>
         )}
       </div>

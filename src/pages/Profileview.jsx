@@ -3,20 +3,12 @@ import Parse from "../parse-init";
 import ProfileCard from "../components/Profilecard";
 import Sessionblock from "../components/Sessionblock";
 import { Link } from "react-router-dom";
-import ava1 from "../assets/avatar1.png";
-import ava2 from "../assets/avatar2.png";
-import ava3 from "../assets/avatar3.png";
 import { useState, useEffect } from "react";
-import {
-  fetchUserSessions,
-  unjoinSession,
-} from "../services/usersessionService";
-import { getCurrentUserInfo } from "../services/userservice";
+import { getCurrentUserInfo, updateUserProfile } from "../services/userservice";
 import LogOutButton from "../components/LogOutButton";
 import "../styles/BrowseSessions.css";
 import TabNavigation from "../components/TabNavigation";
-
-const defaultAvatars = [ava1, ava2, ava3];
+import { unjoinAndRemoveFromJoinedList } from "../utils/unjoinAndRemoveFromJoinedList"; //Helper function to unjoin a session and remove it from joinedSessions list
 
 export default function ProfileView({ onLogout }) {
   const [user, setUser] = useState({});
@@ -24,103 +16,79 @@ export default function ProfileView({ onLogout }) {
   const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [pastSessions, setPastSessions] = useState([]);
   const [activeTab, setActiveTab] = useState("planned");
+  const [loading, setLoading] = useState(true);
 
-  // flow is fetchUserSessions → setJoinedSessions → effect runs → setUpcomingSessions + setPastSessions
-
-  // load user info and stores in user state
+  // Load user info and set user state (stores user information in the user state)
   useEffect(() => {
     async function loadUser() {
       const info = await getCurrentUserInfo();
-      setUser(info);
-      console.log("User info from service:", info);
+      setUser(info || {});
     }
     loadUser();
   }, []);
 
-  // load current, joined user sessions
+  // Load user sessions for current user via cloud function
   useEffect(() => {
-    const user = Parse.User.current();
-    if (!user) return;
-    //load Usersessions for specific user from backend
+    const currentUser = Parse.User.current();
+    if (!currentUser) return; // If no user is logged in, exit early (return)
+
     async function loadUserSessions() {
+      setLoading(true);
       try {
-        const sessions = await fetchUserSessions(user);
+        const sessions = await Parse.Cloud.run("loadSessions", {
+          filters: { joinedByCurrentUser: true },
+        });
         console.log("Loaded user sessions in ProfileView:", sessions);
-        setJoinedSessions(sessions); //stores in joinedSessions state
+        setJoinedSessions(sessions);
       } catch (err) {
-        console.error("Error loading user sessions in ProfileView:", err);
+        console.error("Error loading user sessions:", err);
+        setJoinedSessions([]);
+      } finally {
+        setLoading(false);
       }
     }
 
     loadUserSessions();
   }, []);
 
-  //split joinedSessions into past and future sessions whenever joinedSessions changes
+  // Split joinedSessions into past and future
   useEffect(() => {
-    console.log("Joined sessions:", joinedSessions);
-    //split joinedSessions into past and future sessions
     const now = new Date();
-    console.log("Now is:", now);
     const upcoming = joinedSessions.filter(
       (s) => s.sessionDateTime && s.sessionDateTime >= now
     );
-
     const past = joinedSessions.filter(
       (s) => s.sessionDateTime && s.sessionDateTime < now
     );
     setUpcomingSessions(upcoming);
     setPastSessions(past);
-    console.log("Upcoming user sessions:", upcoming);
-    console.log("Past user sessions:", past);
   }, [joinedSessions]);
 
+  // Unjoin and remove from list
   const handleUnjoin = (id) => async (e) => {
-    if (e && e.preventDefault) {
+    if (e?.preventDefault) {
       e.preventDefault();
       e.stopPropagation();
     }
-    // In the profile view, all listed sessions are joined so clicking again unjoins them
-    try {
-      //call backend to unjoin
-      await unjoinSession(id);
-      console.log("Unjoined session from ProfileView:", id);
-
-      // Remove the session  so it disappears from Planned/Past lists
-      setJoinedSessions((prev) =>
-        prev.filter(
-          (s) =>
-            // s.objectId !== id && // for raw Parse-style objects
-            s.id !== id // in case fetchUserSessions maps id differently
-        )
-      );
-    } catch (err) {
-      console.error("Error unjoining session from ProfileView:", err);
-    }
+    await unjoinAndRemoveFromJoinedList(id, setJoinedSessions);
   };
 
+  // Save profile
   const handleSaveProfile = async (updatedData) => {
     try {
-      const currentUser = Parse.User.current();
-      if (!currentUser) return;
-
-      // Update Parse backend
-      currentUser.set("firstName", updatedData.firstName);
-      currentUser.set("typeofSport", updatedData.typeofSport);
-      currentUser.set("age", parseInt(updatedData.age));
-      currentUser.set("skillLevel", updatedData.skillLevel);
-      if (updatedData.avatar) {
-        currentUser.set("avatar", updatedData.avatar);
+      const updatedUser = await updateUserProfile(updatedData);
+      if (updatedUser) {
+        setUser(updatedUser);
+        console.log("Profile updated successfully");
       }
-
-      await currentUser.save();
-
-      // Update local state to reflect changes immediately
-      setUser(updatedData);
-      console.log("Profile updated successfully");
     } catch (err) {
       console.error("Error saving profile:", err);
     }
   };
+
+  if (loading) {
+    return <div className="page">Loading profile...</div>;
+  }
 
   return (
     <div className="page">
@@ -128,8 +96,7 @@ export default function ProfileView({ onLogout }) {
         <div className="page-title">Profile</div>
         <LogOutButton onLogout={onLogout} />
       </div>
-
-      <ProfileCard
+      <ProfileCard //passes props to Profilecard.jsx
         firstName={user.firstName}
         typeofSport={user.typeofSport}
         avatar={user.avatar}
@@ -137,17 +104,16 @@ export default function ProfileView({ onLogout }) {
         skillLevel={user.skillLevel}
         onSaveProfile={handleSaveProfile}
       />
-
-      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
-
+      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />{" "}
+      {/* function passed down to TabNavigation.jsx */}
       {activeTab === "planned" && (
         <>
           <div className="stack">
             {upcomingSessions.length > 0 ? (
               upcomingSessions.map((s) => (
                 <Link
-                  key={s.id}
-                  to={`/session/${s.id}`}
+                  key={s.id} //key is used to uniquely identify the session in the array
+                  to={`/session/${s.id}`} //links to session view page are created here
                   className="session-link"
                 >
                   <Sessionblock
@@ -160,9 +126,10 @@ export default function ProfileView({ onLogout }) {
                     weather={s.weatherType}
                     windDir={s.windDirection}
                     coastDirection={s.coastDirection}
-                    avatars={defaultAvatars}
+                    joinedUsers={s.joinedUsers || []}
+                    joinedCount={s.joinedCount || 0}
                     onJoin={handleUnjoin(s.id)}
-                    isJoined={true}
+                    isJoined={true} //isJoined is set to true for all sessions in the upcomingSessions array
                   />
                 </Link>
               ))
@@ -179,7 +146,6 @@ export default function ProfileView({ onLogout }) {
           </div>
         </>
       )}
-
       {activeTab === "past" && (
         <>
           <div className="stack">
@@ -199,7 +165,8 @@ export default function ProfileView({ onLogout }) {
                     weather={s.weatherType}
                     windDir={s.windDirection}
                     coastDirection={s.coastDirection}
-                    avatars={defaultAvatars}
+                    joinedUsers={s.joinedUsers || []}
+                    joinedCount={s.joinedCount || 0}
                     showJoin={false}
                   />
                 </Link>

@@ -1,127 +1,97 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import Parse from "../parse-init";
 import Sessionblocklarge from "../components/SessionBlocklarge";
-import "../styles/Sessionview.css";
-import "../App.css";
-import ava1 from "../assets/avatar1.png";
-import ava2 from "../assets/avatar2.png";
-import ava3 from "../assets/avatar3.png";
-import "../styles/SessionView.css";
-import {
-  fetchSessionById,
-  fetchSessionComments,
-} from "../services/sessionService";
-import {
-  fetchUserSessions,
-  joinSession,
-  unjoinSession,
-} from "../services/usersessionService";
 import Chat from "../components/Chat";
+import { fetchSessionComments } from "../services/commentService";
+import { toggleJoinSingle } from "../utils/toggleJoinSingle";
 import getWindfinderlink from "../utils/getWindfinderlink";
+import "../styles/SessionView.css";
 
-const defaultAvatars = [ava1, ava2, ava3];
+const initialProposedComments = [
+  { id: 100, message: "I have a car and can offer a ride!" },
+  { id: 101, message: "Can someone offer a ride?" },
+];
 
 export default function SessionViewPage() {
   const { id } = useParams();
   const [session, setSession] = useState(null);
   const [comments, setComments] = useState([]);
-  const [isJoined, setIsJoined] = useState(false);
-  const proposedComments = [
-    { id: 100, text: "I have a car and can offer a ride!" },
-    { id: 101, text: "Can someone offer a ride?" },
-  ];
+  const [loading, setLoading] = useState(true);
   const currentUser = Parse.User.current();
-  console.log("SessionView currentUser:", currentUser);
 
-  // Load this one session by id
+  // Load session by ID from cloud function
   useEffect(() => {
     if (!id) return;
 
     async function loadSession() {
+      setLoading(true);
       try {
-        console.log("SessionView URL id:", id);
-        const data = await fetchSessionById(id);
-        setSession(data);
-      } catch (error) {
-        console.error("Error fetching session by id:", error);
+        const results = await Parse.Cloud.run("loadSessions", {
+          filters: { sessionIds: [id] },
+        });
+        const loadedSession = results?.[0] || null;
+        setSession(loadedSession);
+      } catch (err) {
+        console.error("Error fetching session by id:", err);
+        setSession(null);
+      } finally {
+        setLoading(false);
       }
     }
 
     loadSession();
   }, [id]);
 
-  // check if user has joined this session
-  useEffect(() => {
-    if (!session) return;
-
-    const user = Parse.User.current();
-    if (!user) return;
-
-    async function loadJoinState() {
-      try {
-        const userSessions = await fetchUserSessions(user);
-        const ids = userSessions.map((s) => s.id); // or s.sessionId depending on your service
-        setIsJoined(ids.includes(session.id));
-      } catch (err) {
-        console.error("Error loading joined state in SessionView:", err);
-      }
-    }
-
-    loadJoinState();
-  }, [session]);
-
-  // join/unjoin logic: call backend and update local state
+  // Join/unjoin session (uses enhanced toggle with avatar support)
   const onJoin = async () => {
-    if (!session) return; //dont do anything if data haven't loaded yet
-    const sessionId = session.id;
-    console.log("Join button clicked", id);
-    const currentlyJoined = isJoined;
-
-    // optimistic toggle (show UI change immediately)
-    setIsJoined(!currentlyJoined);
-
-    try {
-      if (currentlyJoined) {
-        await unjoinSession(sessionId);
-        console.log("Usersession deleted in DB", id);
-      } else {
-        await joinSession(sessionId);
-        console.log("Usersession saved in DB", id);
-      }
-    } catch (error) {
-      console.error("Error toggling join state:", error);
-      setIsJoined(currentlyJoined);
-    }
+    if (!session) return;
+    await toggleJoinSingle(session, setSession);
   };
 
-  // Load comments for this session
+  // Load comments with polling
   useEffect(() => {
-    if (!session) return;
+    if (!session?.id) return;
 
+    // load comments for this session with polling 
     const loadComments = async () => {
       try {
-        const data = await fetchSessionComments(session.id);
-        console.log("Fetched session comments:", data);
-        setComments(data);
+        const loadedComments = await fetchSessionComments(session.id);
+        setComments(loadedComments);
       } catch (error) {
         console.error("Error fetching session comments:", error);
+        setComments([]);
       }
     };
 
+    // load comments immediately
     loadComments();
-  }, [session]);
 
-  const proposedComment = [
-    { id: 100, text: "I have a car and can offer a ride!" },
-    { id: 101, text: "Can someone offer a ride?" },
-  ];
+    // Poll for new comments every 10 seconds
+    const interval = setInterval(() => {
+      loadComments();
+    }, 10000);
 
-  // to avoid that session is null before data loads
-  if (!session) {
-    return <div className="page">Loading session…</div>;
+    return () => {
+      clearInterval(interval);
+    };
+  }, [session?.id]);
+
+  if (loading) {
+    return <div className="page">Loading session...</div>;
   }
-  // const for weather link
-  // const weatherLink = getWindfinderlink(session.spotName);
+
+  if (!session) {
+    return (
+      <div className="page">
+        <div className="page-header">
+          <div className="page-title">Session not found</div>
+        </div>
+        <p>The session you're looking for doesn't exist.</p>
+        <Link to="/">Back to Feed</Link>
+      </div>
+    );
+  }
 
   return (
     <div className="page">
@@ -142,37 +112,34 @@ export default function SessionViewPage() {
           weather={session.weatherType}
           windDir={session.windDirection}
           coastDirection={session.coastDirection}
-          avatars={defaultAvatars}
+          joinedUsers={session.joinedUsers || []}
+          joinedCount={session.joinedCount || 0}
           onJoin={onJoin}
-          isJoined={isJoined}
+          isJoined={session.isJoined}
         />
 
         {/* Get more information section */}
         <div className="info-section">
           <div className="info-title">Get more information:</div>
-
           <div className="info-buttons">
-            {/* Left button: to SpotView */}
             <Link
               to={`/spot/${session.spotName}`}
               className="info-btn info-btn-primary"
             >
               About the spot
             </Link>
-
-            {/* Right button: external link ( weather link) */}
             <a
               href={getWindfinderlink(session.spotName)}
               target="_blank"
               className="info-btn info-btn-secondary"
             >
               <span>About the weather</span>
-              <span className="external-icon">↗</span>
+              <span className="external-icon">→</span>
             </a>
           </div>
         </div>
       </div>
-      {/* Subtitle */}
+
       <div className="section-subtitle">
         Communicate with others joining this session:
       </div>
@@ -183,7 +150,7 @@ export default function SessionViewPage() {
         setComments={setComments}
         session={session}
         spot={null}
-        proposedComments={proposedComments}
+        initialProposedComments={initialProposedComments}
       />
     </div>
   );

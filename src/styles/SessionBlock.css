@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap");
 @import "/src/App.css";
 
 /* Card */
@@ -10,41 +9,16 @@
   box-shadow: 0 10px 30px var(--shadow);
 }
 
-.session-card-large {
-  background: var(--back);
-  border-radius: 15px;
-  margin-top: var(--spacing-sm);
-  padding: var(--spacing-md);
-  box-shadow: 0 10px 30px var(--shadow);
-}
-
 .session-card-title {
   font-size: var(--font-base);
-  font: var(--font-sans);
+  font-family: var(--font-sans);
   font-weight: 400;
 }
 /* Header */
 .session-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-}
-
-.session-header-left {
-  display: flex;
-  align-items: baseline;
-}
-
-.session-header-right {
-  display: flex;
-  align-items: baseline;
-}
-
-.session-title {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  gap: var(--spacing-sm);
 }
 
 .spot {
@@ -60,7 +34,8 @@
   font-size: var(--font-md);
   color: var(--text);
   font-weight: 400;
-  margin-right: var(--spacing-sm);
+  flex: 1;
+  text-align: center;
 }
 
 /* Footer row */
@@ -74,8 +49,8 @@
 
 .session-footer > .join-button,
 .session-footer > .join-buttonlarge {
-  flex: 1 1 auto; /* grow to the right until avatars */
-  width: 100%; /* ensures full width inside its flex slot */
+  flex: 1 1 auto; 
+  width: 100%; 
   min-width: 0;
 }
 
@@ -85,12 +60,11 @@
 }
 /* Metrics */
 .metrics {
-  flex: 1;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-width: 0;
-  margin-right: var(--spacing-sm);
+  gap: var(--spacing-sm);
 }
 
 .metric-text {
@@ -102,7 +76,7 @@
 
 .metric-text-large {
   font: var(--font-sans);
-  font-size: var(--font-md);
+  font-size: var(--font-lg);
   font-weight: 700;
   color: var(--text);
 }
@@ -124,6 +98,25 @@
   align-items: center;
   justify-content: center;
   font-size: var(--font-icon-lg);
+}
+
+.wind-container {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wind-container-large {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .windDir-icon {
@@ -181,12 +174,26 @@
   transform: rotate(315deg);
 }
 
-/* Avatars */
-.avatars {
-  display: flex;
-  align-items: center;
+.coast-arc {
+  position: absolute;
+  top: 0;
+  left: 0;
+  stroke: green;
+  fill: none;
+  stroke-linecap: round;
+  width: 50px;
+  height: 50px;
+  stroke-width: 3;
 }
 
+/* Large version (SessionBlocklarge) */
+.wind-container-large .coast-arc {
+  width: 70px;
+  height: 70px;
+  stroke-width: 4;
+}
+
+/* Avatars */
 .avatar-stack {
   display: flex;
   align-items: center;
@@ -222,30 +229,35 @@
   margin-left: -20px;
 }
 
-/* having underlined text in Links*/
+/* No users fallback */
+.no-users {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  box-shadow: 0 2px 8px var(--shadow);
+  gap: 2px;
+}
+
+.no-users svg {
+  font-size: 18px;
+}
+
+.no-users span {
+  font: var(--font-sans);
+  font-size: var(--font-sm);
+  font-weight: 700;
+}
+
+/* No underlined text in Links */
 .session-link {
   text-decoration: none;
   color: inherit;
 }
 .session-link:visited {
   color: inherit;
-}
-
-.wind-container {
-  position: relative;
-  width: 50px;
-  height: 50px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.wind-container-large {
-  position: relative;
-  width: 70px;
-  height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }

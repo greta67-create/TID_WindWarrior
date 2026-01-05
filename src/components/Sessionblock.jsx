@@ -1,31 +1,34 @@
 import "../styles/Sessionblock.css";
 import JoinButton from "../components/JoinButton";
 import getWeatherIcon from "../utils/getWeatherIcon";
-
-import ava1 from "../assets/avatar1.png";
-import ava2 from "../assets/avatar2.png";
-import ava3 from "../assets/avatar3.png";
+import { IoPeopleOutline } from "react-icons/io5";
+import { getCoastArcPath } from "../utils/getCoastArcPath";
 
 export default function Sessionblock({
-  //fallbacks
+  // Fallback spot information to avoid weird layout when session info can't be loaded
   spot = "Fallback Spot",
   dateLabel = "Apr 4th",
-  timeLabel = "12pm",
+  timeLabel = "12:00 pm",
   windKts = 21,
   tempC = 18,
   weather = "⛅️",
   windDir = "↗",
   coastDirection = null,
-  avatars = [ava1, ava2, ava3],
+  joinedUsers = [],
+  joinedCount = 0, // Total number of joined users
   onJoin = () => {},
   isJoined = false,
-  joinedText = "Joining",
-  showJoin = true, //per default show join button (exeption: Profileview, past sessions)
+  joinedText = "Joined",
+  showJoin = true, // Per default show join button (exception: Profileview, past sessions)
 }) {
-  // show at most 3 avatars
-  const list = Array.isArray(avatars) ? avatars : avatars ? [avatars] : [];
-  const shown = list.slice(0, 3);
-  const more = 3; // calculate the number of additional avatars
+  // Extract avatar URLs from joinedUsers
+  const userAvatars =
+    joinedUsers && joinedUsers.length > 0
+      ? joinedUsers.map((u) => u.avatar).filter(Boolean)
+      : [];
+
+  // Show at most 3 avatars
+  const shownAvatars = userAvatars.slice(0, 3);
 
   return (
     <div className="session-card">
@@ -46,27 +49,10 @@ export default function Sessionblock({
       <div className="session-footer">
         <div className="metrics">
           <div className="wind-container">
-            <div className={`windDir-icon windDir-icon--${windDir}`}>
-              ↑
-            </div>
-            <svg width="50" height="50" style={{ position: 'absolute', top: 0, left: 0 }}>
-              <path 
-                d={
-                  coastDirection === 'N' ? 'M 15 8 A 20 20 0 0 1 35 8' :
-                  coastDirection === 'NE' ? 'M 35 8 A 20 20 0 0 1 42 15' :
-                  coastDirection === 'E' ? 'M 42 15 A 20 20 0 0 1 42 35' :
-                  coastDirection === 'SE' ? 'M 42 35 A 20 20 0 0 1 35 42' :
-                  coastDirection === 'S' ? 'M 35 42 A 20 20 0 0 1 15 42' :
-                  coastDirection === 'SW' ? 'M 15 42 A 20 20 0 0 1 8 35' :
-                  coastDirection === 'W' ? 'M 8 35 A 20 20 0 0 1 8 15' :
-                  coastDirection === 'NW' ? 'M 8 15 A 20 20 0 0 1 15 8' :
-                  ''
-                }
-                stroke="green" 
-                strokeWidth="3" 
-                fill="none" 
-                strokeLinecap="round"
-              />
+            <div className={`windDir-icon windDir-icon--${windDir}`}>↑</div>
+            {/* Curved segment (arc) whose shape depends on coastDirection */}
+            <svg className="coast-arc">
+              <path d={getCoastArcPath(coastDirection, "small")} />
             </svg>
           </div>
           <div className="metric-text">{windKts} knts</div>
@@ -74,12 +60,20 @@ export default function Sessionblock({
           <div className="metric-text">{tempC}°C</div>
         </div>
 
-        {list.length > 0 && (
+        {joinedCount > 0 ? (
           <div className="avatar-stack">
-            {shown.map((src, i) => (
-              <img key={i} alt="" src={src} className="avatar" />
+            {shownAvatars.map((src, index) => (
+              <img key={index} alt="" src={src} className="avatar" />
             ))}
-            {more > 0 && <div className="avatar-count">+{more}</div>}
+            {/* Show +N for users without avatars or beyond first 3 */}
+            {(joinedCount > shownAvatars.length) && (
+              <div className="avatar-count">+{joinedCount - shownAvatars.length}</div>
+            )}
+          </div>
+        ) : (
+          <div className="no-users">
+            <IoPeopleOutline />
+            <span>0</span>
           </div>
         )}
       </div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ChatActions from "./CommentChatActions";
+import CommentActions from "./CommentActions";
 import { createComment, deleteComment } from "../services/commentService";
 
 export default function Chat({
@@ -8,94 +8,105 @@ export default function Chat({
   setComments,
   session,
   spot,
-  hideProposedComments = false,
-  // optional: allow passing initial proposed comments from props
-  proposedComments: initialProposedComments = [
-    { id: 100, text: "I have a car and can offer a ride!" },
-    { id: 101, text: "Can someone offer a ride?" },
-  ],
+  // show proposed comments by default, but hide them in Spotview
+  showProposedComments = true,
+  initialProposedComments = [],
 }) {
   const [input, setInput] = useState("");
   const [proposedComments, setProposedComments] = useState(
     initialProposedComments
   );
 
-  const handleDeleteComment = (commentId) => {
-    deleteComment(commentId)
-      .then(() => {
-        setComments(comments.filter((c) => c.id !== commentId));
-      })
-      .catch((error) => {
-        console.error("Error deleting comment:", error);
-      });
+  // handle delete comment (waits for backend to delete comment)
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const success = await deleteComment(commentId);
+      if (success) {
+        setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
   };
 
+  // handle edit comment, will be implemented in the future
   const handleEditComment = () => {
     alert("Edit comment feature coming soon!");
   };
 
-  const handleSendClick = () => {
-    if (input.trim() === "") return; // Prevent adding empty comments
+  // handle send comment (waits for backend to save comment)
+  const handleSendClick = async () => {
+    const message = input.trim();
 
-    console.log("Creating comment:", input);
-
-    if (session) {
-      console.log("Creating comment for session:", session.id);
-    } else if (spot) {
-      console.log("Creating comment for spot:", spot.id);
+    // input checks
+    if (message === "") return; // prevent adding empty comments
+    if (message.length < 3) {
+      alert("Comment must be at least 3 characters");
+      return;
+    }
+    if (message.length > 1000) {
+      alert("Comment must be less than 1000 characters");
+      return;
     }
 
-    createComment(session?.id, spot?.id, currentUser, input)
-      .then((savedComment) => {
-        setComments([...comments, savedComment]);
-      })
-      .catch((error) => {
-        console.error("Error creating comment:", error);
-      });
+    if (session) { console.log("Creating comment for session:", session.id); } 
+    else if (spot) { console.log("Creating comment for spot:", spot.id); }
 
-    setInput(""); // Clear the input field
+    try {
+      // create comment for session or spot and save to backend
+      const savedComment = await createComment(session?.id, spot?.id, currentUser, message);
+      // add comment to comments array
+      setComments((prev) => [...prev, savedComment]);
+      setInput(""); // Clear the input field only on success
+    } catch (error) {
+      console.error("Error creating comment:", error);
+      // Keep input so user can retry
+    }
   };
 
-  const handlePropCommentClick = (text, id) => {
-    setInput(text);
+  // handle proposed comment click
+  const handleProposedCommentClick = (proposedMessage, id) => {
+    setInput(proposedMessage);
+    // remove proposed comment from proposedComments array
     setProposedComments((prev) => prev.filter((pc) => pc.id !== id));
   };
 
   return (
     <div className="chat">
       <div className="chat-list">
-        {comments.map((c) => (
-          <div key={c.id} className="chat-item">
+        {comments.map((comment) => (
+          <div key={comment.id} className="chat-item">
             <div className="chat-title">
               <div>
-                <strong>{c.name}</strong>
-                <time>{c.time || "Date Unknown"}</time>
+                <strong>{comment.name}</strong>
+                <time>{comment.time || "Date Unknown"}</time>
               </div>
-
-              {c.user_id === currentUser.id ? (
-                <ChatActions
-                  commentId={c.id}
+              {/* only show edit and delete buttons if the comment is owned by the current user */}
+              {comment.user_id === currentUser.id ? (
+                <CommentActions
+                  commentId={comment.id}
                   handleDeleteComment={handleDeleteComment}
                   handleEditComment={handleEditComment}
                 />
               ) : null}
             </div>
-            <div className="chat-text">{c.text}</div>
+            <div className="chat-message">{comment.message}</div>
           </div>
         ))}
       </div>
 
+      {/* comment bar at bottom of page with proposed comments if showProposedComments is true*/}
       <div className="comment-bar">
-        {!hideProposedComments && (
+        {showProposedComments && (
           <div className="prop-comment">
-            {proposedComments.map((pc) => (
+            {proposedComments.map((proposed) => (
               <button
-                key={pc.id}
+                key={proposed.id}
                 type="button"
                 className="chip"
-                onClick={() => handlePropCommentClick(pc.text, pc.id)}
+                onClick={() => handleProposedCommentClick(proposed.message, proposed.id)}
               >
-                {pc.text}
+                {proposed.message}
               </button>
             ))}
           </div>

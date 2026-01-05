@@ -1,64 +1,51 @@
 import "../App.css";
-
-//import SessionBlock from "../components/Sessionblock";
 import { useState, useEffect } from "react";
 import Sessionblock from "../components/Sessionblock";
-
 import { Link } from "react-router-dom";
-import ava1 from "../assets/avatar1.png";
-import ava2 from "../assets/avatar2.png";
-import ava3 from "../assets/avatar3.png";
 import Parse from "../parse-init";
-import loadSurfSessions from "../services/getParseFunctions";
-import { joinSession, unjoinSession } from "../services/usersessionService";
-
-const defaultAvatars = [ava1, ava2, ava3];
-
-// function SessionFeedPage() {
+import { toggleJoinInSessionList } from "../utils/toggleJoinInList";
 
 function SessionFeedPage() {
   const [surfSessions, setSurfSessions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Load sessions from Parse Cloud Function
+  // Load future sessions from cloud function
   useEffect(() => {
-    async function fetchData() {
-      const futureSessions = await Parse.Cloud.run("loadSessions", {
-        filters: { futureOnly: true },
-      });
-      console.log("Loaded sessions in Feed:", futureSessions);
-      setSurfSessions(futureSessions);
+    async function loadSessions() {
+      setLoading(true);
+      try {
+        const results = await Parse.Cloud.run("loadSessions", {
+          filters: { futureOnly: true },
+        });
+        console.log("Loaded sessions in Feed:", results);
+        // Sort by sessionDateTime: earliest first
+        const sorted = [...results].sort(
+          (a, b) => new Date(a.sessionDateTime) - new Date(b.sessionDateTime)
+        );
+        setSurfSessions(sorted);
+      } catch (err) {
+        console.error("Error loading sessions in Feed:", err);
+        setSurfSessions([]);
+      } finally {
+        setLoading(false);
+      }
     }
-    fetchData();
+    loadSessions();
   }, []);
 
-  // Toggle join/unjoin session
+  // Join/unjoin session (uses enhanced toggle with avatar support)
   const onJoin = (id) => async (e) => {
-    if (e && e.preventDefault) {
+    if (e?.preventDefault) {
       e.preventDefault();
       e.stopPropagation();
     }
-    console.log("Join button clicked", id);
-    const currentlyJoined = surfSessions.some((s) => s.id === id && s.isJoined);
-    // UI Toggle
-    setSurfSessions((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, isJoined: !s.isJoined } : s))
-    );
-    try {
-      if (currentlyJoined) {
-        await unjoinSession(id);
-      } else {
-        await joinSession(id);
-      }
-    } catch (error) {
-      console.error("Error toggling user session in feed:", error);
-      // UI Toggle back on error
-      setSurfSessions((prev) =>
-        prev.map((s) => (s.id === id ? { ...s, isJoined: !s.isJoined } : s))
-      );
-    }
+    await toggleJoinInSessionList(id, surfSessions, setSurfSessions);
   };
 
-  // Render session feed
+  if (loading) {
+    return <div className="page">Loading sessions...</div>;
+  }
+
   return (
     <div className="page">
       <div className="page-header">
@@ -68,14 +55,8 @@ function SessionFeedPage() {
         Top sessions based on the weather forecast
       </div>
       <div className="stack">
-        {/* {sessions.map((s) => (
-          <Link key={s.id} to={`/session/${s.id}`}> */}
         {surfSessions.map((s) => (
-          <Link
-            key={s.id}
-            to={`/session/${s.id}`}
-            style={{ textDecoration: "none" }}
-          >
+          <Link key={s.id} to={`/session/${s.id}`} className="session-link">
             <Sessionblock
               spot={s.spotName}
               dateLabel={s.dateLabel}
@@ -85,7 +66,8 @@ function SessionFeedPage() {
               weather={s.weatherType}
               windDir={s.windDirection}
               coastDirection={s.coastDirection}
-              avatars={defaultAvatars}
+              joinedUsers={s.joinedUsers || []}
+              joinedCount={s.joinedCount || 0}
               onJoin={onJoin(s.id)}
               isJoined={s.isJoined}
             />
