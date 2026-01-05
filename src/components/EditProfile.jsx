@@ -30,6 +30,12 @@ export default function EditProfileModal({ user, onClose, onSave }) {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
+      const maxSize = 8 * 1024 * 1024;
+      if (file.size > maxSize) {
+        alert("Profile picture must be less than 8MB");
+        return;
+      }
+
       const previewUrl = URL.createObjectURL(file); // this method creates a URL string for preview because we can't directly use the File object as image src
       setFormData({ ...formData, file, avatar: previewUrl }); // store File object and preview URL in formData
     }
