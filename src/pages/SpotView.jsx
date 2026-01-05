@@ -7,7 +7,7 @@ import Chat from "../components/Chat";
 import {
   fetchSpotByName,
 } from "../services/spotService";
-import { fetchSpotComments } from "../services/commentService";
+import { setupCommentsPolling } from "../utils/setupCommentsPolling";
 import { toggleJoinInSessionList } from "../utils/toggleJoinInList";
 import Map from "react-map-gl/mapbox";
 import MapMarker from "../components/MapMarker";
@@ -35,10 +35,6 @@ export default function SpotViewPage() {
       try {
         const spot = await fetchSpotByName(spotName);
   
-        const loadedComments = await fetchSpotComments(spot.id);
-        console.log("Loaded comments:", loadedComments);
-        setComments(loadedComments);
-  
         const futureSessions = await Parse.Cloud.run("loadSessions", {
           filters: { spotIds: [spot.id] },
         });
@@ -49,7 +45,6 @@ export default function SpotViewPage() {
       } catch (error) {
         console.error("Error fetching spot by name:", error);
         setSpot(null);
-        setComments([]);
         setSurfSessions([]);
       } finally {
         setLoading(false); // stop loading notification
@@ -58,31 +53,6 @@ export default function SpotViewPage() {
   
     loadSpot();
   }, [spotName]);
-
-  // Poll for new comments every 10 seconds (as LiveQuery costs money)
-  useEffect(() => {
-    if (!spot?.id) return;
-
-    const loadComments = async () => {
-      try {
-        const loadedComments = await fetchSpotComments(spot.id);
-        setComments(loadedComments);
-      } catch (error) {
-        console.error("Error fetching spot comments:", error);
-        // Don't clear comments on error, keep existing ones
-      }
-    };
-
-    // Poll for new comments every 10 seconds
-    const interval = setInterval(() => {
-      loadComments();
-    }, 10000);
-
-    // Cleanup interval on unmount or when spot changes
-    return () => {
-      clearInterval(interval);
-    };
-  }, [spot?.id]);
 
   // updates the map center once the spot data loads
   useEffect(() => {
@@ -94,6 +64,11 @@ export default function SpotViewPage() {
       });
     }
   }, [spot]);
+
+  // Load comments with polling using utility function
+  useEffect(() => {
+    return setupCommentsPolling(null, spot?.id, setComments);
+  }, [spot?.id]);
 
   //handle join/unjoin session in spotview
   const onJoin = (id) => async (e) => {
