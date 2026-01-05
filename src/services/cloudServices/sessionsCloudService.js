@@ -53,7 +53,6 @@ function sessionToPlainObject(parseObj) {
  *
  * @param {Object} request.params.filters - Filter options:
  *   - futureOnly: boolean - Only return future sessions
- *   - sessionId: string - Return a single session by ID
  *   - sessionIds: string[] - Return specific sessions by ID
  *   - spotIds: string[] - Return sessions for specific spots
  *   - joinedByCurrentUser: boolean - Only return sessions the user has joined
@@ -74,6 +73,7 @@ Parse.Cloud.define("loadSessions", async (request) => {
     query.include("spotId"); // Include spot data to avoid extra queries
 
     // If joinedByCurrentUser, get joined session IDs first to filter main query
+    // only relevant for Profileview 
     let joinedSessionIds = null;
     if (filters.joinedByCurrentUser) {
       const userSessionsQuery = new Parse.Query("UserSessions");
@@ -89,7 +89,7 @@ Parse.Cloud.define("loadSessions", async (request) => {
         .filter((id) => id !== null);
 
       if (joinedSessionIds.length === 0) {
-        return []; // User hasn't joined any sessions
+        return []; // return on function level User hasn't joined any sessions therfore we don't return any sessions
       }
 
       query.containedIn("objectId", joinedSessionIds);
@@ -98,11 +98,6 @@ Parse.Cloud.define("loadSessions", async (request) => {
     // Apply other filters
     if (filters.futureOnly) {
       query.greaterThanOrEqualTo("sessionDateTime", new Date());
-    }
-
-    // Single session filter
-    if (filters.sessionId) {
-      query.equalTo("objectId", filters.sessionId);
     }
 
     // Multiple sessions filter
