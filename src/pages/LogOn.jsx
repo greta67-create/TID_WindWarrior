@@ -1,6 +1,7 @@
 import { useState } from "react"; // saves the state of the input fields - what the user types in
 import { useNavigate } from "react-router-dom"; // A hook from a React Router library that allows navigation between different pages
 import { logInB4A } from "../services/authService"; // import the logIn function from authService.js
+import "../styles/LogOn.css";
 
 //receives the prop onLogin from the parent App.jsx
 export default function LogOn({ onLogin }) {
@@ -32,7 +33,7 @@ export default function LogOn({ onLogin }) {
     <div className="auth-page">
       <h1>Wind Warrior Login</h1>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="error-message">{error}</p>}
 
       <form onSubmit={handleLogin}>
         <input
