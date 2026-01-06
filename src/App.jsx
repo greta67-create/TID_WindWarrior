@@ -9,6 +9,7 @@ import SpotViewPage from "./pages/SpotView";
 import Navbar from "./components/NavigationBar";
 import MapView from "./pages/MapView";
 import Auth from "./pages/LogOn";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -55,6 +56,7 @@ export default function App() {
             element={<ProfileView onLogout={onLogout} />}
           />
           <Route path="/spot/:spotName" element={<SpotViewPage />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <Navbar /> {/* Appears on all pages because it is outside Routes*/}
       </div>
