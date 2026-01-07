@@ -15,12 +15,6 @@
       newacl.setPublicReadAccess(true);     
       newacl.setWriteAccess(user, true);    
       request.object.setACL(newacl);
-    } else {
-      // For future feauture: edit comment, verify user has write access
-      const existingACL = request.object.getACL();
-      if (!existingACL || !existingACL.getWriteAccess(user)) {
-        throw new Parse.Error("Not authorized to modify this comment");
-      }
     }
     
     // ensure unmeaningful comments are not shared
