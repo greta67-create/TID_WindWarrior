@@ -17,14 +17,8 @@ export default function Sessionblocklarge({
   isJoined = false,
   joinedText = "Joined",
 }) {
-  // Extract avatar URLs from joinedUsers
-  const userAvatars =
-    joinedUsers && joinedUsers.length > 0
-      ? joinedUsers.map((u) => u.avatar).filter(Boolean)
-      : [];
-
-  // Show at most 3 avatars
-  const shownAvatars = userAvatars.slice(0, 3);
+  // Extract avatar URLs from joinedUsers (already filtered and sliced by backend)
+  const shownAvatars = joinedUsers?.map((u) => u.avatar) || [];
 
   // Adapted structure compared to normal Sessionblock (new structure and larger icons)
   return (
