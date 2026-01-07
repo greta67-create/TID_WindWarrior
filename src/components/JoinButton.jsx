@@ -12,7 +12,7 @@ export default function JoinButton({
   const handleClick = (e) => {
     // stop the <Link> on the card from navigating
     e.preventDefault();
-    e.stopPropagation();
+    //e.stopPropagation();
 
     if (onClick) {
       onClick(e); // forward the event to onJoin in Feed
