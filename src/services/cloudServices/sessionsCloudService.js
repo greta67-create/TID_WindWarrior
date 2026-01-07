@@ -125,40 +125,12 @@ Parse.Cloud.define("loadSessions", async (request) => {
       return [];
     }
 
-    // get current user's joined session IDs (for isJoined flag)
-    let userSessionIDs = [];
-
-    if (filters.joinedByCurrentUser) {
-      // Reuse the joined session IDs already fetched
-      userSessionIDs = joinedSessionIds;
-    } else {
-      // Query UserSessions for the sessions we retrieved
-      const currentUserSessionsQuery = new Parse.Query("UserSessions");
-      currentUserSessionsQuery.equalTo("userId", user);
-      currentUserSessionsQuery.include("surfSessionId");
-
-      const sessionPointers = sessions.map((session) => ({
-        __type: "Pointer",
-        className: "SurfSessions",
-        objectId: session.id,
-      }));
-      currentUserSessionsQuery.containedIn("surfSessionId", sessionPointers);
-
-      const currentUserSessionsData = await currentUserSessionsQuery.find();
-
-      userSessionIDs = currentUserSessionsData
-        .map((userSession) => {
-          const surfSession = userSession.get("surfSessionId");
-          return surfSession ? surfSession.id : null;
-        })
-        .filter((id) => id !== null);
-    }
-
-    // get all joined users for all sessions (for avatars and count)
+    // Get all joined users for all sessions (single query for avatars, count, and isJoined)
     const allUserSessionsQuery = new Parse.Query("UserSessions");
     allUserSessionsQuery.include("userId"); // Include user data for avatars
     allUserSessionsQuery.include("surfSessionId");
 
+    // filtering only for the relevant sessions
     const allSessionPointers = sessions.map((session) => ({
       __type: "Pointer",
       className: "SurfSessions",
@@ -168,7 +140,7 @@ Parse.Cloud.define("loadSessions", async (request) => {
 
     const allUserSessionsData = await allUserSessionsQuery.find();
 
-    // group joined users by session ID and extract avatar URLs
+    // Group joined users by session ID and extract avatar URLs
     const joinedUsersBySession = {};
     allUserSessionsData.forEach((userSession) => {
       const surfSession = userSession.get("surfSessionId");
@@ -185,8 +157,7 @@ Parse.Cloud.define("loadSessions", async (request) => {
 
       // Extract user avatar URL from profilepicture Parse File
       const file = userObj.get("profilepicture");
-      const avatarUrl =
-        file && typeof file.url === "function" ? file.url() : null;
+      const avatarUrl = file?.url();
 
       joinedUsersBySession[sessionId].push({
         id: userObj.id,
@@ -195,13 +166,17 @@ Parse.Cloud.define("loadSessions", async (request) => {
     });
 
     // Enrich sessions with join information
+    // Check isJoined by looking for current user ID in allJoinedUsers
     sessions = sessions.map((session) => {
       const allJoinedUsers = joinedUsersBySession[session.id] || [];
+      const isJoined = allJoinedUsers.some((joinedUser) => joinedUser.id === user.id);
+      // Prioritize users with avatars before slicing to 3
+      const usersWithAvatars = allJoinedUsers.filter((u) => u.avatar);
       return {
         ...session,
-        isJoined: userSessionIDs.includes(session.id),
+        isJoined,
         joinedCount: allJoinedUsers.length,
-        joinedUsers: allJoinedUsers.slice(0, 3), // Return first 3 avatars for performance
+        joinedUsers: usersWithAvatars.slice(0, 3),
       };
     });
 

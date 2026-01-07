@@ -21,14 +21,8 @@ export default function Sessionblock({
   joinedText = "Joined",
   showJoin = true, // Per default show join button (exception: Profileview, past sessions)
 }) {
-  // Extract avatar URLs from joinedUsers
-  const userAvatars =
-    joinedUsers && joinedUsers.length > 0
-      ? joinedUsers.map((u) => u.avatar).filter(Boolean)
-      : [];
-
-  // Show at most 3 avatars
-  const shownAvatars = userAvatars.slice(0, 3);
+  // Extract avatar URLs from joinedUsers (already filtered and sliced by backend)
+  const shownAvatars = joinedUsers?.map((u) => u.avatar) || [];
 
   return (
     <div className="session-card">
