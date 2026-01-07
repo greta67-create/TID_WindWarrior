@@ -23,10 +23,11 @@ export async function createUserSession(user, surfSessionId) {
   }
 
   const sessionPointer = createSessionPointer(surfSessionId);
+
+  // check if user is already joined to this session
   const query = new Parse.Query(UserSessions);
   query.equalTo("userId", user);
   query.equalTo("surfSessionId", sessionPointer);
-  
   const existing = await query.first();
   if (existing) {
     return existing;
@@ -50,10 +51,13 @@ export async function deleteUserSession(user, surfSessionId) {
   }
 
   const sessionPointer = createSessionPointer(surfSessionId);
+
+  // check if user is joined to this session
   const query = new Parse.Query(UserSessions);
   query.equalTo("userId", user);
   query.equalTo("surfSessionId", sessionPointer);
   
+  // if user is joined to this session, delete the user session
   const userSession = await query.first();
   if (userSession) {
     await userSession.destroy();
@@ -61,7 +65,7 @@ export async function deleteUserSession(user, surfSessionId) {
 }
 
 /**
- * Join a session (convenience wrapper using current user)
+ * Join a session 
  * @param {string} surfSessionId - The objectId of the SurfSessions
  * @returns {Promise<Parse.Object>}
  */
@@ -74,7 +78,7 @@ export async function joinSession(surfSessionId) {
 }
 
 /**
- * Unjoin a session (convenience wrapper using current user)
+ * Unjoin a session 
  * @param {string} surfSessionId - The objectId of the SurfSessions
  * @returns {Promise<void>}
  */

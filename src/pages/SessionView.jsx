@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Parse from "../parse-init";
 import Sessionblocklarge from "../components/SessionBlocklarge";
 import Chat from "../components/Chat";
-import { fetchSessionComments } from "../services/commentService";
+import { setupCommentsPolling } from "../utils/setupCommentsPolling";
 import { toggleJoinSingle } from "../utils/toggleJoinSingle";
 import getWindfinderlink from "../utils/getWindfinderlink";
 import "../styles/SessionView.css";
@@ -48,32 +48,9 @@ export default function SessionViewPage() {
     await toggleJoinSingle(session, setSession);
   };
 
-  // Load comments with polling
+  // Load comments with polling using utility function
   useEffect(() => {
-    if (!session?.id) return;
-
-    // load comments for this session with polling 
-    const loadComments = async () => {
-      try {
-        const loadedComments = await fetchSessionComments(session.id);
-        setComments(loadedComments);
-      } catch (error) {
-        console.error("Error fetching session comments:", error);
-        setComments([]);
-      }
-    };
-
-    // load comments immediately
-    loadComments();
-
-    // Poll for new comments every 10 seconds
-    const interval = setInterval(() => {
-      loadComments();
-    }, 10000);
-
-    return () => {
-      clearInterval(interval);
-    };
+    return setupCommentsPolling(session?.id, null, setComments);
   }, [session?.id]);
 
   if (loading) {

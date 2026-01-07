@@ -65,10 +65,8 @@ export default function ProfileView({ onLogout }) {
 
   // Unjoin and remove from list
   const handleUnjoin = (id) => async (e) => {
-    if (e?.preventDefault) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+    e.preventDefault();
+    e.stopPropagation();
     await unjoinAndRemoveFromJoinedList(id, setJoinedSessions);
   };
 
