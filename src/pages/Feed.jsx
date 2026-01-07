@@ -35,8 +35,8 @@ function SessionFeedPage() {
 
   // Join/unjoin session (uses enhanced toggle with avatar support)
   const onJoin = (id) => async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    e.preventDefault();
+    e.stopPropagation();
     await toggleJoinInSessionList(id, surfSessions, setSurfSessions);
   };
 
