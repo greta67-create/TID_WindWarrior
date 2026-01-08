@@ -261,3 +261,30 @@
 .session-link:visited {
   color: inherit;
 }
+
+/* Responsive: screens below 390px */
+@media (max-width: 390px) {
+  .session-card {
+    padding: var(--spacing-xs);
+  }
+
+  .spot {
+    font-size: var(--font-base);
+  }
+
+  .subtle {
+    font-size: var(--font-sm);
+  }
+
+  .metric-text {
+    font-size: var(--font-sm);
+  }
+
+  .metrics {
+    gap: 2px;
+  }
+
+  .session-footer {
+    margin-top: var(--spacing-xs);
+  }
+}
