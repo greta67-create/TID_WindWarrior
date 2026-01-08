@@ -18,11 +18,7 @@ function SessionFeedPage() {
           filters: { futureOnly: true },
         });
         console.log("Loaded sessions in Feed:", results);
-        // Sort by sessionDateTime: earliest first
-        const sorted = [...results].sort(
-          (a, b) => new Date(a.sessionDateTime) - new Date(b.sessionDateTime)
-        );
-        setSurfSessions(sorted);
+        setSurfSessions(results);
       } catch (err) {
         console.error("Error loading sessions in Feed:", err);
         setSurfSessions([]);

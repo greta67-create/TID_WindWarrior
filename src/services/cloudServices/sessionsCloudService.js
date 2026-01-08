@@ -114,6 +114,9 @@ Parse.Cloud.define("loadSessions", async (request) => {
       query.containedIn("spotId", spotPointers);
     }
 
+    // Sort by sessionDateTime: earliest first (ascending)
+    query.ascending("sessionDateTime");
+
     const sessionParseObjects = await query.find();
 
     // Convert to plain objects and filter out any null results
