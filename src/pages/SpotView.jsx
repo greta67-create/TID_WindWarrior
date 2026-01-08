@@ -11,6 +11,7 @@ import { setupCommentsPolling } from "../utils/setupCommentsPolling";
 import { toggleJoinInSessionList } from "../utils/toggleJoinInList";
 import Map from "react-map-gl/mapbox";
 import MapMarker from "../components/MapMarker";
+import Page from "../components/Page";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 export default function SpotViewPage() {
@@ -82,15 +83,11 @@ export default function SpotViewPage() {
 
   // render spot view
   return (
-    <div className="page">
+    <Page title={spot?.name || name}>
       <div
         style={{ fontSize: "0.85rem", color: "var(--sub)", marginBottom: 8 }}
       >
         Spot / {spot?.name || name}
-      </div>
-      {/* Header */}
-      <div className="page-header">
-        <div className="page-title">{spot?.name || name}</div>
       </div>
 
       {spot?.mainText && (
@@ -217,6 +214,6 @@ export default function SpotViewPage() {
           showProposedComments={false}
         />
       )}
-    </div>
+    </Page>
   );
 }

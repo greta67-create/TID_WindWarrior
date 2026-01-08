@@ -4,6 +4,7 @@ import Sessionblock from "../components/Sessionblock/Sessionblock";
 import { Link } from "react-router-dom";
 import Parse from "../parse-init";
 import { toggleJoinInSessionList } from "../utils/toggleJoinInList";
+import Page from "../components/Page";
 
 function SessionFeedPage() {
   const [surfSessions, setSurfSessions] = useState([]);
@@ -39,13 +40,10 @@ function SessionFeedPage() {
   }
 
   return (
-    <div className="page">
-      <div className="page-header">
-        <div className="page-title">Your Session Feed</div>
-      </div>
-      <div className="section-subtitle">
-        Top sessions based on the weather forecast
-      </div>
+    <Page
+      title="Your Session Feed"
+      subtitle="Top sessions based on the weather forecast"
+    >
       <div className="stack">
         {surfSessions.map((s) => (
           <Link key={s.id} to={`/session/${s.id}`} className="session-link">
@@ -66,7 +64,7 @@ function SessionFeedPage() {
           </Link>
         ))}
       </div>
-    </div>
+    </Page>
   );
 }
 

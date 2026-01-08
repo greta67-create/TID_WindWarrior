@@ -5,6 +5,7 @@ import SessionList from "../components/ProfileSessions";
 import { useState, useEffect } from "react";
 import { getCurrentUserInfo, updateUserProfile } from "../services/userservice";
 import LogOutButton from "../components/LogOutButton";
+import Page from "../components/Page";
 import "../styles/BrowseSessions.css";
 import TabNavigation from "../components/TabNavigation";
 import { unjoinAndRemoveFromJoinedList } from "../utils/unjoinAndRemoveFromJoinedList"; //Helper function to unjoin a session and remove it from joinedSessions list
@@ -95,11 +96,10 @@ export default function ProfileView({ onLogout }) {
   }
 
   return (
-    <div className="page">
-      <div className="page-header">
-        <div className="page-title">Profile</div>
-        <LogOutButton onLogout={onLogout} />
-      </div>
+    <Page
+      title="Profile"
+      rightContent={<LogOutButton onLogout={onLogout} />}
+    >
       <ProfileCard //passes props to Profilecard.jsx
         firstName={user.firstName}
         typeofSport={user.typeofSport}
@@ -119,6 +119,6 @@ export default function ProfileView({ onLogout }) {
       {activeTab === "past" && (
         <SessionList sessions={pastSessions} showJoin={false} />
       )}
-    </div>
+    </Page>
   );
 }
