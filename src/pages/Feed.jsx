@@ -1,6 +1,6 @@
 import "../App.css";
 import { useState, useEffect } from "react";
-import Sessionblock from "../components/Sessionblock";
+import Sessionblock from "../components/Sessionblock/Sessionblock";
 import { Link } from "react-router-dom";
 import Parse from "../parse-init";
 import { toggleJoinInSessionList } from "../utils/toggleJoinInList";
@@ -35,8 +35,6 @@ function SessionFeedPage() {
 
   // Join/unjoin session (uses enhanced toggle with avatar support)
   const onJoin = (id) => async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
     await toggleJoinInSessionList(id, surfSessions, setSurfSessions);
   };
 

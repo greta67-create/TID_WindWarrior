@@ -1,8 +1,8 @@
-import "../styles/Sessionblock.css";
-import JoinButton from "../components/JoinButton";
-import getWeatherIcon from "../utils/getWeatherIcon";
-import { IoPeopleOutline } from "react-icons/io5";
-import { getCoastArcPath } from "../utils/getCoastArcPath";
+import "../../styles/Sessionblock.css";
+import JoinButton from "./JoinButton";
+import getWeatherIcon from "../../utils/getWeatherIcon";
+import { getCoastArcPath } from "../../utils/getCoastArcPath";
+import AvatarStack from "./AvatarStack";
 
 export default function Sessionblocklarge({
   // Fallbacks
@@ -17,9 +17,6 @@ export default function Sessionblocklarge({
   isJoined = false,
   joinedText = "Joined",
 }) {
-  // Extract avatar URLs from joinedUsers (already filtered and sliced by backend)
-  const shownAvatars = joinedUsers?.map((u) => u.avatar) || [];
-
   // Adapted structure compared to normal Sessionblock (new structure and larger icons)
   return (
     <div className="session-card">
@@ -48,22 +45,7 @@ export default function Sessionblocklarge({
           joinedText={joinedText}
         />
 
-        {joinedCount > 0 ? (
-          <div className="avatar-stack">
-            {shownAvatars.map((src, index) => (
-              <img key={index} alt="" src={src} className="avatar" />
-            ))}
-            {/* Show +N for users without avatars or beyond first 3 */}
-            {(joinedCount > shownAvatars.length) && (
-              <div className="avatar-count">+{joinedCount - shownAvatars.length}</div>
-            )}
-          </div>
-        ) : (
-          <div className="no-users">
-            <IoPeopleOutline />
-            <span>0</span>
-          </div>
-        )}
+        <AvatarStack joinedUsers={joinedUsers} joinedCount={joinedCount} />
       </div>
     </div>
   );
