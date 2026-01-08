@@ -36,7 +36,7 @@ export default function SpotViewPage() {
         const spot = await fetchSpotByName(spotName);
   
         const futureSessions = await Parse.Cloud.run("loadSessions", {
-          filters: { spotIds: [spot.id] },
+          filters: { spotIds: [spot.id], futureOnly: true },
         });
         console.log("Loaded sessions in Spotfeed:", futureSessions);
         setSurfSessions(futureSessions);
@@ -199,6 +199,8 @@ export default function SpotViewPage() {
                 weather={s.weatherType}
                 windDir={s.windDirection}
                 coastDirection={s.coastDirection}
+                joinedUsers={s.joinedUsers || []}
+                joinedCount={s.joinedCount || 0}
                 onJoin={onJoin(s.id)}
                 isJoined={s.isJoined}
               />

@@ -21,7 +21,6 @@ export default function Sessionblock({
   joinedText = "Joined",
   showJoin = true, // Per default show join button (exception: Profileview, past sessions)
 }) {
-
   return (
     <div className="session-card">
       <div className="session-header">

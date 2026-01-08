@@ -1,4 +1,4 @@
-import Parse from "parse";
+import Parse from "../parse-init";
 
 /**
  * User service file to handle user-related operations between the backend (Parse) and frontend (React)

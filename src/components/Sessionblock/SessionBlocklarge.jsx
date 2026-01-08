@@ -17,7 +17,6 @@ export default function Sessionblocklarge({
   isJoined = false,
   joinedText = "Joined",
 }) {
-
   // Adapted structure compared to normal Sessionblock (new structure and larger icons)
   return (
     <div className="session-card">
