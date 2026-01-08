@@ -30,7 +30,7 @@ export default function ProfileView({ onLogout }) {
   // Load user sessions for current user via cloud function
   useEffect(() => {
     const currentUser = Parse.User.current();
-    if (!currentUser) return; // If no user is logged in, exit early (return)
+    if (!currentUser) return; // If no user is logged in, exit early
 
     async function loadUserSessions() {
       setLoading(true);
@@ -53,7 +53,7 @@ export default function ProfileView({ onLogout }) {
 
   // Split joinedSessions into past and future
   useEffect(() => {
-    const now = new Date();
+    const now = new Date(); // Date constructor creates a new date object with the current date and time
     const upcoming = joinedSessions.filter(
       (s) => s.sessionDateTime && s.sessionDateTime >= now
     );
@@ -67,7 +67,6 @@ export default function ProfileView({ onLogout }) {
   // Unjoin and remove from list
   const handleUnjoin = (id) => async (e) => {
     e.preventDefault();
-    e.stopPropagation();
     await unjoinAndRemoveFromJoinedList(id, setJoinedSessions);
   };
 
