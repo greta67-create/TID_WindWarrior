@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Parse from "../parse-init";
 import Sessionblocklarge from "../components/Sessionblock/SessionBlocklarge";
 import Chat from "../components/Chat";
+import Page from "../components/Page";
 import { setupCommentsPolling } from "../utils/setupCommentsPolling";
 import { toggleJoinSingle } from "../utils/toggleJoinSingle";
 import getWindfinderlink from "../utils/getWindfinderlink";
@@ -59,60 +60,54 @@ export default function SessionViewPage() {
 
   if (!session) {
     return (
-      <div className="page">
-        <div className="page-header">
-          <div className="page-title">Session not found</div>
-        </div>
+      <Page title="Session not found">
         <p>The session you're looking for doesn't exist.</p>
         <Link to="/">Back to Feed</Link>
-      </div>
+      </Page>
     );
   }
 
   return (
-    <div className="page">
-      <div>
-        {/* Title */}
-        <div className="page-header">
-          <div className="page-title">{session.spotName}</div>
-          <div className="subtle">
-            {session.dateLabel} | {session.timeLabel}
-          </div>
+    <Page
+      title={session.spotName}
+      rightContent={
+        <div className="subtle">
+          {session.dateLabel} | {session.timeLabel}
         </div>
+      }
+    >
+      {/* Session card */}
+      <Sessionblocklarge
+        spot={session.spotName}
+        windKts={session.windPower}
+        tempC={session.temperature}
+        weather={session.weatherType}
+        windDir={session.windDirection}
+        coastDirection={session.coastDirection}
+        joinedUsers={session.joinedUsers || []}
+        joinedCount={session.joinedCount || 0}
+        onJoin={onJoin}
+        isJoined={session.isJoined}
+      />
 
-        {/* Session card */}
-        <Sessionblocklarge
-          spot={session.spotName}
-          windKts={session.windPower}
-          tempC={session.temperature}
-          weather={session.weatherType}
-          windDir={session.windDirection}
-          coastDirection={session.coastDirection}
-          joinedUsers={session.joinedUsers || []}
-          joinedCount={session.joinedCount || 0}
-          onJoin={onJoin}
-          isJoined={session.isJoined}
-        />
-
-        {/* Get more information section */}
-        <div className="info-section">
-          <div className="info-title">Get more information:</div>
-          <div className="info-buttons">
-            <Link
-              to={`/spot/${session.spotName}`}
-              className="info-btn info-btn-primary"
-            >
-              About the spot
-            </Link>
-            <a
-              href={getWindfinderlink(session.spotName)}
-              target="_blank"
-              className="info-btn info-btn-secondary"
-            >
-              <span>About the weather</span>
-              <span className="external-icon">→</span>
-            </a>
-          </div>
+      {/* Get more information section */}
+      <div className="info-section">
+        <div className="info-title">Get more information:</div>
+        <div className="info-buttons">
+          <Link
+            to={`/spot/${session.spotName}`}
+            className="info-btn info-btn-primary"
+          >
+            About the spot
+          </Link>
+          <a
+            href={getWindfinderlink(session.spotName)}
+            target="_blank"
+            className="info-btn info-btn-secondary"
+          >
+            <span>About the weather</span>
+            <span className="external-icon">→</span>
+          </a>
         </div>
       </div>
 
@@ -128,6 +123,6 @@ export default function SessionViewPage() {
         spot={null}
         initialProposedComments={initialProposedComments}
       />
-    </div>
+    </Page>
   );
 }
