@@ -12,6 +12,7 @@ export default function JoinButton({
   const handleClick = (e) => {
     // Prevent click from bubbling up to parent <Link>
     e.stopPropagation();
+    e.preventDefault();
     onClick(e);
   };
 
