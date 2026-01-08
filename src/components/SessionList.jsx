@@ -21,6 +21,8 @@ export default function SessionList({ sessions, showJoin, onUnjoin }) {
       </div>
     );
   }
+
+  // looping through sessions array and creating link for each session where a sessionblock is rendered
   return (
     <div className="stack">
       {sessions.map((s) => (

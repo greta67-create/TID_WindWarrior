@@ -82,7 +82,7 @@ export async function updateUserProfile(updatedData) {
     // Save all changes to Parse backend
     await currentUser.save();
 
-    // Return updated user data as plain object
+    // Return updated user data as plain object to make it easier to use in React components
     return UserToPlainObject(currentUser);
   } catch (error) {
     console.error("Error updating user profile:", error);
