@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import Map from "react-map-gl/mapbox";
-import MapMarker from "../components/MapMarker";
+import MapMarker from "../components/MapComponents/MapMarker";
 import Page from "../components/Page";
-import MapContainer from "../components/MapContainer";
+import MapContainer from "../components/MapComponents/MapContainer";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "/src/styles/Map.css";
 import { fetchSpots } from "../services/spotService";

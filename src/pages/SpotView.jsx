@@ -10,7 +10,7 @@ import {
 import { setupCommentsPolling } from "../utils/setupCommentsPolling";
 import { toggleJoinInSessionList } from "../utils/toggleJoinInList";
 import Map from "react-map-gl/mapbox";
-import MapMarker from "../components/MapMarker";
+import MapMarker from "../components/MapComponents/MapMarker";
 import Page from "../components/Page";
 import "mapbox-gl/dist/mapbox-gl.css";
 
