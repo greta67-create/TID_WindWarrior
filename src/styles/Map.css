@@ -83,4 +83,12 @@
 .map-legend-label {
     font-weight: 600;
     color: var(--text);
+/* Map container - page without padding */
+.map-container {
+    width: 100%;
+    max-width: var(--content);
+    margin: 0 auto;
+    padding: 0;
+    padding-bottom: 140px;
+    background: transparent;
 }

@@ -4,14 +4,13 @@ import Parse from "../parse-init";
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Chat from "../components/Chat";
-import {
-  fetchSpotByName,
-} from "../services/spotService";
+import { fetchSpotByName } from "../services/spotService";
 import { setupCommentsPolling } from "../utils/setupCommentsPolling";
 import { toggleJoinInSessionList } from "../utils/toggleJoinInList";
-import Map from "react-map-gl/mapbox";
-import MapMarker from "../components/MapMarker";
-import "mapbox-gl/dist/mapbox-gl.css";
+import Page from "../components/Page";
+import TabNavigation from "../components/TabNavigation";
+import SpotDetails from "../components/SpotComponents/SpotDetails";
+import SpotMap from "../components/SpotComponents/SpotMap";
 
 export default function SpotViewPage() {
   const { spotName } = useParams();
@@ -82,80 +81,10 @@ export default function SpotViewPage() {
 
   // render spot view
   return (
-    <div className="page">
-      <div
-        style={{ fontSize: "0.85rem", color: "var(--sub)", marginBottom: 8 }}
-      >
-        Spot / {spot?.name || name}
-      </div>
-      {/* Header */}
-      <div className="page-header">
-        <div className="page-title">{spot?.name || name}</div>
-      </div>
+    <Page title={spot?.name || name}>
+      <SpotDetails spot={spot} name={name} />
 
-      {spot?.mainText && (
-        <div className="spot-view-description">{spot.mainText}</div>
-      )}
-
-      {/* Activities, Levels, Amenities */}
-      <div className="spot-details">
-        {spot?.activities && spot.activities.length > 0 && (
-          <div className="spot-detail-item">
-            <strong style={{ color: "var(--text)" }}>Activities:</strong>{" "}
-            <span style={{ color: "var(--sub)" }}>
-              {spot.activities.join(", ")}
-            </span>
-          </div>
-        )}
-
-        {spot?.skillLevel && spot.skillLevel.length > 0 && (
-          <div className="spot-detail-item">
-            <strong style={{ color: "var(--text)" }}>Levels:</strong>{" "}
-            <span style={{ color: "var(--sub)" }}>
-              {spot.skillLevel.join(", ")}
-            </span>
-          </div>
-        )}
-
-        {spot?.amenities && spot.amenities.length > 0 && (
-          <div className="spot-detail-item">
-            <strong style={{ color: "var(--text)" }}>Amenities:</strong>{" "}
-            <span style={{ color: "var(--sub)" }}>
-              {spot.amenities.join(", ")}
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Spot Image */}
-      {spot?.spotImage && (
-        <div className="spot-image-container">
-          <img src={spot.spotImage.url()} alt={spot.name} />
-        </div>
-      )}
-
-      {/* Map Section */}
-      <div className="section-subtitle">On the Map</div>
-      <div className="spot-map-container">
-        {spot?.latitude && spot?.longitude && (
-          <Map
-            {...viewState}
-            onMove={(evt) => setViewState(evt.viewState)}
-            style={{ width: "100%", height: "100%" }}
-            mapStyle="mapbox://styles/mapbox/streets-v12"
-            mapboxAccessToken={import.meta.env.VITE_MAPBOX_TOKEN}
-          >
-            <MapMarker
-              spot_id={spot.id}
-              spot_name={spot.name}
-              wind_direction={spot.currentWindDirection}
-              wind_power={spot.currentWindKnts}
-              latitude={spot.latitude}
-              longitude={spot.longitude}
-            />
-          </Map>
-        )}
-      </div>
+      <SpotMap spot={spot} viewState={viewState} setViewState={setViewState} />
 
       {/* Windfinder Link */}
       {spot?.windfinderLink && (
@@ -169,21 +98,14 @@ export default function SpotViewPage() {
         </a>
       )}
 
-      {/* Tab Navigation */}
-      <div className="tab-navigation">
-        <button
-          onClick={() => setActiveTab("sessions")}
-          className={`tab-button ${activeTab === "sessions" ? "active" : ""}`}
-        >
-          Top Sessions
-        </button>
-        <button
-          onClick={() => setActiveTab("comments")}
-          className={`tab-button ${activeTab === "comments" ? "active" : ""}`}
-        >
-          Comments
-        </button>
-      </div>
+      <TabNavigation
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        tabs={[
+          { id: "sessions", label: "Top Sessions" },
+          { id: "comments", label: "Comments" },
+        ]}
+      />
 
       {activeTab === "sessions" ? (
         <div className="stack">
@@ -210,13 +132,13 @@ export default function SpotViewPage() {
       ) : (
         <Chat
           comments={comments}
-          currentUser={Parse.User.current()}
+          currentUser={user}
           setComments={setComments}
           session={null}
           spot={spot}
           showProposedComments={false}
         />
       )}
-    </div>
+    </Page>
   );
 }

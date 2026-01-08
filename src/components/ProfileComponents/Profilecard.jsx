@@ -1,6 +1,6 @@
 import { useState } from "react";
-import defaultAvatar from "../assets/Default.png";
-import "../styles/Profilecard.css";
+import defaultAvatar from "../../assets/Default.png";
+import "../../styles/Profilecard.css";
 import Modal from "./FadedProfile";
 import EditProfileModal from "./EditProfile";
 

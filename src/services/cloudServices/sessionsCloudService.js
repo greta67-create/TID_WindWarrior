@@ -44,6 +44,8 @@ function sessionToPlainObject(parseObj) {
     spotId: spotObj ? spotObj.id : null,
     coastDirection: spotObj ? spotObj.get("coastDirection") : null,
     isJoined: false, // Will be updated later with actual join status
+    joinedCount: 0, // Will be updated later with actual join count
+    joinedUsers: [], // Will be updated later with actual joined users
   };
 }
 
@@ -113,6 +115,9 @@ Parse.Cloud.define("loadSessions", async (request) => {
       }));
       query.containedIn("spotId", spotPointers);
     }
+
+    // Sort by sessionDateTime: earliest first (ascending)
+    query.ascending("sessionDateTime");
 
     const sessionParseObjects = await query.find();
 
