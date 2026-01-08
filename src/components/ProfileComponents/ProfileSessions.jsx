@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Sessionblock from "../Sessionblock/Sessionblock";
 
+// Component to display list of sessions or a message if the list is empty
 export default function SessionList({ sessions, showJoin, onUnjoin }) {
   if (sessions.length === 0) {
     return (
@@ -20,6 +21,8 @@ export default function SessionList({ sessions, showJoin, onUnjoin }) {
       </div>
     );
   }
+
+  // looping through sessions array and creating link for each session where a sessionblock is rendered
   return (
     <div className="stack">
       {sessions.map((s) => (
