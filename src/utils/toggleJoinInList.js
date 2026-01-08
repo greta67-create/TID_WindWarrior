@@ -21,8 +21,10 @@ export async function toggleJoinInSessionList(sessionId, sessions, setSessions) 
   try {
     if (currentlyJoined) {
       await unjoinSession(sessionId);
+      console.log(`Successfully unjoined session ${sessionId}`);
     } else {
       await joinSession(sessionId);
+      console.log(`Successfully joined session ${sessionId}`);
     }
   } catch (error) {
     console.error("Error toggling user session:", error);

@@ -1,7 +1,7 @@
 import "../App.css";
 import Parse from "../parse-init";
 import ProfileCard from "../components/Profilecard";
-import Sessionblock from "../components/Sessionblock";
+import Sessionblock from "../components/Sessionblock/Sessionblock";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getCurrentUserInfo, updateUserProfile } from "../services/userservice";

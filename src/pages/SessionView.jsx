@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Parse from "../parse-init";
-import Sessionblocklarge from "../components/SessionBlocklarge";
+import Sessionblocklarge from "../components/Sessionblock/SessionBlocklarge";
 import Chat from "../components/Chat";
 import { setupCommentsPolling } from "../utils/setupCommentsPolling";
 import { toggleJoinSingle } from "../utils/toggleJoinSingle";

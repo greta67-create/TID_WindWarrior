@@ -1,5 +1,5 @@
 import "../styles/SpotView.css";
-import Sessionblock from "../components/Sessionblock";
+import Sessionblock from "../components/Sessionblock/Sessionblock";
 import Parse from "../parse-init";
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
@@ -72,10 +72,6 @@ export default function SpotViewPage() {
 
   //handle join/unjoin session in spotview
   const onJoin = (id) => async (e) => {
-    if (e?.preventDefault) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
     await toggleJoinInSessionList(id, surfSessions, setSurfSessions);
   };
 

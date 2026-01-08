@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/JoinButton.css";
+import "../../styles/JoinButton.css";
 
 export default function JoinButton({
   isJoined = false,
