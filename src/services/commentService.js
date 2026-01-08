@@ -46,56 +46,36 @@ export function commentToPlainObject(parseObj) {
 }
 
 /**
- * Fetch comments for a given session
- * @param {string} surfSessionId - The ID of the session to fetch comments for
+ * Fetch comments for a session or spot
+ * @param {string|null} sessionId - The ID of the session to fetch comments for
+ * @param {string|null} spotId - The ID of the spot to fetch comments for
  * @returns {Promise<Array>} Array of plain JavaScript objects with comment data
  */
-export async function fetchSessionComments(surfSessionId) {
-    if (!surfSessionId) {
-      throw new Error("Session ID must be provided to fetch session comments");
-    }
-  
-    const query = new Parse.Query(Comment);
-    const sessionPointer = createSessionPointer(surfSessionId);
-  
-    query.equalTo("surfSessionId", sessionPointer); // filter comments by session
-    query.include("userId");
-    query.ascending("createdAt");
-  
-    try {
-      const results = await query.find();
-      return results.map(commentToPlainObject);
-    } catch (error) {
-      console.error("Error fetching session comments:", error);
-      throw error;
-    }
-}
+export async function fetchComments(sessionId = null, spotId = null) {
+  if (!sessionId && !spotId) {
+    throw new Error("Either sessionId or spotId must be provided");
+  }
 
-
-/**
- * Fetch comments for a given spot
- * @param {string} spotId - The ID of the spot to fetch comments for
- * @returns {Promise<Array>} Array of plain JavaScript objects with comment data
- */
-export async function fetchSpotComments(spotId) {
-    if (!spotId) {
-      throw new Error("Spot ID must be provided to fetch spot comments");
-    }
-
-    const query = new Parse.Query(Comment);
+  const query = new Parse.Query(Comment);
+  
+  if (sessionId) {
+    const sessionPointer = createSessionPointer(sessionId);
+    query.equalTo("surfSessionId", sessionPointer);
+  } else {
     const spotPointer = createSpotPointer(spotId);
-
-    query.equalTo("spotId", spotPointer); // filter comments by spot
-    query.ascending("createdAt");
-    query.include("userId");
+    query.equalTo("spotId", spotPointer);
+  }
   
-    try {
-      const results = await query.find();
-      return results.map(commentToPlainObject);
-    } catch (error) {
-      console.error("Error fetching comments for Spot:", error);
-      throw error;
-    }
+  query.include("userId");
+  query.ascending("createdAt");
+
+  try {
+    const results = await query.find();
+    return results.map(commentToPlainObject);
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+    throw error;
+  }
 }
 
 /**

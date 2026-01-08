@@ -50,8 +50,8 @@ export default function SessionViewPage() {
 
   // Load comments with polling using utility function
   useEffect(() => {
-    return setupCommentsPolling(session?.id, null, setComments);
-  }, [session?.id]);
+    return setupCommentsPolling(id, null, setComments);
+  }, [id]);
 
   if (loading) {
     return <div className="page">Loading session...</div>;
