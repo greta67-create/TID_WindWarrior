@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/JoinButton.css";
+import "../../styles/JoinButton.css";
 
 export default function JoinButton({
   isJoined = false,
@@ -12,6 +12,7 @@ export default function JoinButton({
   const handleClick = (e) => {
     // Prevent click from bubbling up to parent <Link>
     e.stopPropagation();
+    e.preventDefault();
     onClick(e);
   };
 

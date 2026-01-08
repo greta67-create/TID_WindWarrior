@@ -133,6 +133,7 @@ export default function Chat({
             placeholder="Add Comment"
             value={input}
             onChange={(e) => setInput(e.target.value)}
+
           />
           <button className="send-btn" onClick={handleSendClick}>
             Send

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Sessionblock from "./Sessionblock";
+import Sessionblock from "./Sessionblock/Sessionblock";
 
 export default function SessionList({ sessions, showJoin, onUnjoin }) {
   if (sessions.length === 0) {

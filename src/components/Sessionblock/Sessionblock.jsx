@@ -1,8 +1,8 @@
-import "../styles/Sessionblock.css";
-import JoinButton from "../components/JoinButton";
-import getWeatherIcon from "../utils/getWeatherIcon";
-import { IoPeopleOutline } from "react-icons/io5";
-import { getCoastArcPath } from "../utils/getCoastArcPath";
+import "../../styles/Sessionblock.css";
+import JoinButton from "./JoinButton";
+import getWeatherIcon from "../../utils/getWeatherIcon";
+import { getCoastArcPath } from "../../utils/getCoastArcPath";
+import AvatarStack from "./AvatarStack";
 
 export default function Sessionblock({
   // Fallback spot information to avoid weird layout when session info can't be loaded
@@ -21,9 +21,6 @@ export default function Sessionblock({
   joinedText = "Joined",
   showJoin = true, // Per default show join button (exception: Profileview, past sessions)
 }) {
-  // Extract avatar URLs from joinedUsers (already filtered and sliced by backend)
-  const shownAvatars = joinedUsers?.map((u) => u.avatar) || [];
-
   return (
     <div className="session-card">
       <div className="session-header">
@@ -54,22 +51,7 @@ export default function Sessionblock({
           <div className="metric-text">{tempC}°C</div>
         </div>
 
-        {joinedCount > 0 ? (
-          <div className="avatar-stack">
-            {shownAvatars.map((src, index) => (
-              <img key={index} alt="" src={src} className="avatar" />
-            ))}
-            {/* Show +N for users without avatars or beyond first 3 */}
-            {(joinedCount > shownAvatars.length) && (
-              <div className="avatar-count">+{joinedCount - shownAvatars.length}</div>
-            )}
-          </div>
-        ) : (
-          <div className="no-users">
-            <IoPeopleOutline />
-            <span>0</span>
-          </div>
-        )}
+        <AvatarStack joinedUsers={joinedUsers} joinedCount={joinedCount} />
       </div>
     </div>
   );
