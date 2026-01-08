@@ -19,6 +19,7 @@ function CommentActions({ commentId, handleDeleteComment, handleEditComment }) {
     const handleClickOutside = (event) => {
       console.log("handleClickOutside", event.target);
       console.log("wrapperRef.current", wrapperRef.current);
+      // ensure click is outside of the chat actions wrapper
       if (!wrapperRef.current?.contains(event.target)) {
         setIsTooltipVisible(false);
       }

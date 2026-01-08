@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Map from "react-map-gl/mapbox";
 import MapMarker from "../components/MapMarker";
+import MapLegend from "../components/MapLegend";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "/src/styles/Map.css";
 import { fetchSpots } from "../services/spotService";
@@ -48,7 +49,7 @@ function MapView() {
         </div>
       </div>
 
-      <div className="page" style={{padding: 0}}>  {/* need to modify to remove padding */}
+      <div className="page" style={{padding: 0, position: 'relative'}}>  {/* need to modify to remove padding */}
         {spots && 
         <Map
           {...viewState}
@@ -70,6 +71,7 @@ function MapView() {
           ))}
         </Map>
         }
+        <MapLegend />
       </div>
     </>
   );
