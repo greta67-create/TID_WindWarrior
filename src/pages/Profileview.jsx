@@ -76,7 +76,6 @@ export default function ProfileView({ onLogout }) {
       const updatedUser = await updateUserProfile(updatedData);
       if (updatedUser) {
         setUser(updatedUser);
-        console.log("Profile updated successfully");
       }
     } catch (error) {
       console.error("Error saving profile:", error);

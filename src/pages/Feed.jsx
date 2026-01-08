@@ -18,7 +18,6 @@ function SessionFeedPage() {
         const results = await Parse.Cloud.run("loadSessions", {
           filters: { futureOnly: true },
         });
-        console.log("Loaded sessions in Feed:", results);
         setSurfSessions(results);
       } catch (err) {
         console.error("Error loading sessions in Feed:", err);
