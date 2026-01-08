@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Sessionblock from "./Sessionblock";
 
+// Component to display list of sessions or a message if the list is empty
 export default function SessionList({ sessions, showJoin, onUnjoin }) {
   if (sessions.length === 0) {
     return (
