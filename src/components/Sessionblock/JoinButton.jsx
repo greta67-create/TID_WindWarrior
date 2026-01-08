@@ -6,8 +6,6 @@ export default function JoinButton({
   onClick = () => {},
   joinedText = "Joined",
   children = null,
-  className = "",
-  ...rest
 }) {
   const handleClick = (e) => {
     // Prevent click from bubbling up to parent <Link>
@@ -19,9 +17,8 @@ export default function JoinButton({
   return (
     <button
       type="button"
-      className={`join-button ${isJoined ? "joined" : ""} ${className}`}
+      className={`join-button ${isJoined ? "joined" : ""}`}
       onClick={handleClick}
-      {...rest}
     >
       {children ?? (isJoined ? joinedText : "Join")}
     </button>
