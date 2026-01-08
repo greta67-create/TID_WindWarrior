@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Marker } from "react-map-gl/mapbox";
-import getArrowRotation from "../utils/getArrowRotation";
+import getArrowRotation from "../../utils/getArrowRotation";
 import { FaLocationArrow } from "react-icons/fa";
 
 function MapMarker({

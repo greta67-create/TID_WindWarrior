@@ -1,10 +1,11 @@
 import "../App.css";
 import Parse from "../parse-init";
-import ProfileCard from "../components/Profilecard";
-import SessionList from "../components/ProfileSessions";
+import ProfileCard from "../components/ProfileComponents/Profilecard";
+import SessionList from "../components/ProfileComponents/ProfileSessions";
 import { useState, useEffect } from "react";
 import { getCurrentUserInfo, updateUserProfile } from "../services/userservice";
 import LogOutButton from "../components/LogOutButton";
+import Page from "../components/Page";
 import "../styles/BrowseSessions.css";
 import TabNavigation from "../components/TabNavigation";
 import { unjoinAndRemoveFromJoinedList } from "../utils/unjoinAndRemoveFromJoinedList"; //Helper function to unjoin a session and remove it from joinedSessions list
@@ -29,7 +30,7 @@ export default function ProfileView({ onLogout }) {
   // Load user sessions for current user via cloud function
   useEffect(() => {
     const currentUser = Parse.User.current();
-    if (!currentUser) return; // If no user is logged in, exit early (return)
+    if (!currentUser) return; // If no user is logged in, exit early
 
     async function loadUserSessions() {
       setLoading(true);
@@ -52,7 +53,7 @@ export default function ProfileView({ onLogout }) {
 
   // Split joinedSessions into past and future
   useEffect(() => {
-    const now = new Date();
+    const now = new Date(); // Date constructor creates a new date object with the current date and time
     const upcoming = joinedSessions.filter(
       (s) => s.sessionDateTime && s.sessionDateTime >= now
     );
@@ -66,7 +67,6 @@ export default function ProfileView({ onLogout }) {
   // Unjoin and remove from list
   const handleUnjoin = (id) => async (e) => {
     e.preventDefault();
-    e.stopPropagation();
     await unjoinAndRemoveFromJoinedList(id, setJoinedSessions);
   };
 
@@ -76,7 +76,6 @@ export default function ProfileView({ onLogout }) {
       const updatedUser = await updateUserProfile(updatedData);
       if (updatedUser) {
         setUser(updatedUser);
-        console.log("Profile updated successfully");
       }
     } catch (error) {
       console.error("Error saving profile:", error);
@@ -95,11 +94,10 @@ export default function ProfileView({ onLogout }) {
   }
 
   return (
-    <div className="page">
-      <div className="page-header">
-        <div className="page-title">Profile</div>
-        <LogOutButton onLogout={onLogout} />
-      </div>
+    <Page
+      title="Profile"
+      rightContent={<LogOutButton onLogout={onLogout} />}
+    >
       <ProfileCard //passes props to Profilecard.jsx
         firstName={user.firstName}
         typeofSport={user.typeofSport}
@@ -119,6 +117,6 @@ export default function ProfileView({ onLogout }) {
       {activeTab === "past" && (
         <SessionList sessions={pastSessions} showJoin={false} />
       )}
-    </div>
+    </Page>
   );
 }

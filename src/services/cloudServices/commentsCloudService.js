@@ -37,5 +37,4 @@
     if (recentCommentCount >= 10) {
       throw new Parse.Error("Rate limit exceeded. Please try again later.");
     }
-    console.log("Comment validation passed");
   });

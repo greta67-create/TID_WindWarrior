@@ -44,6 +44,8 @@ function sessionToPlainObject(parseObj) {
     spotId: spotObj ? spotObj.id : null,
     coastDirection: spotObj ? spotObj.get("coastDirection") : null,
     isJoined: false, // Will be updated later with actual join status
+    joinedCount: 0, // Will be updated later with actual join count
+    joinedUsers: [], // Will be updated later with actual joined users
   };
 }
 
@@ -105,7 +107,8 @@ Parse.Cloud.define("loadSessions", async (request) => {
       query.containedIn("objectId", filters.sessionIds);
     }
 
-    if (filters.spotIds && filters.spotIds.length > 0) {
+    //  spot filter
+    if (filters.spotIds) {
       const spotPointers = filters.spotIds.map((spotId) => ({
         __type: "Pointer",
         className: "Spot",
@@ -114,18 +117,20 @@ Parse.Cloud.define("loadSessions", async (request) => {
       query.containedIn("spotId", spotPointers);
     }
 
+    // Sort by sessionDateTime: earliest first (ascending)
+    query.ascending("sessionDateTime");
+
     const sessionParseObjects = await query.find();
 
-    // Convert to plain objects and filter out any null results
+    // Convert to plain objects 
     let sessions = sessionParseObjects
       .map((session) => sessionToPlainObject(session))
-      .filter((session) => session !== null);
 
     if (sessions.length === 0) {
       return [];
     }
 
-    // Get all joined users for all sessions (single query for avatars, count, and isJoined)
+    // Get all joined users for all sessions 
     const allUserSessionsQuery = new Parse.Query("UserSessions");
     allUserSessionsQuery.include("userId"); // Include user data for avatars
     allUserSessionsQuery.include("surfSessionId");

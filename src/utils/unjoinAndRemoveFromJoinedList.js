@@ -10,7 +10,6 @@ export async function unjoinAndRemoveFromJoinedList(sessionId, setJoinedSessions
 
   try {
     await unjoinSession(sessionId);
-    console.log("Unjoined session from ProfileView:", sessionId);
   } catch (err) {
     console.error("Error unjoining session from ProfileView:", err);
   }

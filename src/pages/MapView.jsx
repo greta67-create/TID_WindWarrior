@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import Map from "react-map-gl/mapbox";
-import MapMarker from "../components/MapMarker";
-import MapLegend from "../components/MapLegend";
+import MapMarker from "../components/MapComponents/MapMarker";
+import MapLegend from "../components/MapComponents/MapLegend";
+import Page from "../components/Page";
+import MapContainer from "../components/MapComponents/MapContainer";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "/src/styles/Map.css";
 import { fetchSpots } from "../services/spotService";
@@ -40,16 +42,13 @@ function MapView() {
 
   return (
     <>
-      <div className="page map-header">
-        <div className="page-header">
-          <div className="page-title">Live Map</div>
-        </div>
-        <div className="section-subtitle">
-          Check the wind right now and find new spots
-        </div>
-      </div>
+      <Page
+        title="Live Map"
+        subtitle="Check the wind right now and find new spots"
+        className="map-header"
+      />
 
-      <div className="page" style={{padding: 0, position: 'relative'}}>  {/* need to modify to remove padding */}
+      <MapContainer>
         {spots && 
         <Map
           {...viewState}
@@ -69,10 +68,10 @@ function MapView() {
               longitude={spot.longitude}
             />
           ))}
+          <MapLegend />
         </Map>
         }
-        <MapLegend />
-      </div>
+      </MapContainer>
     </>
   );
 }

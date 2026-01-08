@@ -1,4 +1,4 @@
-import "../styles/ProfilePopUp.css";
+import "../../styles/ProfilePopUp.css";
 
 export default function Modal({ children, onClose }) {
   // Close modal when clicking outside content
