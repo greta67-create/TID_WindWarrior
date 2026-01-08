@@ -1,4 +1,4 @@
-import { fetchSessionComments, fetchSpotComments } from "../services/commentService";
+import { fetchComments } from "../services/commentService";
 
 /**
  * Sets up polling for comments
@@ -14,9 +14,7 @@ export function setupCommentsPolling(sessionId, spotId, setComments) {
 
   const loadComments = async () => {
     try {
-      const loadedComments = sessionId
-        ? await fetchSessionComments(sessionId)
-        : await fetchSpotComments(spotId);
+      const loadedComments = await fetchComments(sessionId, spotId);
       setComments(loadedComments);
     } catch (error) {
       console.error("Error fetching comments:", error);
