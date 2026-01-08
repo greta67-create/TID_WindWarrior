@@ -1,7 +1,7 @@
 import "../App.css";
 import Parse from "../parse-init";
 import ProfileCard from "../components/Profilecard";
-import SessionList from "../components/SessionList";
+import SessionList from "../components/ProfileSessions";
 import { useState, useEffect } from "react";
 import { getCurrentUserInfo, updateUserProfile } from "../services/userservice";
 import LogOutButton from "../components/LogOutButton";
